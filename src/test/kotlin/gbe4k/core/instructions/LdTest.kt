@@ -1,0 +1,57 @@
+package gbe4k.core.instructions
+
+import gbe4k.core.CpuTestSupport
+import gbe4k.core.Register
+import gbe4k.core.Register.F
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+
+class LdTest : CpuTestSupport() {
+    @ParameterizedTest
+    @EnumSource(names = ["AF", "BC", "DE", "HL", "SP"])
+    fun `should ld d16`(register: Register) {
+        Ld(register, 0xffff).execute(cpu)
+
+        assertThat(cpu.registers[register]).isEqualTo(0xffff)
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = ["AF", "BC", "DE", "HL", "SP"])
+    fun `should reject byte for 16 bit registers`(register: Register) {
+        assertThatThrownBy {
+            Ld(register, 0x12.toByte()).execute(cpu)
+        }
+
+        assertThat(cpu.registers[register]).isEqualTo(0x0000)
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = ["A", "B", "C", "D", "E"])
+    fun `should ld d8`(register: Register) {
+        Ld(register, 0xab.toByte()).execute(cpu)
+
+        assertThat(cpu.registers[register].toByte()).isEqualTo(0xab.toByte())
+    }
+
+    @Test
+    fun `should not ld F, d8`() {
+        assertThatThrownBy {
+            Ld(F, 0xab.toByte()).execute(cpu)
+        }.hasMessage("Can not LD F, 0xab")
+
+        assertThat(cpu.registers.f).isEqualTo(0x00)
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = ["A", "B", "C", "D", "E", "F"])
+    fun `should reject int for 8bit registers`(register: Register) {
+        assertThatThrownBy {
+            Ld(register, 0xffff).execute(cpu)
+        }
+
+        assertThat(cpu.registers[register]).isEqualTo(0x0000)
+    }
+}

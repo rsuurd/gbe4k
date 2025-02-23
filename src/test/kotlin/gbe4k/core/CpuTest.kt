@@ -14,6 +14,19 @@ class CpuTest : CpuTestSupport() {
     fun `should init`() {
         assertThat(cpu.pc).isEqualTo(0x100)
         assertThat(cpu.ime).isTrue()
+        assertThat(cpu.registers.a).isEqualTo(0x00)
+        assertThat(cpu.registers.b).isEqualTo(0x00)
+        assertThat(cpu.registers.c).isEqualTo(0x00)
+        assertThat(cpu.registers.d).isEqualTo(0x00)
+        assertThat(cpu.registers.e).isEqualTo(0x00)
+        assertThat(cpu.registers.f).isEqualTo(0x00)
+        assertThat(cpu.registers.h).isEqualTo(0x00)
+        assertThat(cpu.registers.l).isEqualTo(0x00)
+        assertThat(cpu.registers.af).isEqualTo(0x00)
+        assertThat(cpu.registers.bc).isEqualTo(0x00)
+        assertThat(cpu.registers.de).isEqualTo(0x00)
+        assertThat(cpu.registers.hl).isEqualTo(0x00)
+        assertThat(cpu.registers.sp).isEqualTo(0x00)
     }
 
     @Test
@@ -48,6 +61,13 @@ class CpuTest : CpuTestSupport() {
 
         assertThat(cpu.pc).isEqualTo(0x0101)
     }
+    @Test
+    fun `should execute LD SP, d16`() {
+        stepWith(0x31, 0xff, 0xff)
+
+        assertThat(cpu.pc).isEqualTo(0x0103)
+        assertThat(cpu.registers.sp).isEqualTo(0xffff)
+    }
 
     @Test
     fun `should execute jp`() {
@@ -60,6 +80,7 @@ class CpuTest : CpuTestSupport() {
     fun `should execute di`() {
         stepWith(0xf3)
 
+        assertThat(cpu.pc).isEqualTo(0x0101)
         assertThat(cpu.ime).isFalse()
     }
 
