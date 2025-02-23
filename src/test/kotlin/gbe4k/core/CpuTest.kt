@@ -6,6 +6,10 @@ import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Cpu.Companion.loNibble
 import gbe4k.core.Cpu.Companion.n16
 import gbe4k.core.Cpu.Companion.n8
+import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -62,7 +66,7 @@ class CpuTest : CpuTestSupport() {
         assertThat(cpu.pc).isEqualTo(0x0101)
     }
     @Test
-    fun `should execute LD SP, d16`() {
+    fun `should execute ld sp, d16`() {
         stepWith(0x31, 0xff, 0xff)
 
         assertThat(cpu.pc).isEqualTo(0x0103)
@@ -82,6 +86,25 @@ class CpuTest : CpuTestSupport() {
 
         assertThat(cpu.pc).isEqualTo(0x0101)
         assertThat(cpu.ime).isFalse()
+    }
+
+    @Test
+    fun `should execute ld a16, a`() {
+        cpu.registers.a = 0x12
+        every { cpu.bus.write(any(), any()) } just runs
+
+        stepWith(0xea, 0xff, 0xff)
+
+        assertThat(cpu.pc).isEqualTo(0x0103)
+        verify { cpu.bus.write(0xffff, 0x12) }
+    }
+
+    @Test
+    fun `should execute ld a, d8`() {
+        stepWith(0x3e, 0xaa)
+
+        assertThat(cpu.pc).isEqualTo(0x0102)
+        assertThat(cpu.registers.a).isEqualTo(0xaa.toByte())
     }
 
     private fun stepWith(vararg bytes: Number) {

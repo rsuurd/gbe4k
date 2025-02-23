@@ -2,6 +2,8 @@ package gbe4k.core.instructions
 
 import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.hex
+import gbe4k.core.Cpu.Companion.hi
+import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Register
 import gbe4k.core.Register.A
 import gbe4k.core.Register.AF
@@ -30,19 +32,36 @@ class Ld : Instruction {
         this.source = value
     }
 
+    constructor(destination: Int, value: Register) {
+        this.destination = destination
+        this.source = value
+    }
+
     override fun execute(cpu: Cpu) {
         when (destination) {
-            is Register -> storeInRegister(cpu)
+            is Register -> storeInRegister(cpu, destination)
+            is Int -> writeToBus(cpu, destination)
             else -> throw IllegalArgumentException("Can not $this")
         }
     }
 
-    private fun storeInRegister(cpu: Cpu) {
+    private fun storeInRegister(cpu: Cpu, register: Register) {
         val value = resolveValue(cpu)
 
-        when (destination as Register) {
-            AF, BC, DE, HL, SP -> cpu.registers[destination] = value as Int
-            A, B, C, D, E, H, L -> cpu.registers[destination] = value as Byte
+        when (register) {
+            AF, BC, DE, HL, SP -> cpu.registers[register] = value as Int
+            A, B, C, D, E, H, L -> cpu.registers[register] = value as Byte
+            else -> throw IllegalArgumentException("Can not $this")
+        }
+    }
+
+    private fun writeToBus(cpu: Cpu, address: Int) {
+        when (val value = resolveValue(cpu)) {
+            is Int -> {
+                cpu.bus.write(address, value.hi())
+                cpu.bus.write(address + 1, value.lo())
+            }
+            is Byte -> cpu.bus.write(address, value)
             else -> throw IllegalArgumentException("Can not $this")
         }
     }
