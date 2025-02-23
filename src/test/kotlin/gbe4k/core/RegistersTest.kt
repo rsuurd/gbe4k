@@ -12,6 +12,7 @@ import gbe4k.core.Register.F
 import gbe4k.core.Register.H
 import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
+import gbe4k.core.Register.SP
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -241,5 +242,21 @@ class RegistersTest {
         assertThat(registers.l).isEqualTo(0x23)
         assertThat(registers[H]).isEqualTo(0x33)
         assertThat(registers[L]).isEqualTo(0x23)
+    }
+
+    @Test
+    fun `should set and get register SP`() {
+        registers.sp = 0x0001
+
+        assertThat(registers.sp).isEqualTo(0x0001)
+        assertThat(registers[SP]).isEqualTo(0x0001)
+    }
+
+    @Test
+    fun `should set and get register SP by name`() {
+        registers[SP] = 0x0001
+
+        assertThat(registers.sp).isEqualTo(0x0001)
+        assertThat(registers[SP]).isEqualTo(0x0001)
     }
 }

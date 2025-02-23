@@ -16,16 +16,18 @@ import gbe4k.core.Register.F
 import gbe4k.core.Register.H
 import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
+import gbe4k.core.Register.SP
 
 enum class Register {
-    A, B, C, D, E, F, H, L, AF, BC, DE, HL;
+    A, B, C, D, E, F, H, L, AF, BC, DE, HL, SP;
 }
 
 data class Registers(
     var af: Int = 0,
     var bc: Int = 0,
     var de: Int = 0,
-    var hl: Int = 0
+    var hl: Int = 0,
+    var sp: Int = 0
 ) {
     operator fun get(register: Register): Int = when (register) {
         A -> a.toInt()
@@ -40,6 +42,7 @@ data class Registers(
         BC -> bc
         DE -> de
         HL -> hl
+        SP -> sp
     }
 
     operator fun set(register: Register, value: Int) {
@@ -48,6 +51,7 @@ data class Registers(
             BC -> bc = value
             DE -> de = value
             HL -> hl = value
+            SP -> sp = value
             A, B, C, D, E, F, H, L -> set(register, value.toByte())
         }
     }
