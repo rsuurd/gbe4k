@@ -15,8 +15,8 @@ abstract class CpuTestSupport {
     @InjectMockKs
     protected lateinit var cpu: Cpu
 
-    protected fun withBytes(vararg bytes: Byte, block: () -> Unit) {
-        every { bus.read(any()) }.returnsMany(bytes.toList())
+    protected fun withBytes(vararg bytes: Number, block: () -> Unit) {
+        every { bus.read(any()) }.returnsMany(bytes.toList().map { it.toByte() })
 
         block()
 

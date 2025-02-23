@@ -1,6 +1,5 @@
 package gbe4k.core
 
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Cpu.Companion.hi
 import gbe4k.core.Cpu.Companion.hiNibble
 import gbe4k.core.Cpu.Companion.lo
@@ -49,7 +48,14 @@ class CpuTest : CpuTestSupport() {
         assertThat(cpu.pc).isEqualTo(0x0101)
     }
 
-    private fun stepWith(vararg bytes: Byte) {
+    @Test
+    fun `should execute jp`() {
+        stepWith(0xc3, 0x50, 0x01)
+
+        assertThat(cpu.pc).isEqualTo(0x0150)
+    }
+
+    private fun stepWith(vararg bytes: Number) {
         withBytes(*bytes) {
             cpu.step()
         }
