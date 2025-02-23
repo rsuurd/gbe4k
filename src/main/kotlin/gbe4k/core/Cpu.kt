@@ -1,11 +1,13 @@
 package gbe4k.core
 
+import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Nop
 import kotlin.experimental.and
 
 class Cpu(val bus: Bus) {
     var pc = 0x0100
+    var ime = true
 
     fun step() {
         val instruction = nextInstruction()
@@ -16,6 +18,7 @@ class Cpu(val bus: Bus) {
     private fun nextInstruction() = when (val opcode = read()) {
         0x00.toByte() -> Nop
         0xc3.toByte() -> Jp(readInt())
+        0xf3.toByte() -> Di
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
     }
 

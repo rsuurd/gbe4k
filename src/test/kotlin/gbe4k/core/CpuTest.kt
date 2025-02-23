@@ -55,6 +55,13 @@ class CpuTest : CpuTestSupport() {
         assertThat(cpu.pc).isEqualTo(0x0150)
     }
 
+    @Test
+    fun `should execute di`() {
+        stepWith(0xf3)
+
+        assertThat(cpu.ime).isFalse()
+    }
+
     private fun stepWith(vararg bytes: Number) {
         withBytes(*bytes) {
             cpu.step()
