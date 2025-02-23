@@ -13,6 +13,7 @@ class CpuTest : CpuTestSupport() {
     @Test
     fun `should init`() {
         assertThat(cpu.pc).isEqualTo(0x100)
+        assertThat(cpu.ime).isTrue()
     }
 
     @Test
