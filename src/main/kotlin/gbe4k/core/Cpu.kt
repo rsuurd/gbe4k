@@ -14,6 +14,7 @@ import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Jp
+import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
@@ -132,6 +133,12 @@ class Cpu(val bus: Bus) {
         0xfa.toByte() -> Ld(A, readInt(), INDIRECT)
 
         // jumps/call
+        0x18.toByte() -> Jr(read())
+        0x20.toByte() -> Jr(read(), z = false)
+        0x28.toByte() -> Jr(read(), z = true)
+        0x30.toByte() -> Jr(read(), c = false)
+        0x38.toByte() -> Jr(read(), c = true)
+
         0xc2.toByte() -> Jp(readInt(), z = false)
         0xc3.toByte() -> Jp(readInt())
         0xca.toByte() -> Jp(readInt(), z = true)

@@ -27,7 +27,7 @@ class JpTest : CpuTestSupport() {
 
         stepWith(0xca, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -45,7 +45,7 @@ class JpTest : CpuTestSupport() {
 
         stepWith(0xda, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -63,7 +63,7 @@ class JpTest : CpuTestSupport() {
 
         stepWith(0xc2, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -81,7 +81,7 @@ class JpTest : CpuTestSupport() {
 
         stepWith(0xd2, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test

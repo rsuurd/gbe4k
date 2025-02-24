@@ -27,7 +27,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xcc, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -45,7 +45,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xdc, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -63,7 +63,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xc4, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 
     @Test
@@ -81,6 +81,6 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xd4, 0xff, 0x34)
 
-        assertThat(cpu.pc).isNotEqualTo(0x34ff)
+        assertThat(cpu.pc).isEqualTo(0x103)
     }
 }
