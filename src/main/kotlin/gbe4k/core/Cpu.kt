@@ -14,6 +14,7 @@ import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
+import gbe4k.core.instructions.Inc
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
@@ -43,6 +44,20 @@ class Cpu(val bus: Bus) {
 
     private fun nextInstruction() = when (val opcode = read()) {
         0x00.toByte() -> Nop
+
+        // inc
+        0x03.toByte() -> Inc(BC)
+        0x04.toByte() -> Inc(B)
+        0x0c.toByte() -> Inc(C)
+        0x13.toByte() -> Inc(DE)
+        0x14.toByte() -> Inc(D)
+        0x1c.toByte() -> Inc(E)
+        0x23.toByte() -> Inc(HL)
+        0x24.toByte() -> Inc(H)
+        0x2c.toByte() -> Inc(L)
+        0x33.toByte() -> Inc(SP)
+        0x34.toByte() -> Inc(registers.hl)
+        0x3c.toByte() -> Inc(A)
 
         // all supported ld instructions
         0x01.toByte() -> Ld(BC, readInt())
