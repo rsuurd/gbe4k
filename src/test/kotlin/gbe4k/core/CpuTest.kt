@@ -6,10 +6,6 @@ import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Cpu.Companion.loNibble
 import gbe4k.core.Cpu.Companion.n16
 import gbe4k.core.Cpu.Companion.n8
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -57,59 +53,5 @@ class CpuTest : CpuTestSupport() {
     @Test
     fun `should combine nibbles to byte`() {
         assertThat(n8(0xa, 0xf)).isEqualTo(0xaf)
-    }
-
-    @Test
-    fun `should execute nop`() {
-        stepWith(0x00)
-
-        assertThat(cpu.pc).isEqualTo(0x0101)
-    }
-    @Test
-    fun `should execute ld sp, d16`() {
-        stepWith(0x31, 0xff, 0xff)
-
-        assertThat(cpu.pc).isEqualTo(0x0103)
-        assertThat(cpu.registers.sp).isEqualTo(0xffff)
-    }
-
-    @Test
-    fun `should execute jp`() {
-        stepWith(0xc3, 0x50, 0x01)
-
-        assertThat(cpu.pc).isEqualTo(0x0150)
-    }
-
-    @Test
-    fun `should execute di`() {
-        stepWith(0xf3)
-
-        assertThat(cpu.pc).isEqualTo(0x0101)
-        assertThat(cpu.ime).isFalse()
-    }
-
-    @Test
-    fun `should execute ld a16, a`() {
-        cpu.registers.a = 0x12
-        every { cpu.bus.write(any(), any()) } just runs
-
-        stepWith(0xea, 0xff, 0xff)
-
-        assertThat(cpu.pc).isEqualTo(0x0103)
-        verify { cpu.bus.write(0xffff, 0x12) }
-    }
-
-    @Test
-    fun `should execute ld a, d8`() {
-        stepWith(0x3e, 0xaa)
-
-        assertThat(cpu.pc).isEqualTo(0x0102)
-        assertThat(cpu.registers.a).isEqualTo(0xaa.toByte())
-    }
-
-    private fun stepWith(vararg bytes: Number) {
-        withBytes(*bytes) {
-            cpu.step()
-        }
     }
 }

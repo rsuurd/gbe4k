@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class JpTest : CpuTestSupport() {
     @Test
     fun `should jump to address`() {
-        Jp(0x0150).execute(cpu)
+        stepWith(0xc3, 0x50, 0x01)
 
         assertThat(cpu.pc).isEqualTo(0x0150)
     }

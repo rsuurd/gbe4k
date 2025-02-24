@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test
 class NopTest : CpuTestSupport() {
     @Test
     fun `should do nothing`() {
-        Nop.execute(cpu)
+        stepWith(0x00)
 
-        assertThat(cpu.pc).isEqualTo(0x0100)
+        assertThat(cpu.pc).isEqualTo(0x0101)
     }
 }

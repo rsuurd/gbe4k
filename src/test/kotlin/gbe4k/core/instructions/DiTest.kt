@@ -7,8 +7,9 @@ import org.junit.jupiter.api.Test
 class DiTest : CpuTestSupport() {
     @Test
     fun `should disable interrupts`() {
-        Di.execute(cpu)
+        stepWith(0xf3)
 
+        assertThat(cpu.pc).isEqualTo(0x0101)
         assertThat(cpu.ime).isFalse()
     }
 }
