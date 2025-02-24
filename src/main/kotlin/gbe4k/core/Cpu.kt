@@ -11,6 +11,7 @@ import gbe4k.core.Register.H
 import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
+import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Ld
@@ -130,8 +131,16 @@ class Cpu(val bus: Bus) {
         0xf9.toByte() -> Ld(SP, HL)
         0xfa.toByte() -> Ld(A, readInt(), INDIRECT)
 
-        // other
+        // jumps/call
         0xc3.toByte() -> Jp(readInt())
+        0xc4.toByte() -> Call(readInt(), z = false)
+        0xcc.toByte() -> Call(readInt(), z = true)
+        0xcd.toByte() -> Call(readInt())
+        0xd4.toByte() -> Call(readInt(), c = false)
+        0xdc.toByte() -> Call(readInt(), c = true)
+
+        // other
+
         0xf3.toByte() -> Di
 
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
