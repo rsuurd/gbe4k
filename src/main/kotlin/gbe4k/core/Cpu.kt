@@ -12,6 +12,7 @@ import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Di
+import gbe4k.core.instructions.Flags
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
@@ -21,7 +22,9 @@ import kotlin.experimental.and
 class Cpu(val bus: Bus) {
     var pc = 0x0100
 
-    var registers = Registers()
+    val registers = Registers()
+    val flags = Flags(registers)
+
     var ime = true
 
     fun step() {
