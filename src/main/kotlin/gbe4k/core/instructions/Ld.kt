@@ -112,8 +112,4 @@ open class Ld private constructor(
 
         return builder.toString()
     }
-
-    enum class Mode {
-        DIRECT, INDIRECT
-    }
 }
