@@ -132,7 +132,12 @@ class Cpu(val bus: Bus) {
         0xfa.toByte() -> Ld(A, readInt(), INDIRECT)
 
         // jumps/call
+        0xc2.toByte() -> Jp(readInt(), z = false)
         0xc3.toByte() -> Jp(readInt())
+        0xca.toByte() -> Jp(readInt(), z = true)
+        0xd2.toByte() -> Jp(readInt(), c = false)
+        0xda.toByte() -> Jp(readInt(), c = true)
+        0xe9.toByte() -> Jp(registers.hl)
         0xc4.toByte() -> Call(readInt(), z = false)
         0xcc.toByte() -> Call(readInt(), z = true)
         0xcd.toByte() -> Call(readInt())
