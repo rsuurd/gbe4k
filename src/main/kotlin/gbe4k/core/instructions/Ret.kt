@@ -2,21 +2,10 @@ package gbe4k.core.instructions
 
 import gbe4k.core.Cpu
 
-open class Ret(
-    private val z: Boolean? = null,
-    private val c: Boolean? = null
-) : Instruction {
-    override fun execute(cpu: Cpu) {
-        if (isConditionTrue(cpu)) {
-            cpu.pc = cpu.stack.pop()
-        }
+open class Ret(z: Boolean? = null, c: Boolean? = null) : AbstractJump(z, c) {
+    override fun jump(cpu: Cpu) {
+        cpu.pc = cpu.stack.pop()
     }
-
-    private fun isConditionTrue(cpu: Cpu) = z?.let {
-        cpu.flags.z == it
-    } ?: c?.let {
-        cpu.flags.c == it
-    } ?: true
 }
 
 object Reti : Ret() {
