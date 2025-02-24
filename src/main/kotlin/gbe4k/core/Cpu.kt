@@ -27,6 +27,7 @@ import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.logic.Or
+import gbe4k.core.instructions.logic.Xor
 import kotlin.experimental.and
 
 class Cpu(val bus: Bus) {
@@ -209,14 +210,23 @@ class Cpu(val bus: Bus) {
         0xff.toByte() -> Rst(0x38)
 
         // logic
+        0xaf.toByte() -> Xor(A)
+        0xa8.toByte() -> Xor(B)
+        0xa9.toByte() -> Xor(C)
+        0xaa.toByte() -> Xor(D)
+        0xab.toByte() -> Xor(E)
+        0xac.toByte() -> Xor(H)
+        0xad.toByte() -> Xor(L)
+        0xae.toByte() -> Xor(registers.hl)
+        0xee.toByte() -> Xor(read())
         0x87.toByte() -> Or(A)
-        0x80.toByte() -> Or(B)
-        0x81.toByte() -> Or(C)
-        0x82.toByte() -> Or(D)
-        0x83.toByte() -> Or(E)
-        0x84.toByte() -> Or(H)
-        0x85.toByte() -> Or(L)
-        0x86.toByte() -> Or(registers.hl)
+        0xb0.toByte() -> Or(B)
+        0xb1.toByte() -> Or(C)
+        0xb2.toByte() -> Or(D)
+        0xb3.toByte() -> Or(E)
+        0xb4.toByte() -> Or(H)
+        0xb5.toByte() -> Or(L)
+        0xb6.toByte() -> Or(registers.hl)
         0xf6.toByte() -> Or(read())
 
         // other
