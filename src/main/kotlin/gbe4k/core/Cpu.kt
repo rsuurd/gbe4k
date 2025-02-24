@@ -19,6 +19,7 @@ import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
+import gbe4k.core.instructions.Pop
 import gbe4k.core.instructions.Push
 import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
@@ -137,6 +138,10 @@ class Cpu(val bus: Bus) {
         0xf9.toByte() -> Ld(SP, HL)
         0xfa.toByte() -> Ld(A, readInt(), INDIRECT)
 
+        0xc1.toByte() -> Pop(BC)
+        0xd1.toByte() -> Pop(DE)
+        0xe1.toByte() -> Pop(HL)
+        0xf1.toByte() -> Pop(AF)
         0xc5.toByte() -> Push(BC)
         0xd5.toByte() -> Push(DE)
         0xe5.toByte() -> Push(HL)
