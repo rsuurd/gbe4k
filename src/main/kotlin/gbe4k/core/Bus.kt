@@ -3,12 +3,26 @@ package gbe4k.core
 import gbe4k.core.Cpu.Companion.hex
 
 class Bus(private val cart: Cart) {
+    private val vram = Ram(VRAM)
+    private val wram = Ram(WRAM)
+    private val hram = Ram(HRAM)
+
     fun read(address: Int): Byte = when (address) {
         in CART_DATA -> cart.read(address)
+        in VRAM -> vram[address]
+        in WRAM -> wram[address]
+        in HRAM -> hram[address]
         else -> throw IllegalArgumentException("Can not read from: ${address.hex()}")
     }
 
-    fun write(address: Int, value: Byte) {}
+    fun write(address: Int, value: Byte) {
+        when (address) {
+            in VRAM -> vram[address] = value
+            in WRAM -> wram[address] = value
+            in HRAM -> hram[address] = value
+            else -> { /* nop */ }
+        }
+    }
 
     companion object {
         val CART_DATA = 0..0x7fff
