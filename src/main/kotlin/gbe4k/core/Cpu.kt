@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Register.A
+import gbe4k.core.Register.AF
 import gbe4k.core.Register.B
 import gbe4k.core.Register.BC
 import gbe4k.core.Register.C
@@ -18,6 +19,7 @@ import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
+import gbe4k.core.instructions.Push
 import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
@@ -134,6 +136,11 @@ class Cpu(val bus: Bus) {
         0xf8.toByte() -> Ld(HL, registers.sp + read()) // this is probably not correct
         0xf9.toByte() -> Ld(SP, HL)
         0xfa.toByte() -> Ld(A, readInt(), INDIRECT)
+
+        0xc5.toByte() -> Push(BC)
+        0xd5.toByte() -> Push(DE)
+        0xe5.toByte() -> Push(HL)
+        0xf5.toByte() -> Push(AF)
 
         // jumps/call
         0x18.toByte() -> Jr(read())
