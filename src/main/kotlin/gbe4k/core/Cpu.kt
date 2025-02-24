@@ -18,6 +18,8 @@ import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
+import gbe4k.core.instructions.Ret
+import gbe4k.core.instructions.Reti
 import kotlin.experimental.and
 
 class Cpu(val bus: Bus) {
@@ -138,7 +140,6 @@ class Cpu(val bus: Bus) {
         0x28.toByte() -> Jr(read(), z = true)
         0x30.toByte() -> Jr(read(), c = false)
         0x38.toByte() -> Jr(read(), c = true)
-
         0xc2.toByte() -> Jp(readInt(), z = false)
         0xc3.toByte() -> Jp(readInt())
         0xca.toByte() -> Jp(readInt(), z = true)
@@ -150,7 +151,12 @@ class Cpu(val bus: Bus) {
         0xcd.toByte() -> Call(readInt())
         0xd4.toByte() -> Call(readInt(), c = false)
         0xdc.toByte() -> Call(readInt(), c = true)
-
+        0xc0.toByte() -> Ret(z = false)
+        0xc8.toByte() -> Ret(z = true)
+        0xc9.toByte() -> Ret()
+        0xd0.toByte() -> Ret(c = false)
+        0xd8.toByte() -> Ret(c = true)
+        0xd9.toByte() -> Reti
         // other
 
         0xf3.toByte() -> Di
