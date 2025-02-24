@@ -14,7 +14,7 @@ import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
-import gbe4k.core.instructions.Inc
+import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
@@ -25,6 +25,7 @@ import gbe4k.core.instructions.Push
 import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
+import gbe4k.core.instructions.arithmetic.Dec
 import kotlin.experimental.and
 
 class Cpu(val bus: Bus) {
@@ -58,6 +59,19 @@ class Cpu(val bus: Bus) {
         0x33.toByte() -> Inc(SP)
         0x34.toByte() -> Inc(registers.hl)
         0x3c.toByte() -> Inc(A)
+        //dec
+        0x0b.toByte() -> Dec(BC)
+        0x05.toByte() -> Dec(B)
+        0x0d.toByte() -> Dec(C)
+        0x1b.toByte() -> Dec(DE)
+        0x15.toByte() -> Dec(D)
+        0x1d.toByte() -> Dec(E)
+        0x2b.toByte() -> Dec(HL)
+        0x25.toByte() -> Dec(H)
+        0x2d.toByte() -> Dec(L)
+        0x3b.toByte() -> Dec(SP)
+        0x35.toByte() -> Dec(registers.hl)
+        0x3d.toByte() -> Dec(A)
 
         // all supported ld instructions
         0x01.toByte() -> Ld(BC, readInt())

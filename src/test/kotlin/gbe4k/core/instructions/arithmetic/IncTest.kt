@@ -1,6 +1,5 @@
-package gbe4k.core.instructions
+package gbe4k.core.instructions.arithmetic
 
-import gbe4k.core.Cpu
 import gbe4k.core.CpuTestSupport
 import gbe4k.core.Register
 import gbe4k.core.Register.A
@@ -19,7 +18,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import org.junit.jupiter.params.provider.ValueSource
 
 class IncTest : CpuTestSupport() {
     @Test
