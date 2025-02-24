@@ -20,6 +20,7 @@ import gbe4k.core.instructions.Ld.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
 import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
+import gbe4k.core.instructions.Rst
 import kotlin.experimental.and
 
 class Cpu(val bus: Bus) {
@@ -157,8 +158,16 @@ class Cpu(val bus: Bus) {
         0xd0.toByte() -> Ret(c = false)
         0xd8.toByte() -> Ret(c = true)
         0xd9.toByte() -> Reti
-        // other
+        0xc7.toByte() -> Rst(0x00)
+        0xcf.toByte() -> Rst(0x08)
+        0xd7.toByte() -> Rst(0x10)
+        0xdf.toByte() -> Rst(0x18)
+        0xe7.toByte() -> Rst(0x20)
+        0xef.toByte() -> Rst(0x28)
+        0xf7.toByte() -> Rst(0x30)
+        0xff.toByte() -> Rst(0x38)
 
+        // other
         0xf3.toByte() -> Di
 
         else -> TODO("Unsupported opcode: ${opcode.hex()}")

@@ -2,7 +2,7 @@ package gbe4k.core.instructions
 
 import gbe4k.core.Cpu
 
-class Call(
+open class Call(
     private val address: Int,
     private val z: Boolean? = null,
     private val c: Boolean? = null
