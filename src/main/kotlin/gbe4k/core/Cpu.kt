@@ -12,7 +12,6 @@ import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Di
-import gbe4k.core.instructions.Flags
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Ld
 import gbe4k.core.instructions.Ld.Mode.INDIRECT
@@ -24,6 +23,7 @@ class Cpu(val bus: Bus) {
 
     val registers = Registers()
     val flags = Flags(registers)
+    val stack = Stack(bus, registers)
 
     var ime = true
 

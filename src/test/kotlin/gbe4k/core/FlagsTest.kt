@@ -1,6 +1,5 @@
-package gbe4k.core.instructions
+package gbe4k.core
 
-import gbe4k.core.Registers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest

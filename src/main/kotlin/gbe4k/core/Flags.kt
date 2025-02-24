@@ -1,6 +1,5 @@
-package gbe4k.core.instructions
+package gbe4k.core
 
-import gbe4k.core.Registers
 import kotlin.experimental.and
 import kotlin.experimental.or
 
