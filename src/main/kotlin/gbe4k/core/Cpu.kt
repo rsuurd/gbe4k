@@ -28,6 +28,7 @@ import gbe4k.core.instructions.Rst
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Cp
+import gbe4k.core.instructions.logic.Cpl
 import gbe4k.core.instructions.logic.Or
 import gbe4k.core.instructions.logic.Xor
 import kotlin.experimental.and
@@ -212,6 +213,7 @@ class Cpu(val bus: Bus) {
         0xff.toByte() -> Rst(0x38)
 
         // logic
+        0x2f.toByte() -> Cpl
         0xa0.toByte() -> And(B)
         0xa1.toByte() -> And(C)
         0xa2.toByte() -> And(D)
