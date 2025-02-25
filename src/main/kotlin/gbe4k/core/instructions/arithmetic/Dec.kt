@@ -2,19 +2,36 @@ package gbe4k.core.instructions.arithmetic
 
 import gbe4k.core.Cpu
 import gbe4k.core.Register
+import gbe4k.core.instructions.Instruction
+import gbe4k.core.instructions.InstructionSupport.get
+import gbe4k.core.instructions.InstructionSupport.set
+import gbe4k.core.instructions.Mode
 
-class Dec : Base {
-    constructor(register: Register) : super(register)
-    constructor(address: Int) : super(address)
+class Dec : Instruction {
+    private val destination: Any
+    private val mode: Mode
 
-    override fun calculate(value: Byte) = value.dec()
-    override fun calculate(value: Int) = value.dec()
+    constructor(register: Register) {
+        this.destination = register
+        mode = Mode.DIRECT
+    }
 
-    override fun setFlags(newValue: Byte, previousValue: Byte, cpu: Cpu) {
-        cpu.flags.z = newValue.isZero()
+    constructor(address: Int) {
+        this.destination = address
+        mode = Mode.INDIRECT
+    }
+
+    override fun execute(cpu: Cpu) {
+        val new = when (val prev = destination.get(cpu, mode)) {
+            is Byte -> prev.dec()
+            is Int -> prev.dec()
+            else -> throw IllegalArgumentException("Can't dec $destination")
+        }
+
+        destination.set(new, cpu)
+
+        cpu.flags.z = new.toInt() == 0
         cpu.flags.n = true
-
-        // TODO calculate half-carry
-        // cpu.flags.h = false
+        // cpu.flags.h = true
     }
 }

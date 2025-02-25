@@ -280,5 +280,11 @@ class Cpu(val bus: Bus) {
 
         fun Byte.hex() = "0x%02x".format(this)
         fun Int.hex() = "0x%04x".format(this)
+
+        fun Number.address() = when (this) {
+            is Int -> this
+            is Byte -> n16(0xff.toByte(), this)
+            else -> throw IllegalArgumentException("$this is not an address")
+        }
     }
 }

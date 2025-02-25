@@ -2,18 +2,22 @@ package gbe4k.core.instructions.logic
 
 import gbe4k.core.Cpu
 import gbe4k.core.Register
-import gbe4k.core.instructions.arithmetic.Base.Companion.isZero
+import gbe4k.core.instructions.Instruction
+import gbe4k.core.instructions.InstructionSupport.get
+import gbe4k.core.instructions.Mode
 import kotlin.experimental.or
 
-class Or : BaseLogic {
-    constructor(register: Register) : super(register)
-    constructor(address: Int) : super(address)
-    constructor(value: Byte) : super(value)
+class Or private constructor(private val source: Any, private val mode: Mode = Mode.DIRECT) : Instruction {
+    constructor(register: Register) : this(register as Any)
+    constructor(value: Byte) : this(value as Any)
+    constructor(address: Int) : this(address as Any, Mode.INDIRECT)
 
-    override fun logic(acc: Byte, value: Byte) = acc.or(value)
+    override fun execute(cpu: Cpu) {
+        val current = source.get(cpu, mode) as Byte
+        val value = cpu.registers.a.or(current)
+        cpu.registers.a = value
 
-    override fun setFlags(value: Byte, acc: Byte, cpu: Cpu) {
-        cpu.flags.z = value.isZero()
+        cpu.flags.z = value == 0x00.toByte()
         cpu.flags.n = false
         cpu.flags.h = false
         cpu.flags.c = false

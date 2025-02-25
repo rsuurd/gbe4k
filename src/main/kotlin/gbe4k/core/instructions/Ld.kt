@@ -2,22 +2,9 @@ package gbe4k.core.instructions
 
 import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.hex
-import gbe4k.core.Cpu.Companion.hi
-import gbe4k.core.Cpu.Companion.lo
-import gbe4k.core.Cpu.Companion.n16
 import gbe4k.core.Register
-import gbe4k.core.Register.A
-import gbe4k.core.Register.AF
-import gbe4k.core.Register.B
-import gbe4k.core.Register.BC
-import gbe4k.core.Register.C
-import gbe4k.core.Register.D
-import gbe4k.core.Register.DE
-import gbe4k.core.Register.E
-import gbe4k.core.Register.H
-import gbe4k.core.Register.HL
-import gbe4k.core.Register.L
-import gbe4k.core.Register.SP
+import gbe4k.core.instructions.InstructionSupport.get
+import gbe4k.core.instructions.InstructionSupport.set
 
 open class Ld private constructor(
     private val destination: Any,
@@ -35,63 +22,7 @@ open class Ld private constructor(
     constructor(destination: Int, source: Byte, mode: Mode = Mode.DIRECT) : this(destination as Any, source, mode)
 
     override fun execute(cpu: Cpu) {
-        when (destination) {
-            is Register -> writeToRegister(cpu)
-            is Int, is Byte -> writeToMemory(cpu)
-            else -> throw IllegalArgumentException("Can not $this")
-        }
-    }
-
-    private fun writeToRegister(cpu: Cpu) {
-        val value = resolveValue(cpu)
-
-        when (val register = destination as Register) {
-            AF, BC, DE, HL, SP -> cpu.registers[register] = value as Int
-            A, B, C, D, E, H, L -> cpu.registers[register] = value as Byte
-            else -> throw IllegalArgumentException("Can not write to $register")
-        }
-    }
-
-    private fun writeToMemory(cpu: Cpu) {
-        val address = resolveAddress(destination)
-
-        when (val value = resolveValue(cpu)) {
-            is Int -> {
-                cpu.bus.write(address, value.hi())
-                cpu.bus.write(address + 1, value.lo())
-            }
-
-            is Byte -> cpu.bus.write(address, value)
-        }
-    }
-
-    private fun resolveAddress(address: Any) = when (address) {
-        is Int -> address
-        is Byte -> n16(0xff.toByte(), address)
-        else -> throw IllegalArgumentException("$address is not an address")
-    }
-
-    private fun resolveValue(cpu: Cpu): Any {
-        val value = when (source) {
-            is Register -> readFromRegister(cpu, source)
-            is Int, is Byte -> source
-            else -> throw IllegalArgumentException("Can not resolve value from $source")
-        }
-
-        return if (mode == Mode.INDIRECT) {
-            readFromMemory(cpu, value)
-        } else {
-            value
-        }
-    }
-
-    private fun readFromMemory(cpu: Cpu, address: Any) =
-        cpu.bus.read(resolveAddress(address))
-
-    private fun readFromRegister(cpu: Cpu, register: Register) = when (register) {
-        AF, BC, DE, HL, SP -> cpu.registers[register]
-        A, B, C, D, E, H, L -> cpu.registers[register].toByte()
-        else -> throw IllegalArgumentException("Can not read from $register")
+        destination.set(source.get(cpu, mode), cpu)
     }
 
     override fun toString(): String {
