@@ -13,84 +13,84 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
-class OrTest : CpuTestSupport() {
+class AndTest : CpuTestSupport() {
     @Test
-    fun `should or a`() {
+    fun `should and a`() {
         cpu.registers.a = 0xa
 
-        stepWith(0xb7)
+        stepWith(0xa7)
 
         assertThat(cpu.registers.a).isEqualTo(0xa)
     }
 
     @Test
-    fun `should or b`() {
-        checkOr(B, 0xb0)
+    fun `should and b`() {
+        checkAnd(B, 0xa0)
     }
 
     @Test
-    fun `should or c`() {
-        checkOr(C, 0xb1)
+    fun `should and c`() {
+        checkAnd(C, 0xa1)
     }
 
     @Test
-    fun `should or d`() {
-        checkOr(D, 0xb2)
+    fun `should and d`() {
+        checkAnd(D, 0xa2)
     }
 
     @Test
-    fun `should or e`() {
-        checkOr(E, 0xb3)
+    fun `should and e`() {
+        checkAnd(E, 0xa3)
     }
 
     @Test
-    fun `should or h`() {
-        checkOr(H, 0xb4)
+    fun `should and h`() {
+        checkAnd(H, 0xa4)
     }
 
     @Test
-    fun `should or l`() {
-        checkOr(L, 0xb5)
+    fun `should and l`() {
+        checkAnd(L, 0xa5)
     }
 
     @Test
-    fun `should or (hl)`() {
+    fun `should and (hl)`() {
         cpu.registers.a = 0x3
         cpu.registers.hl = 0x7f32
 
-        stepWith(0xb6, 0x4)
+        stepWith(0xa6, 0x5)
 
-        assertThat(cpu.registers.a).isEqualTo(0x7)
+        assertThat(cpu.registers.a).isEqualTo(0x1)
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isFalse()
+        assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isFalse()
     }
 
     @Test
-    fun `should or d8`() {
+    fun `should and d8`() {
         cpu.registers.a = 0x3
         cpu.registers.hl = 0x7f32
 
-        stepWith(0xf6, 0x4)
+        stepWith(0xe6, 0x7)
 
-        assertThat(cpu.registers.a).isEqualTo(0x7)
+        assertThat(cpu.registers.a).isEqualTo(0x3)
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isFalse()
+        assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isFalse()
     }
 
-    private fun checkOr(register: Register, opcode: Int) {
+    private fun checkAnd(register: Register, opcode: Int) {
         cpu.registers.a = 0xa
         cpu.registers[register] = 0xc
 
         stepWith(opcode)
 
-        assertThat(cpu.registers.a).isEqualTo(0xe)
+        assertThat(cpu.registers.a).isEqualTo(0x8)
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isFalse()
+        assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isFalse()
     }
 
@@ -100,7 +100,7 @@ class OrTest : CpuTestSupport() {
         cpu.registers.a = 0x0
         cpu.registers[register] = 0x0
 
-         Or(register).execute(cpu)
+         And(register).execute(cpu)
 
         assertThat(cpu.flags.z).isTrue()
     }

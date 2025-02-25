@@ -26,6 +26,7 @@ import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
 import gbe4k.core.instructions.arithmetic.Dec
+import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Or
 import gbe4k.core.instructions.logic.Xor
 import kotlin.experimental.and
@@ -210,7 +211,15 @@ class Cpu(val bus: Bus) {
         0xff.toByte() -> Rst(0x38)
 
         // logic
-        0xaf.toByte() -> Xor(A)
+        0xa0.toByte() -> And(B)
+        0xa1.toByte() -> And(C)
+        0xa2.toByte() -> And(D)
+        0xa3.toByte() -> And(E)
+        0xa4.toByte() -> And(H)
+        0xa5.toByte() -> And(L)
+        0xa6.toByte() -> And(registers.hl)
+        0xa7.toByte() -> And(A)
+        0xe6.toByte() -> And(read())
         0xa8.toByte() -> Xor(B)
         0xa9.toByte() -> Xor(C)
         0xaa.toByte() -> Xor(D)
@@ -218,8 +227,8 @@ class Cpu(val bus: Bus) {
         0xac.toByte() -> Xor(H)
         0xad.toByte() -> Xor(L)
         0xae.toByte() -> Xor(registers.hl)
+        0xaf.toByte() -> Xor(A)
         0xee.toByte() -> Xor(read())
-        0x87.toByte() -> Or(A)
         0xb0.toByte() -> Or(B)
         0xb1.toByte() -> Or(C)
         0xb2.toByte() -> Or(D)
@@ -227,6 +236,7 @@ class Cpu(val bus: Bus) {
         0xb4.toByte() -> Or(H)
         0xb5.toByte() -> Or(L)
         0xb6.toByte() -> Or(registers.hl)
+        0xb7.toByte() -> Or(A)
         0xf6.toByte() -> Or(read())
 
         // other
