@@ -13,10 +13,14 @@ import gbe4k.core.instructions.Instruction
 
 abstract class BaseLogic(private val source: Any) : Instruction {
     override fun execute(cpu: Cpu) {
-        val previousValue = cpu.registers.a
-        val newValue = logic(previousValue, getValue(cpu))
-        cpu.registers.a = newValue
-        setFlags(newValue, previousValue, cpu)
+        val acc = cpu.registers.a
+        val value = logic(acc, getValue(cpu))
+        storeResult(value, cpu)
+        setFlags(value, acc, cpu)
+    }
+
+    protected open fun storeResult(result: Byte, cpu: Cpu) {
+        cpu.registers.a = result
     }
 
     private fun getValue(cpu: Cpu): Byte = when (source) {
@@ -26,7 +30,7 @@ abstract class BaseLogic(private val source: Any) : Instruction {
         else -> throw IllegalArgumentException("Can't read value from $source")
     }
 
-    abstract fun logic(a: Byte, b: Byte): Byte
+    abstract fun logic(acc: Byte, value: Byte): Byte
 
-    abstract fun setFlags(newValue: Byte, previousValue: Byte, cpu: Cpu)
+    abstract fun setFlags(value: Byte, acc: Byte, cpu: Cpu)
 }

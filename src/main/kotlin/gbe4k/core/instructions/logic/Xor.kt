@@ -11,10 +11,10 @@ class Xor : BaseLogic {
     constructor(address: Int) : super(address)
     constructor(value: Byte) : super(value)
 
-    override fun logic(a: Byte, b: Byte) = a.xor(b)
+    override fun logic(acc: Byte, value: Byte) = acc.xor(value)
 
-    override fun setFlags(newValue: Byte, previousValue: Byte, cpu: Cpu) {
-        cpu.flags.z = newValue.isZero()
+    override fun setFlags(value: Byte, acc: Byte, cpu: Cpu) {
+        cpu.flags.z = value.isZero()
         cpu.flags.n = false
         cpu.flags.h = false
         cpu.flags.c = false
