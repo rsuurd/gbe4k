@@ -27,6 +27,7 @@ import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.logic.And
+import gbe4k.core.instructions.logic.Ccf
 import gbe4k.core.instructions.logic.Cp
 import gbe4k.core.instructions.logic.Cpl
 import gbe4k.core.instructions.logic.Or
@@ -214,6 +215,7 @@ class Cpu(val bus: Bus) {
 
         // logic
         0x2f.toByte() -> Cpl
+        0x3f.toByte() -> Ccf
         0xa0.toByte() -> And(B)
         0xa1.toByte() -> And(C)
         0xa2.toByte() -> And(D)
