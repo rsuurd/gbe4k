@@ -1,6 +1,5 @@
 package gbe4k.core.instructions
 
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.CpuTestSupport
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -96,12 +95,10 @@ class RetTest : CpuTestSupport() {
 
     @Test
     fun `should reti`() {
-        cpu.ime = false
-
         stepWith(0xd9, 0x40, 0x00)
 
         assertThat(cpu.pc).isEqualTo(0x4000)
         assertThat(cpu.registers.sp).isEqualTo(0x02)
-        assertThat(cpu.ime).isTrue()
+        assertThat(cpu.interrupts.ime).isTrue()
     }
 }

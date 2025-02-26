@@ -14,6 +14,7 @@ import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
+import gbe4k.core.instructions.Ei
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
@@ -35,20 +36,25 @@ import gbe4k.core.instructions.logic.Cpl
 import gbe4k.core.instructions.logic.Or
 import gbe4k.core.instructions.logic.Xor
 import kotlin.experimental.and
+import kotlin.experimental.or
 
-class Cpu(val bus: Bus) {
+class Cpu(val bus: Bus, val interrupts: Interrupts) {
     var pc = 0x0100
 
     val registers = Registers()
     val flags = Flags(registers)
     val stack = Stack(bus, registers)
 
-    var ime = true
+    private var halted = false
 
     fun step() {
-        val instruction = nextInstruction()
+        if (interrupts.handle(this)) {
+            halted = false
+        } else if (!halted) {
+            val instruction = nextInstruction()
 
-        instruction.execute(this)
+            instruction.execute(this)
+        }
     }
 
     private fun nextInstruction() = when (val opcode = read()) {
@@ -283,6 +289,7 @@ class Cpu(val bus: Bus) {
 
         // other
         0xf3.toByte() -> Di
+        0xfb.toByte() -> Ei
 
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
     }
@@ -313,6 +320,17 @@ class Cpu(val bus: Bus) {
             is Int -> this
             is Byte -> n16(0xff.toByte(), this)
             else -> throw IllegalArgumentException("$this is not an address")
+        }
+
+        fun Byte.isBitSet(position: Int) = (toInt() shr position).and(1) == 1
+        fun Byte.setBit(enabled: Boolean, position: Int): Byte {
+            return if (enabled) {
+                or((1 shl position).toByte())
+            } else {
+                val size = Byte.SIZE_BITS - countLeadingZeroBits()
+
+                and((((1 shl size) - 1) - (1 shl position)).toByte())
+            }
         }
     }
 }

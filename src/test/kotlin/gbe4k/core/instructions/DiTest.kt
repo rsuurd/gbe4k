@@ -10,6 +10,6 @@ class DiTest : CpuTestSupport() {
         stepWith(0xf3)
 
         assertThat(cpu.pc).isEqualTo(0x0101)
-        assertThat(cpu.ime).isFalse()
+        assertThat( interrupts.ime).isFalse()
     }
 }

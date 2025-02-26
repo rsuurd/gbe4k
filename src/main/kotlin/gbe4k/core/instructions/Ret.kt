@@ -12,6 +12,6 @@ object Reti : Ret() {
     override fun execute(cpu: Cpu) {
         super.execute(cpu)
 
-        cpu.ime = true
+        cpu.interrupts.ime = true
     }
 }
