@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.Interrupts.Interrupt.VBLANK
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -50,7 +51,7 @@ class InterruptsTest : CpuTestSupport() {
 
     @ParameterizedTest
     @EnumSource
-    fun `should indicate pending interrupt but not call if disabled`(interrupt: Interrupts.Interrupt) {
+    fun `should not indicate pending interrupt if disabled`(interrupt: Interrupts.Interrupt) {
         interrupts.ime = true
         interrupts.ie = 0x0
         interrupts.dispatch(interrupt)
@@ -77,5 +78,54 @@ class InterruptsTest : CpuTestSupport() {
             assertThat(pending).isTrue()
             assertThat(cpu.pc).isEqualTo(interrupt.address)
         }
+    }
+
+    @Test
+    fun `should wake up cpu when halted and interrupt pending`() {
+        every { bus.write(any(), any()) } just runs
+        cpu.halted = true
+        interrupts.ime = true
+        interrupts.ie = 0x1f
+        interrupts.dispatch(VBLANK)
+
+        cpu.step()
+
+        assertThat(cpu.halted).isFalse()
+    }
+
+    @Test
+    fun `should wake up cpu when halted and interrupt pending even if ime is disabled`() {
+        every { bus.write(any(), any()) } just runs
+        cpu.halted = true
+        interrupts.ime = false
+        interrupts.ie = 0x1f
+        interrupts.dispatch(VBLANK)
+
+        cpu.step()
+
+        assertThat(cpu.halted).isFalse()
+    }
+
+    @Test
+    fun `should not wake up cpu when halted and no interrupt pending`() {
+        cpu.halted = true
+        interrupts.ime = true
+        interrupts.ie = 0x1f
+
+        cpu.step()
+
+        assertThat(cpu.halted).isTrue()
+    }
+
+    @Test
+    fun `should not wake up cpu when halted and interrupt is disabled`() {
+        cpu.halted = true
+        interrupts.ime = true
+        interrupts.ie = 0x00
+        interrupts.dispatch(VBLANK)
+
+        cpu.step()
+
+        assertThat(cpu.halted).isTrue()
     }
 }

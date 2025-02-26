@@ -15,6 +15,7 @@ import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Ei
+import gbe4k.core.instructions.Halt
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
@@ -45,7 +46,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
     val flags = Flags(registers)
     val stack = Stack(bus, registers)
 
-    private var halted = false
+    var halted = false
 
     fun step() {
         if (interrupts.handle(this)) {
@@ -288,6 +289,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xfe.toByte() -> Cp(read())
 
         // other
+        0x76.toByte() -> Halt
         0xf3.toByte() -> Di
         0xfb.toByte() -> Ei
 
