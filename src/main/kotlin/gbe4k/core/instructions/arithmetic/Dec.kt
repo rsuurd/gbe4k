@@ -22,15 +22,15 @@ class Dec : Instruction {
     }
 
     override fun execute(cpu: Cpu) {
-        val new = when (val prev = destination.get(cpu, mode)) {
+        val result = when (val prev = destination.get(cpu, mode)) {
             is Byte -> prev.dec()
             is Int -> prev.dec()
             else -> throw IllegalArgumentException("Can't dec $destination")
         }
 
-        destination.set(new, cpu)
+        destination.set(result, cpu)
 
-        cpu.flags.z = new.toInt() == 0
+        cpu.flags.z = result.toInt() == 0
         cpu.flags.n = true
         // cpu.flags.h = true
     }

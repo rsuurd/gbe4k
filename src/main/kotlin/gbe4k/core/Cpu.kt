@@ -14,7 +14,6 @@ import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
 import gbe4k.core.instructions.Call
 import gbe4k.core.instructions.Di
-import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.Jp
 import gbe4k.core.instructions.Jr
 import gbe4k.core.instructions.Ld
@@ -25,7 +24,10 @@ import gbe4k.core.instructions.Push
 import gbe4k.core.instructions.Ret
 import gbe4k.core.instructions.Reti
 import gbe4k.core.instructions.Rst
+import gbe4k.core.instructions.arithmetic.Add
 import gbe4k.core.instructions.arithmetic.Dec
+import gbe4k.core.instructions.arithmetic.Inc
+import gbe4k.core.instructions.arithmetic.Sub
 import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Ccf
 import gbe4k.core.instructions.logic.Cp
@@ -51,6 +53,32 @@ class Cpu(val bus: Bus) {
 
     private fun nextInstruction() = when (val opcode = read()) {
         0x00.toByte() -> Nop
+
+        // add
+        0x09.toByte() -> Add(HL, BC)
+        0x19.toByte() -> Add(HL, DE)
+        0x29.toByte() -> Add(HL, HL)
+        0x39.toByte() -> Add(HL, SP)
+        0x80.toByte() -> Add(A, B)
+        0x81.toByte() -> Add(A, C)
+        0x82.toByte() -> Add(A, D)
+        0x83.toByte() -> Add(A, E)
+        0x84.toByte() -> Add(A, H)
+        0x85.toByte() -> Add(A, L)
+        0x86.toByte() -> Add(A, registers.hl)
+        0x87.toByte() -> Add(A, A)
+        0xc6.toByte() -> Add(A, read())
+
+        // sub
+        0x90.toByte() -> Sub(A, B)
+        0x91.toByte() -> Sub(A, C)
+        0x92.toByte() -> Sub(A, D)
+        0x93.toByte() -> Sub(A, E)
+        0x94.toByte() -> Sub(A, H)
+        0x95.toByte() -> Sub(A, L)
+        0x96.toByte() -> Sub(A, registers.hl)
+        0x97.toByte() -> Sub(A, A)
+        0xd6.toByte() -> Sub(A, read())
 
         // inc
         0x03.toByte() -> Inc(BC)

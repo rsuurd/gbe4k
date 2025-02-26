@@ -22,15 +22,15 @@ class Inc : Instruction {
     }
 
     override fun execute(cpu: Cpu) {
-        val new = when (val prev = destination.get(cpu, mode)) {
+        val result = when (val prev = destination.get(cpu, mode)) {
             is Byte -> prev.inc()
             is Int -> prev.inc()
             else -> throw IllegalArgumentException("Can't inc $destination")
         }
 
-        destination.set(new, cpu)
+        destination.set(result, cpu)
 
-        cpu.flags.z = new.toInt() == 0
+        cpu.flags.z = result.toInt() == 0
         cpu.flags.n = false
         // cpu.flags.h = true
     }

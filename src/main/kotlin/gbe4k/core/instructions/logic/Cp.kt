@@ -5,7 +5,6 @@ import gbe4k.core.Register
 import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get
 import gbe4k.core.instructions.Mode
-import kotlin.experimental.and
 
 class Cp private constructor(private val source: Any, private val mode: Mode = Mode.DIRECT): Instruction {
     constructor(register: Register) : this(register as Any)
