@@ -1,5 +1,6 @@
 package gbe4k.core.instructions
 
+import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.CpuTestSupport
 import io.mockk.every
 import io.mockk.just
@@ -858,6 +859,10 @@ class LdTest : CpuTestSupport() {
         stepWith(0xf8, 0xaa)
 
         assertThat(cpu.registers.hl).isEqualTo(0x01db)
+        assertThat(cpu.flags.z).isFalse()
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isFalse()
+        assertThat(cpu.flags.c).isTrue()
     }
 
     @Test

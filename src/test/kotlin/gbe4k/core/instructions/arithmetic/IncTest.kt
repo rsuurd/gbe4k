@@ -114,6 +114,16 @@ class IncTest : CpuTestSupport() {
         assertThat(cpu.flags.z).isFalse()
     }
 
+    @ParameterizedTest
+    @EnumSource(names = ["A", "B", "C", "D", "E", "H", "L"])
+    fun `should set h flag to 0`(register: Register) {
+        cpu.registers[register] = 0x0f
+
+        Inc(register).execute(cpu)
+
+        assertThat(cpu.flags.h).isTrue()
+    }
+
     private fun verifyInc(register: Register, opcode: Byte) {
         cpu.registers[register] = 0x12
 

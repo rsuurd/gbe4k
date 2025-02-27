@@ -52,8 +52,8 @@ class CpTest : CpuTestSupport() {
         assertThat(cpu.registers.a).isEqualTo(0x3)
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isTrue()
-        assertThat(cpu.flags.h).isFalse()
-        assertThat(cpu.flags.c).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
     }
 
     @Test
@@ -65,8 +65,8 @@ class CpTest : CpuTestSupport() {
         assertThat(cpu.registers.a).isEqualTo(0x3)
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isTrue()
-        assertThat(cpu.flags.h).isFalse()
-        assertThat(cpu.flags.c).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
     }
 
     private fun checkCp(registers: Register, opcode: Int) {

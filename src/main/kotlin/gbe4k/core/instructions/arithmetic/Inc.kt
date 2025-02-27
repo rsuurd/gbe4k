@@ -10,28 +10,34 @@ import gbe4k.core.instructions.Mode
 class Inc : Instruction {
     private val destination: Any
     private val mode: Mode
+    private val is8bit: Boolean
 
     constructor(register: Register) {
         this.destination = register
         mode = Mode.DIRECT
+        is8bit = register.is8bit
     }
 
     constructor(address: Int) {
         this.destination = address
         mode = Mode.INDIRECT
+        is8bit = true
     }
 
     override fun execute(cpu: Cpu) {
-        val result = when (val prev = destination.get(cpu, mode)) {
-            is Byte -> prev.inc()
-            is Int -> prev.inc()
-            else -> throw IllegalArgumentException("Can't inc $destination")
+        val previous = destination.get(cpu, mode).toInt()
+        val incremented = previous.inc()
+
+        val result = if (is8bit) {
+            cpu.flags.z = incremented == 0
+            cpu.flags.n = false
+            cpu.flags.h = previous.and(0x0f) + 1 > 0x0f
+
+            incremented.toByte()
+        } else {
+            incremented
         }
 
         destination.set(result, cpu)
-
-        cpu.flags.z = result.toInt() == 0
-        cpu.flags.n = false
-        // cpu.flags.h = true
     }
 }

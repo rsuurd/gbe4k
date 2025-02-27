@@ -41,6 +41,30 @@ class SubTest : CpuTestSupport() {
     }
 
     @Test
+    fun `should set z flag`() {
+        cpu.registers.a = 0x11
+
+        stepWith(0xd6, 0x11)
+
+        assertThat(cpu.registers.a).isEqualTo(0x00)
+        assertThat(cpu.flags.z).isTrue()
+        assertThat(cpu.flags.n).isTrue()
+        assertThat(cpu.flags.h).isFalse()
+    }
+
+    @Test
+    fun `should set h flag`() {
+        cpu.registers.a = 0x11
+
+        stepWith(0xd6, 0x02)
+
+        assertThat(cpu.registers.a).isEqualTo(0x0f)
+        assertThat(cpu.flags.z).isFalse()
+        assertThat(cpu.flags.n).isTrue()
+        assertThat(cpu.flags.h).isTrue()
+    }
+
+    @Test
     fun `should sub a, (hl)`() {
         cpu.registers.a = 0x99.toByte()
         cpu.registers.hl = 0x4563

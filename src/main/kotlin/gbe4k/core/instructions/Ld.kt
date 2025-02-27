@@ -5,6 +5,7 @@ import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Register
 import gbe4k.core.instructions.InstructionSupport.get
 import gbe4k.core.instructions.InstructionSupport.set
+import kotlin.experimental.and
 
 open class Ld private constructor(
     private val destination: Any,
@@ -22,7 +23,9 @@ open class Ld private constructor(
     constructor(destination: Int, source: Byte, mode: Mode = Mode.DIRECT) : this(destination as Any, source, mode)
 
     override fun execute(cpu: Cpu) {
-        destination.set(source.get(cpu, mode), cpu)
+        val value = source.get(cpu, mode)
+
+        destination.set(value, cpu)
     }
 
     override fun toString(): String {
@@ -42,5 +45,16 @@ open class Ld private constructor(
         }
 
         return builder.toString()
+    }
+}
+
+// special ld instruction
+class `LdHlSp+r8`(private val value: Byte) : Instruction {
+    override fun execute(cpu: Cpu) {
+        cpu.registers.hl = cpu.registers.sp + value
+        cpu.flags.z = false
+        cpu.flags.n = false
+        cpu.flags.h = cpu.registers.sp.and(0x0f) + value.and(0x0f) > 0xf
+        cpu.flags.c = cpu.registers.sp.and(0xfff) + value > 0xff
     }
 }

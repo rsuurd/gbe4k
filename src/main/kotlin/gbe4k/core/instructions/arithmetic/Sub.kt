@@ -6,6 +6,7 @@ import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get
 import gbe4k.core.instructions.InstructionSupport.set
 import gbe4k.core.instructions.Mode
+import kotlin.experimental.and
 
 class Sub private constructor(
     private val destination: Register,
@@ -17,15 +18,16 @@ class Sub private constructor(
     constructor(destination: Register, address: Int) : this(destination, address as Any, Mode.INDIRECT)
 
     override fun execute(cpu: Cpu) {
-        val value = source.get(cpu, mode).toInt()
-        val original = destination.get(cpu).toInt()
-        val result = (original - value) % 0x10000
+        val value = source.get(cpu, mode).toInt().and(0xffff)
+        val original = destination.get(cpu).toInt().and(0xffff)
+        val result = (original - value)
 
-        destination.set(result, cpu)
+        cpu.flags.n = true
 
         cpu.flags.z = result == 0
-        cpu.flags.n = true
-        cpu.flags.h = false // TODO
-        cpu.flags.c = false // TODO
+        cpu.flags.h = original.toByte().and(0x0f) - value.toByte().and(0x0f) < 0
+        cpu.flags.c = result < 0
+
+        destination.set(result.toByte(), cpu)
     }
 }

@@ -10,28 +10,34 @@ import gbe4k.core.instructions.Mode
 class Dec : Instruction {
     private val destination: Any
     private val mode: Mode
+    private val is8bit: Boolean
 
     constructor(register: Register) {
         this.destination = register
         mode = Mode.DIRECT
+        is8bit = register.is8bit
     }
 
     constructor(address: Int) {
         this.destination = address
         mode = Mode.INDIRECT
+        is8bit = true
     }
 
     override fun execute(cpu: Cpu) {
-        val result = when (val prev = destination.get(cpu, mode)) {
-            is Byte -> prev.dec()
-            is Int -> prev.dec()
-            else -> throw IllegalArgumentException("Can't dec $destination")
+        val previous = destination.get(cpu, mode).toInt().and(0xffff)
+        val decremented = previous.dec()
+
+        val result = if (is8bit) {
+            cpu.flags.z = decremented == 0
+            cpu.flags.n = true
+            cpu.flags.h = previous.and(0x0f) - 1 < 0
+
+            decremented.toByte()
+        } else {
+            decremented
         }
 
         destination.set(result, cpu)
-
-        cpu.flags.z = result.toInt() == 0
-        cpu.flags.n = true
-        // cpu.flags.h = true
     }
 }

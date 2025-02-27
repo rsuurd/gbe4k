@@ -19,6 +19,7 @@ import gbe4k.core.instructions.Halt
 import gbe4k.core.instructions.control.Jp
 import gbe4k.core.instructions.control.Jr
 import gbe4k.core.instructions.Ld
+import gbe4k.core.instructions.`LdHlSp+r8`
 import gbe4k.core.instructions.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
 import gbe4k.core.instructions.Pop
@@ -212,7 +213,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xea -> Ld(readInt(), A)
         0xf0 -> Ld(A, read(), INDIRECT)
         0xf2 -> Ld(A, registers.c, INDIRECT)
-        0xf8 -> Ld(HL, registers.sp + read()) // this is probably not correct
+        0xf8 -> `LdHlSp+r8`(read())
         0xf9 -> Ld(SP, HL)
         0xfa -> Ld(A, readInt(), INDIRECT)
 

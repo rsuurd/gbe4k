@@ -60,6 +60,32 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.registers.a).isEqualTo(0x46)
     }
 
+    @Test
+    fun `should set flags for 8bit`() {
+        cpu.registers.a = 0x04
+
+        stepWith(0xc6, 0xfc)
+
+        assertThat(cpu.registers.a).isEqualTo(0x00)
+        assertThat(cpu.flags.z).isTrue()
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
+    }
+
+    @Test
+    fun `should set flags for 16bit`() {
+        cpu.registers.hl = 0x3333
+        cpu.registers.bc = 0xcccd
+
+        stepWith(0x09)
+
+        assertThat(cpu.registers.a).isEqualTo(0x00)
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
+    }
+
     companion object {
         @JvmStatic
         fun r8(): Stream<Arguments> = Stream.of(

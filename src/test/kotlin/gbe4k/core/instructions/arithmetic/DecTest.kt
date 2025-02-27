@@ -84,6 +84,30 @@ class DecTest : CpuTestSupport() {
         verifyDec(L, 0x2d)
     }
 
+    @Test
+    fun `should set z flag`() {
+        cpu.registers.l = 0x01
+
+        stepWith(0x2d)
+
+        assertThat(cpu.registers.l).isEqualTo(0x00.toByte())
+        assertThat(cpu.flags.z).isTrue()
+        assertThat(cpu.flags.n).isTrue()
+        assertThat(cpu.flags.h).isFalse()
+    }
+
+    @Test
+    fun `should set h flag`() {
+        cpu.registers.l = 0x00
+
+        stepWith(0x2d)
+
+        assertThat(cpu.registers.l).isEqualTo(0xff.toByte())
+        assertThat(cpu.flags.z).isFalse()
+        assertThat(cpu.flags.n).isTrue()
+        assertThat(cpu.flags.h).isTrue()
+    }
+
     @ParameterizedTest
     @EnumSource(names = ["A", "B", "C", "D", "E", "H", "L"])
     fun `should set z flag to 1`(register: Register) {

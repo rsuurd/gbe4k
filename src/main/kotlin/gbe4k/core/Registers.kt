@@ -20,6 +20,9 @@ import gbe4k.core.Register.SP
 
 enum class Register {
     A, B, C, D, E, F, H, L, AF, BC, DE, HL, SP;
+
+    val is16bit: Boolean get() = name.length > 1
+    val is8bit: Boolean get() = name.length == 1
 }
 
 data class Registers(
