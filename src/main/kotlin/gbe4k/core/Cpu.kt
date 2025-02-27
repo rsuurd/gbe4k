@@ -37,6 +37,7 @@ import gbe4k.core.instructions.bit.Bit
 import gbe4k.core.instructions.bit.Res
 import gbe4k.core.instructions.bit.Set
 import gbe4k.core.instructions.bit.Sla
+import gbe4k.core.instructions.bit.Sra
 import gbe4k.core.instructions.bit.Srl
 import gbe4k.core.instructions.bit.Swap
 import gbe4k.core.instructions.logic.And
@@ -321,6 +322,14 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x25 -> Sla(L)
         0x26 -> Sla(registers.hl)
         0x27 -> Sla(A)
+        0x28 -> Sra(B)
+        0x29 -> Sra(C)
+        0x2a -> Sra(D)
+        0x2b -> Sra(E)
+        0x2c -> Sra(H)
+        0x2d -> Sra(L)
+        0x2e -> Sra(registers.hl)
+        0x2f -> Sra(A)
         0x30 -> Swap(B)
         0x31 -> Swap(C)
         0x32 -> Swap(D)
