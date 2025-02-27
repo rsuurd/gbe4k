@@ -31,6 +31,7 @@ import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.arithmetic.Scf
 import gbe4k.core.instructions.arithmetic.Sub
+import gbe4k.core.instructions.bit.Set
 import gbe4k.core.instructions.bit.Sla
 import gbe4k.core.instructions.bit.Swap
 import gbe4k.core.instructions.logic.And
@@ -305,7 +306,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
     }
 
-    private fun extendedInstruction() = when(val opcode = read().toInt().and(0xff)) {
+    private fun extendedInstruction() = when (val opcode = read().toInt().and(0xff)) {
         0x20 -> Sla(B)
         0x21 -> Sla(C)
         0x22 -> Sla(D)
@@ -322,6 +323,71 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x35 -> Swap(L)
         0x36 -> Swap(registers.hl)
         0x37 -> Swap(A)
+        0xc0 -> Set(0, B)
+        0xc1 -> Set(0, C)
+        0xc2 -> Set(0, D)
+        0xc3 -> Set(0, E)
+        0xc4 -> Set(0, H)
+        0xc5 -> Set(0, L)
+        0xc6 -> Set(0, registers.hl)
+        0xc7 -> Set(0, A)
+        0xc8 -> Set(1, B)
+        0xc9 -> Set(1, C)
+        0xca -> Set(1, D)
+        0xcb -> Set(1, E)
+        0xcc -> Set(1, H)
+        0xcd -> Set(1, L)
+        0xce -> Set(1, registers.hl)
+        0xcf -> Set(1, A)
+        0xd0 -> Set(2, B)
+        0xd1 -> Set(2, C)
+        0xd2 -> Set(2, D)
+        0xd3 -> Set(2, E)
+        0xd4 -> Set(2, H)
+        0xd5 -> Set(2, L)
+        0xd6 -> Set(2, registers.hl)
+        0xd7 -> Set(2, A)
+        0xd8 -> Set(3, B)
+        0xd9 -> Set(3, C)
+        0xda -> Set(3, D)
+        0xdb -> Set(3, E)
+        0xdc -> Set(3, H)
+        0xdd -> Set(3, L)
+        0xde -> Set(3, registers.hl)
+        0xdf -> Set(3, A)
+        0xe0 -> Set(4, B)
+        0xe1 -> Set(4, C)
+        0xe2 -> Set(4, D)
+        0xe3 -> Set(4, E)
+        0xe4 -> Set(4, H)
+        0xe5 -> Set(4, L)
+        0xe6 -> Set(4, registers.hl)
+        0xe7 -> Set(4, A)
+        0xe8 -> Set(5, B)
+        0xe9 -> Set(5, C)
+        0xea -> Set(5, D)
+        0xeb -> Set(5, E)
+        0xec -> Set(5, H)
+        0xed -> Set(5, L)
+        0xee -> Set(5, registers.hl)
+        0xef -> Set(5, A)
+        0xf0 -> Set(6, B)
+        0xf1 -> Set(6, C)
+        0xf2 -> Set(6, D)
+        0xf3 -> Set(6, E)
+        0xf4 -> Set(6, H)
+        0xf5 -> Set(6, L)
+        0xf6 -> Set(6, registers.hl)
+        0xf7 -> Set(6, A)
+        0xf8 -> Set(7, B)
+        0xf9 -> Set(7, C)
+        0xfa -> Set(7, D)
+        0xfb -> Set(7, E)
+        0xfc -> Set(7, H)
+        0xfd -> Set(7, L)
+        0xfe -> Set(7, registers.hl)
+        0xff -> Set(7, A)
+
         else -> TODO("Unsupported extended opcode: ${opcode.hex()}")
     }
 
