@@ -13,7 +13,7 @@ class Sla private constructor(private val source: Any, private val mode: Mode = 
     constructor(address: Int) : this(address as Any, Mode.INDIRECT)
 
     override fun execute(cpu: Cpu) {
-        val value = source.get(cpu, mode).toInt().absoluteValue
+        val value = source.get(cpu, mode).toInt()
         val result = value.shl(1)
 
         source.set(result.toByte(), cpu)
@@ -21,6 +21,6 @@ class Sla private constructor(private val source: Any, private val mode: Mode = 
         cpu.flags.z = result.and(0xff) == 0
         cpu.flags.n = false
         cpu.flags.h = false
-        cpu.flags.c = result > 0xff
+        cpu.flags.c = result.absoluteValue > 0xff
     }
 }

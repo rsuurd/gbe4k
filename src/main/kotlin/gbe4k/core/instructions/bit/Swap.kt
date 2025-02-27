@@ -1,7 +1,6 @@
 package gbe4k.core.instructions.bit
 
 import gbe4k.core.Cpu
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Cpu.Companion.hiNibble
 import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Cpu.Companion.loNibble
@@ -11,7 +10,6 @@ import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get
 import gbe4k.core.instructions.InstructionSupport.set
 import gbe4k.core.instructions.Mode
-import kotlin.math.absoluteValue
 
 class Swap private constructor(private val source: Any, private val mode: Mode = Mode.DIRECT) : Instruction {
     constructor(register: Register) : this(register as Any)
