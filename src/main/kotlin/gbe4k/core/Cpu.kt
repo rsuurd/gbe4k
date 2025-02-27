@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Register.A
 import gbe4k.core.Register.AF
 import gbe4k.core.Register.B
@@ -30,6 +31,7 @@ import gbe4k.core.instructions.arithmetic.Add
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.arithmetic.Sub
+import gbe4k.core.instructions.bit.Sla
 import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Ccf
 import gbe4k.core.instructions.logic.Cp
@@ -288,8 +290,9 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xbe.toByte() -> Cp(registers.hl)
         0xbf.toByte() -> Cp(A)
         0xfe.toByte() -> Cp(read())
+
         // extended stuff
-        0xcb.toByte() -> read().let { Nop } // skip for now
+        0xcb.toByte() -> extendedInstruction()
 
         // other
         0x76.toByte() -> Halt
@@ -297,6 +300,18 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xfb.toByte() -> Ei
 
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
+    }
+
+    private fun extendedInstruction() = when(val opcode = read().toInt()) {
+        0x20 -> Sla(B)
+        0x21 -> Sla(C)
+        0x22 -> Sla(D)
+        0x23 -> Sla(E)
+        0x24 -> Sla(H)
+        0x25 -> Sla(L)
+        0x26 -> Sla(registers.hl)
+        0x27 -> Sla(A)
+        else -> TODO("Unsupported extended opcode: ${opcode.hex()}")
     }
 
     private fun read() = bus.read(pc++)
