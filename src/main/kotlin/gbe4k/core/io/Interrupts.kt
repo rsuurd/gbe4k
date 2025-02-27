@@ -3,7 +3,7 @@ package gbe4k.core.io
 import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Cpu.Companion.setBit
-import gbe4k.core.instructions.Call
+import gbe4k.core.instructions.control.Call
 
 class Interrupts(var `if`: Byte = 0, var ie: Byte = 0) {
     var ime = false

@@ -38,6 +38,5 @@ class Bus(
         val OAM = 0xfe00..0xfe9f
         val HRAM = 0xff80..0xfffe
         val IO = 0xff00..0xff7f
-        val INTERRUPTS = 0xffff
     }
 }

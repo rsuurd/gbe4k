@@ -1,4 +1,4 @@
-package gbe4k.core.instructions
+package gbe4k.core.instructions.control
 
 import gbe4k.core.CpuTestSupport
 import io.mockk.verify

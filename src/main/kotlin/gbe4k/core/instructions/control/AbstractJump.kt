@@ -1,6 +1,7 @@
-package gbe4k.core.instructions
+package gbe4k.core.instructions.control
 
 import gbe4k.core.Cpu
+import gbe4k.core.instructions.Instruction
 
 abstract class AbstractJump(val z: Boolean?, val c: Boolean?) : Instruction {
     override fun execute(cpu: Cpu) {
