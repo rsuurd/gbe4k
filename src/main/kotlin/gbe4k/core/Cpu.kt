@@ -36,6 +36,7 @@ import gbe4k.core.instructions.logic.Cp
 import gbe4k.core.instructions.logic.Cpl
 import gbe4k.core.instructions.logic.Or
 import gbe4k.core.instructions.logic.Xor
+import gbe4k.core.io.Interrupts
 import kotlin.experimental.and
 import kotlin.experimental.or
 
@@ -287,6 +288,8 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xbe.toByte() -> Cp(registers.hl)
         0xbf.toByte() -> Cp(A)
         0xfe.toByte() -> Cp(read())
+        // extended stuff
+        0xcb.toByte() -> read().let { Nop } // skip for now
 
         // other
         0x76.toByte() -> Halt

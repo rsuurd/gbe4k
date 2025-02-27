@@ -1,5 +1,6 @@
-package gbe4k.core
+package gbe4k.core.io
 
+import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Cpu.Companion.setBit
 import gbe4k.core.instructions.Call
@@ -34,7 +35,7 @@ class Interrupts(var `if`: Byte = 0, var ie: Byte = 0) {
 
     enum class Interrupt(val address: Int) {
         VBLANK(0x40),
-        LCD(0x48),
+        STAT(0x48),
         TIMER(0x50),
         SERIAL(0x58),
         JOYPAD(0x60),

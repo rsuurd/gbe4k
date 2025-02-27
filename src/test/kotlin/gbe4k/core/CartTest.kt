@@ -37,6 +37,6 @@ class CartTest {
 
         assertThat(cart.title).isEqualTo("CPU_INSTRS")
         assertThat(cart.size).isEqualTo(64)
-        assertThat(cart.read(0x0000)).isEqualTo(0x3c)
+        assertThat(cart[0x0000]).isEqualTo(0x3c)
     }
 }

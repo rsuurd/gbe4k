@@ -2,10 +2,10 @@ package gbe4k.core
 
 import gbe4k.core.Bus.Companion.CART_DATA
 import gbe4k.core.Bus.Companion.HRAM
-import gbe4k.core.Bus.Companion.INTERRUPT_ENABLE
-import gbe4k.core.Bus.Companion.INTERRUPT_FLAG
+import gbe4k.core.Bus.Companion.IO
 import gbe4k.core.Bus.Companion.VRAM
 import gbe4k.core.Bus.Companion.WRAM
+import gbe4k.core.io.Io
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -23,20 +23,20 @@ class BusTest {
     private lateinit var cart: Cart
 
     @MockK
-    private lateinit var interrupts: Interrupts
+    private lateinit var io: Io
 
     @InjectMockKs
     private lateinit var bus: Bus
 
     @Test
     fun `should read from cart`() {
-        every { cart.read(any()) } returns 0x00
+        every { cart[any()] } returns 0x00
 
         for (address in CART_DATA) {
             bus.read(address)
         }
 
-        verify(exactly = 0x8000) { cart.read(any()) }
+        verify(exactly = 0x8000) { cart[any()] }
     }
 
     @Test
@@ -50,7 +50,7 @@ class BusTest {
     }
 
     @Test
-    fun `should  write & read wram`() {
+    fun `should write & read wram`() {
         for (address in WRAM) {
             val value = 0xa4.toByte()
 
@@ -60,7 +60,7 @@ class BusTest {
     }
 
     @Test
-    fun `should  write & read hram`() {
+    fun `should write & read hram`() {
         for (address in HRAM) {
             val value = 0xa4.toByte()
 
@@ -70,23 +70,24 @@ class BusTest {
     }
 
     @Test
-    fun `should write interrupt addresses`() {
-        every { interrupts.ie = 0xf } just runs
-        every { interrupts.`if` = 0xf } just runs
+    fun `should read io`() {
+        every { io[any()] } returns 0x4a
 
-        bus.write(INTERRUPT_ENABLE, 0xf)
-        bus.write(INTERRUPT_FLAG, 0xf)
+        for (address in IO) {
+            assertThat(bus.read(address)).isEqualTo(0x4a)
+        }
 
-        verify { interrupts.ie = 0xf }
-        verify { interrupts.`if` = 0xf }
+        verify(exactly = 0x80) { io[any()] }
     }
 
     @Test
-    fun `should read interrupt addresses`() {
-        every { interrupts.ie } returns 0xf
-        every { interrupts.`if` } returns 0xf
+    fun `should write io`() {
+        every { io[any()] = any() } just runs
 
-        assertThat(bus.read(INTERRUPT_ENABLE)).isEqualTo(0xf)
-        assertThat(bus.read(INTERRUPT_FLAG)).isEqualTo(0xf)
+        for (address in IO) {
+            assertThat(bus.write(address, 0x4a))
+        }
+
+        verify(exactly = 0x80) { io[any()] = 0x4a }
     }
 }

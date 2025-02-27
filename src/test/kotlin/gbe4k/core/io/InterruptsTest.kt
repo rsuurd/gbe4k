@@ -1,6 +1,7 @@
-package gbe4k.core
+package gbe4k.core.io
 
-import gbe4k.core.Interrupts.Interrupt.VBLANK
+import gbe4k.core.CpuTestSupport
+import gbe4k.core.io.Interrupts.Interrupt.VBLANK
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs

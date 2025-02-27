@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.io.Interrupts
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
