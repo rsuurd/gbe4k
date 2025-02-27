@@ -32,6 +32,7 @@ import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.arithmetic.Sub
 import gbe4k.core.instructions.bit.Sla
+import gbe4k.core.instructions.bit.Swap
 import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Ccf
 import gbe4k.core.instructions.logic.Cp
@@ -58,6 +59,8 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
             val instruction = nextInstruction()
 
             instruction.execute(this)
+
+            // cycle depending on the execution result
         }
     }
 
@@ -311,6 +314,14 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x25 -> Sla(L)
         0x26 -> Sla(registers.hl)
         0x27 -> Sla(A)
+        0x30 -> Swap(B)
+        0x31 -> Swap(C)
+        0x32 -> Swap(D)
+        0x33 -> Swap(E)
+        0x34 -> Swap(H)
+        0x35 -> Swap(L)
+        0x36 -> Swap(registers.hl)
+        0x37 -> Swap(A)
         else -> TODO("Unsupported extended opcode: ${opcode.hex()}")
     }
 
