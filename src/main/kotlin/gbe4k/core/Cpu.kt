@@ -31,6 +31,7 @@ import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.arithmetic.Scf
 import gbe4k.core.instructions.arithmetic.Sub
+import gbe4k.core.instructions.bit.Bit
 import gbe4k.core.instructions.bit.Res
 import gbe4k.core.instructions.bit.Set
 import gbe4k.core.instructions.bit.Sla
@@ -64,7 +65,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         }
     }
 
-    private fun nextInstruction() = when (val opcode = read().toInt().and(0xff)) {
+    private fun nextInstruction() = when (val opcode = read().toInt().and(0x00ff)) {
         0x00 -> Nop
 
         // add
@@ -307,7 +308,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         else -> TODO("Unsupported opcode: ${opcode.hex()}")
     }
 
-    private fun extendedInstruction() = when (val opcode = read().toInt().and(0xff)) {
+    private fun extendedInstruction() = when (val opcode = read().toInt().and(0x00ff)) {
         0x20 -> Sla(B)
         0x21 -> Sla(C)
         0x22 -> Sla(D)
@@ -324,6 +325,70 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x35 -> Swap(L)
         0x36 -> Swap(registers.hl)
         0x37 -> Swap(A)
+        0x40 -> Bit(0, B)
+        0x41 -> Bit(0, C)
+        0x42 -> Bit(0, D)
+        0x43 -> Bit(0, E)
+        0x44 -> Bit(0, H)
+        0x45 -> Bit(0, L)
+        0x46 -> Bit(0, registers.hl)
+        0x47 -> Bit(0, A)
+        0x48 -> Bit(1, B)
+        0x49 -> Bit(1, C)
+        0x4a -> Bit(1, D)
+        0x4b -> Bit(1, E)
+        0x4c -> Bit(1, H)
+        0x4d -> Bit(1, L)
+        0x4e -> Bit(1, registers.hl)
+        0x4f -> Bit(1, A)
+        0x50 -> Bit(2, B)
+        0x51 -> Bit(2, C)
+        0x52 -> Bit(2, D)
+        0x53 -> Bit(2, E)
+        0x54 -> Bit(2, H)
+        0x55 -> Bit(2, L)
+        0x56 -> Bit(2, registers.hl)
+        0x57 -> Bit(2, A)
+        0x58 -> Bit(3, B)
+        0x59 -> Bit(3, C)
+        0x5a -> Bit(3, D)
+        0x5b -> Bit(3, E)
+        0x5c -> Bit(3, H)
+        0x5d -> Bit(3, L)
+        0x5e -> Bit(3, registers.hl)
+        0x5f -> Bit(3, A)
+        0x60 -> Bit(4, B)
+        0x61 -> Bit(4, C)
+        0x62 -> Bit(4, D)
+        0x63 -> Bit(4, E)
+        0x64 -> Bit(4, H)
+        0x65 -> Bit(4, L)
+        0x66 -> Bit(4, registers.hl)
+        0x67 -> Bit(4, A)
+        0x68 -> Bit(5, B)
+        0x69 -> Bit(5, C)
+        0x6a -> Bit(5, D)
+        0x6b -> Bit(5, E)
+        0x6c -> Bit(5, H)
+        0x6d -> Bit(5, L)
+        0x6e -> Bit(5, registers.hl)
+        0x6f -> Bit(5, A)
+        0x70 -> Bit(6, B)
+        0x71 -> Bit(6, C)
+        0x72 -> Bit(6, D)
+        0x73 -> Bit(6, E)
+        0x74 -> Bit(6, H)
+        0x75 -> Bit(6, L)
+        0x76 -> Bit(6, registers.hl)
+        0x77 -> Bit(6, A)
+        0x78 -> Bit(7, B)
+        0x79 -> Bit(7, C)
+        0x7a -> Bit(7, D)
+        0x7b -> Bit(7, E)
+        0x7c -> Bit(7, H)
+        0x7d -> Bit(7, L)
+        0x7e -> Bit(7, registers.hl)
+        0x7f -> Bit(7, A)
         0x80 -> Res(0, B)
         0x81 -> Res(0, C)
         0x82 -> Res(0, D)
