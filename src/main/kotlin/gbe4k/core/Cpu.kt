@@ -28,6 +28,7 @@ import gbe4k.core.instructions.control.Ret
 import gbe4k.core.instructions.control.Reti
 import gbe4k.core.instructions.control.Rst
 import gbe4k.core.instructions.arithmetic.Add
+import gbe4k.core.instructions.arithmetic.Daa
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
 import gbe4k.core.instructions.arithmetic.Scf
@@ -121,6 +122,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x3b -> Dec(SP)
         0x35 -> Dec(registers.hl)
         0x3d -> Dec(A)
+        0x27 -> Daa
         0x37 -> Scf
 
         // all supported ld instructions
