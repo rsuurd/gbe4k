@@ -1,7 +1,6 @@
 package gbe4k.core.instructions.arithmetic
 
 import gbe4k.core.Cpu
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Register
 import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get

@@ -24,6 +24,7 @@ import gbe4k.core.instructions.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
 import gbe4k.core.instructions.Pop
 import gbe4k.core.instructions.Push
+import gbe4k.core.instructions.arithmetic.Adc
 import gbe4k.core.instructions.control.Ret
 import gbe4k.core.instructions.control.Reti
 import gbe4k.core.instructions.control.Rst
@@ -31,6 +32,7 @@ import gbe4k.core.instructions.arithmetic.Add
 import gbe4k.core.instructions.arithmetic.Daa
 import gbe4k.core.instructions.arithmetic.Dec
 import gbe4k.core.instructions.arithmetic.Inc
+import gbe4k.core.instructions.arithmetic.Sbc
 import gbe4k.core.instructions.arithmetic.Scf
 import gbe4k.core.instructions.arithmetic.Sub
 import gbe4k.core.instructions.bit.Bit
@@ -86,7 +88,16 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x86 -> Add(A, registers.hl)
         0x87 -> Add(A, A)
         0xc6 -> Add(A, read())
-
+        // adc
+        0x88 -> Adc(B)
+        0x89 -> Adc(C)
+        0x8a -> Adc(D)
+        0x8b -> Adc(E)
+        0x8c -> Adc(H)
+        0x8d -> Adc(L)
+        0x8e -> Adc(registers.hl)
+        0x8f -> Adc(A)
+        0xce -> Adc(read())
         // sub
         0x90 -> Sub(A, B)
         0x91 -> Sub(A, C)
@@ -97,7 +108,16 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x96 -> Sub(A, registers.hl)
         0x97 -> Sub(A, A)
         0xd6 -> Sub(A, read())
-
+        // sbc
+        0x98 -> Sbc(B)
+        0x99 -> Sbc(C)
+        0x9a -> Sbc(D)
+        0x9b -> Sbc(E)
+        0x9c -> Sbc(H)
+        0x9d -> Sbc(L)
+        0x9e -> Sbc(registers.hl)
+        0x9f -> Sbc(A)
+        0xde -> Sbc(read())
         // inc
         0x03 -> Inc(BC)
         0x04 -> Inc(B)
