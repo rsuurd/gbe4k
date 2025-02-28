@@ -37,6 +37,8 @@ import gbe4k.core.instructions.arithmetic.Scf
 import gbe4k.core.instructions.arithmetic.Sub
 import gbe4k.core.instructions.bit.Bit
 import gbe4k.core.instructions.bit.Res
+import gbe4k.core.instructions.bit.Rl
+import gbe4k.core.instructions.bit.Rr
 import gbe4k.core.instructions.bit.Set
 import gbe4k.core.instructions.bit.Sla
 import gbe4k.core.instructions.bit.Sra
@@ -334,6 +336,22 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
     }
 
     private fun extendedInstruction() = when (val opcode = read().toInt().and(0x00ff)) {
+        0x10 -> Rl(B)
+        0x11 -> Rl(C)
+        0x12 -> Rl(D)
+        0x13 -> Rl(E)
+        0x14 -> Rl(H)
+        0x15 -> Rl(L)
+        0x16 -> Rl(registers.hl)
+        0x17 -> Rl(A)
+        0x18 -> Rr(B)
+        0x19 -> Rr(C)
+        0x1a -> Rr(D)
+        0x1b -> Rr(E)
+        0x1c -> Rr(H)
+        0x1d -> Rr(L)
+        0x1e -> Rr(registers.hl)
+        0x1f -> Rr(A)
         0x20 -> Sla(B)
         0x21 -> Sla(C)
         0x22 -> Sla(D)
