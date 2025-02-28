@@ -22,4 +22,6 @@ class And private constructor(private val source: Any, private val mode: Mode = 
         cpu.flags.h = true
         cpu.flags.c = false
     }
+
+    override fun toString(): String = "AND $source"
 }

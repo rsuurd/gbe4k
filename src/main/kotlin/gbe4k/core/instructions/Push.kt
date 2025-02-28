@@ -7,4 +7,6 @@ class Push(private val register: Register) : Instruction {
     override fun execute(cpu: Cpu) {
         cpu.stack.push(register)
     }
+
+    override fun toString() = "PUSH $register"
 }

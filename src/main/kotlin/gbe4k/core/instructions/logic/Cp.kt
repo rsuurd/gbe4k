@@ -1,6 +1,7 @@
 package gbe4k.core.instructions.logic
 
 import gbe4k.core.Cpu
+import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Register
 import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get
@@ -21,4 +22,6 @@ class Cp private constructor(private val source: Any, private val mode: Mode = M
         cpu.flags.h = cpu.registers.a.and(0x0f) - value.and(0x0f) < 0
         cpu.flags.c = result < 0
     }
+
+    override fun toString(): String = "CP ${if (source is Byte) source.hex() else source}"
 }

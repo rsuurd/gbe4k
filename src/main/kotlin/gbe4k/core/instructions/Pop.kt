@@ -7,4 +7,6 @@ class Pop(private val register: Register) : Instruction {
     override fun execute(cpu: Cpu) {
         cpu.stack.pop(register)
     }
+
+    override fun toString() = "POP $register"
 }

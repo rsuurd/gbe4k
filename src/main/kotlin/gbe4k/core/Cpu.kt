@@ -12,22 +12,18 @@ import gbe4k.core.Register.H
 import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
-import gbe4k.core.instructions.control.Call
 import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Ei
 import gbe4k.core.instructions.Halt
-import gbe4k.core.instructions.control.Jp
-import gbe4k.core.instructions.control.Jr
 import gbe4k.core.instructions.Ld
+import gbe4k.core.instructions.LdAHli
 import gbe4k.core.instructions.`LdHlSp+r8`
 import gbe4k.core.instructions.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
 import gbe4k.core.instructions.Pop
 import gbe4k.core.instructions.Push
+import gbe4k.core.instructions.Stop
 import gbe4k.core.instructions.arithmetic.Adc
-import gbe4k.core.instructions.control.Ret
-import gbe4k.core.instructions.control.Reti
-import gbe4k.core.instructions.control.Rst
 import gbe4k.core.instructions.arithmetic.Add
 import gbe4k.core.instructions.arithmetic.Daa
 import gbe4k.core.instructions.arithmetic.Dec
@@ -38,12 +34,24 @@ import gbe4k.core.instructions.arithmetic.Sub
 import gbe4k.core.instructions.bit.Bit
 import gbe4k.core.instructions.bit.Res
 import gbe4k.core.instructions.bit.Rl
+import gbe4k.core.instructions.bit.RlA
+import gbe4k.core.instructions.bit.Rlc
+import gbe4k.core.instructions.bit.RlcA
 import gbe4k.core.instructions.bit.Rr
+import gbe4k.core.instructions.bit.RrA
+import gbe4k.core.instructions.bit.Rrc
+import gbe4k.core.instructions.bit.RrcA
 import gbe4k.core.instructions.bit.Set
 import gbe4k.core.instructions.bit.Sla
 import gbe4k.core.instructions.bit.Sra
 import gbe4k.core.instructions.bit.Srl
 import gbe4k.core.instructions.bit.Swap
+import gbe4k.core.instructions.control.Call
+import gbe4k.core.instructions.control.Jp
+import gbe4k.core.instructions.control.Jr
+import gbe4k.core.instructions.control.Ret
+import gbe4k.core.instructions.control.Reti
+import gbe4k.core.instructions.control.Rst
 import gbe4k.core.instructions.logic.And
 import gbe4k.core.instructions.logic.Ccf
 import gbe4k.core.instructions.logic.Cp
@@ -69,13 +77,14 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         } else if (!halted) {
             val instruction = nextInstruction()
 
+            println(instruction)
+
             instruction.execute(this)
         }
     }
 
     private fun nextInstruction() = when (val opcode = read().toInt().and(0x00ff)) {
         0x00 -> Nop
-
         // add
         0x09 -> Add(HL, BC)
         0x19 -> Add(HL, DE)
@@ -148,7 +157,6 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x3d -> Dec(A)
         0x27 -> Daa
         0x37 -> Scf
-
         // all supported ld instructions
         0x01 -> Ld(BC, readInt())
         0x02 -> Ld(registers.bc, A)
@@ -242,7 +250,6 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xf8 -> `LdHlSp+r8`(read())
         0xf9 -> Ld(SP, HL)
         0xfa -> Ld(A, readInt(), INDIRECT)
-
         0xc1 -> Pop(BC)
         0xd1 -> Pop(DE)
         0xe1 -> Pop(HL)
@@ -285,6 +292,10 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xff -> Rst(0x38)
 
         // logic
+        0x07 -> RlcA
+        0x17 -> RlA
+        0x0f -> RrcA
+        0x1f -> RrA
         0x2f -> Cpl
         0x3f -> Ccf
         0xa0 -> And(B)
@@ -328,6 +339,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xcb -> extendedInstruction()
 
         // other
+        0x10 -> Stop(read())
         0x76 -> Halt
         0xf3 -> Di
         0xfb -> Ei
@@ -336,6 +348,22 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
     }
 
     private fun extendedInstruction() = when (val opcode = read().toInt().and(0x00ff)) {
+        0x00 -> Rlc(B)
+        0x01 -> Rlc(C)
+        0x02 -> Rlc(D)
+        0x03 -> Rlc(E)
+        0x04 -> Rlc(H)
+        0x05 -> Rlc(L)
+        0x06 -> Rlc(registers.hl)
+        0x07 -> Rlc(A)
+        0x08 -> Rrc(B)
+        0x09 -> Rrc(C)
+        0x0a -> Rrc(D)
+        0x0b -> Rrc(E)
+        0x0c -> Rrc(H)
+        0x0d -> Rrc(L)
+        0x0e -> Rrc(registers.hl)
+        0x0f -> Rrc(A)
         0x10 -> Rl(B)
         0x11 -> Rl(C)
         0x12 -> Rl(D)
@@ -576,7 +604,6 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0xfd -> Set(7, L)
         0xfe -> Set(7, registers.hl)
         0xff -> Set(7, A)
-
         else -> TODO("Unsupported extended opcode: ${opcode.hex()}")
     }
 

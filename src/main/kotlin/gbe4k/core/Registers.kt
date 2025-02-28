@@ -17,6 +17,7 @@ import gbe4k.core.Register.H
 import gbe4k.core.Register.HL
 import gbe4k.core.Register.L
 import gbe4k.core.Register.SP
+import kotlin.experimental.and
 
 enum class Register {
     A, B, C, D, E, F, H, L, AF, BC, DE, HL, SP;
@@ -26,21 +27,21 @@ enum class Register {
 }
 
 data class Registers(
-    var af: Int = 0,
-    var bc: Int = 0,
-    var de: Int = 0,
-    var hl: Int = 0,
-    var sp: Int = 0
+    var af: Int = 0x01b0,
+    var bc: Int = 0x0013,
+    var de: Int = 0x00d8,
+    var hl: Int = 0x014d,
+    var sp: Int = 0xfffe
 ) {
     operator fun get(register: Register): Int = when (register) {
-        A -> a.toInt()
-        B -> b.toInt()
-        C -> c.toInt()
-        D -> d.toInt()
-        E -> e.toInt()
-        F -> f.toInt()
-        H -> h.toInt()
-        L -> l.toInt()
+        A -> a.toInt().and(0xff)
+        B -> b.toInt().and(0xff)
+        C -> c.toInt().and(0xff)
+        D -> d.toInt().and(0xff)
+        E -> e.toInt().and(0xff)
+        F -> f.toInt().and(0xff)
+        H -> h.toInt().and(0xff)
+        L -> l.toInt().and(0xff)
         AF -> af
         BC -> bc
         DE -> de
@@ -50,12 +51,13 @@ data class Registers(
 
     operator fun set(register: Register, value: Int) {
         when (register) {
-            AF -> af = value
+            AF -> af = value.and(0xfff0)
             BC -> bc = value
             DE -> de = value
             HL -> hl = value
             SP -> sp = value
-            A, B, C, D, E, F, H, L -> set(register, value.toByte())
+            F -> f = value.toByte().and(0xf0.toByte())
+            A, B, C, D, E, H, L -> set(register, value.and(0xff).toByte())
         }
     }
 

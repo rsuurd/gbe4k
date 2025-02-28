@@ -38,8 +38,8 @@ object InstructionSupport {
 
             when (value) {
                 is Int -> {
-                    cpu.bus.write(address, value.hi())
-                    cpu.bus.write(address + 1, value.lo())
+                    cpu.bus.write(address, value.lo())
+                    cpu.bus.write(address + 1, value.hi())
                 }
                 is Byte -> cpu.bus.write(address, value)
                 else -> throw IllegalArgumentException("Can not set $value to $this")

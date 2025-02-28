@@ -6,6 +6,8 @@ open class Ret(z: Boolean? = null, c: Boolean? = null) : AbstractJump(z, c) {
     override fun jump(cpu: Cpu) {
         cpu.pc = cpu.stack.pop()
     }
+
+    override fun toString(): String = "RET ${condition()}"
 }
 
 object Reti : Ret() {
@@ -14,4 +16,6 @@ object Reti : Ret() {
 
         cpu.interrupts.ime = true
     }
+
+    override fun toString(): String = "RETI"
 }

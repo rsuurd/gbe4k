@@ -4,7 +4,7 @@ import gbe4k.core.Addressable
 
 class Lcd : Addressable {
     // TODO additional properties
-    private var ly: Byte = 0
+    private var ly: Byte = 0xff.toByte()
 
     override operator fun get(address: Int) = when (address) {
         LY -> ly

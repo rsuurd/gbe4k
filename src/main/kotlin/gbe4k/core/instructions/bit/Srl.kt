@@ -7,7 +7,6 @@ import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.InstructionSupport.get
 import gbe4k.core.instructions.InstructionSupport.set
 import gbe4k.core.instructions.Mode
-import kotlin.experimental.and
 import kotlin.math.absoluteValue
 
 class Srl private constructor(private val source: Any, private val mode: Mode = Mode.DIRECT) : Instruction {
@@ -15,7 +14,7 @@ class Srl private constructor(private val source: Any, private val mode: Mode = 
     constructor(address: Int) : this(address as Any, Mode.INDIRECT)
 
     override fun execute(cpu: Cpu) {
-        val value = source.get(cpu, mode).toInt()
+        val value = source.get(cpu, mode).toInt().and(0xff)
         val result = value.shr(1) + value.and(0x1).shl(8)
 
         source.set(result.toByte(), cpu)

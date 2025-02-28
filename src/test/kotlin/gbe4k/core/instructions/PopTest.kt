@@ -37,6 +37,6 @@ class PopTest : CpuTestSupport() {
         stepWith(opcode, 0x0a, 0x35)
 
         assertThat(cpu.registers.sp).isEqualTo(0x253c)
-        assertThat(cpu.registers[register]).isEqualTo(0x0a35)
+        assertThat(cpu.registers[register]).isEqualTo(0x350a)
     }
 }

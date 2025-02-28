@@ -17,4 +17,20 @@ abstract class AbstractJump(val z: Boolean?, val c: Boolean?) : Instruction {
     } ?: c?.let {
         cpu.flags.c == it
     } ?: true
+
+    protected fun condition(): String {
+        val builder = StringBuilder()
+
+        if (z == true) {
+            builder.append('Z')
+        } else if (z == false) {
+            builder.append("NZ")
+        } else if (c == true) {
+            builder.append('C')
+        } else if (c == false) {
+            builder.append("NC")
+        }
+
+        return builder.toString()
+    }
 }

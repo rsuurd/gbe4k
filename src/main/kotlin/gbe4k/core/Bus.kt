@@ -2,6 +2,7 @@ package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.io.Io
+import gbe4k.core.io.Io.Companion.INTERRUPT_ENABLE
 
 class Bus(
     private val cart: Cart,
@@ -15,8 +16,8 @@ class Bus(
         in CART_DATA -> cart[address]
         in VRAM -> vram[address]
         in WRAM -> wram[address]
+        in IO, INTERRUPT_ENABLE -> io[address]
         in HRAM -> hram[address]
-        in IO -> io[address]
         else -> throw IllegalArgumentException("Can not read from: ${address.hex()}")
     }
 
@@ -25,7 +26,7 @@ class Bus(
             in VRAM -> vram[address] = value
             in WRAM -> wram[address] = value
             in HRAM -> hram[address] = value
-            in IO -> io[address] = value
+            in IO, INTERRUPT_ENABLE -> io[address] = value
             else -> { /* nop */ }
         }
     }
@@ -36,7 +37,7 @@ class Bus(
         val CART_RAM = 0xa000..0xbfff
         val WRAM = 0xc000..0xdfff
         val OAM = 0xfe00..0xfe9f
-        val HRAM = 0xff80..0xfffe
         val IO = 0xff00..0xff7f
+        val HRAM = 0xff80..0xfffe
     }
 }
