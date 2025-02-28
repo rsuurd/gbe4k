@@ -8,13 +8,13 @@ class Stack(private val bus: Bus, private val registers: Registers) {
     fun push(register: Register) = push(registers[register])
 
     fun push(value: Int) {
-        bus.write(--registers.sp, value.lo())
         bus.write(--registers.sp, value.hi())
+        bus.write(--registers.sp, value.lo())
     }
 
     fun pop(): Int {
-        val hi = bus.read(registers.sp++)
         val lo = bus.read(registers.sp++)
+        val hi = bus.read(registers.sp++)
 
         return n16(hi, lo)
     }

@@ -16,7 +16,6 @@ import gbe4k.core.instructions.Di
 import gbe4k.core.instructions.Ei
 import gbe4k.core.instructions.Halt
 import gbe4k.core.instructions.Ld
-import gbe4k.core.instructions.LdAHli
 import gbe4k.core.instructions.`LdHlSp+r8`
 import gbe4k.core.instructions.Mode.INDIRECT
 import gbe4k.core.instructions.Nop
@@ -74,10 +73,10 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
     fun step() {
         if (interrupts.handle(this)) {
             halted = false
-        } else if (!halted) {
-            val instruction = nextInstruction()
+        }
 
-            println(instruction)
+        if (!halted) {
+            val instruction = nextInstruction()
 
             instruction.execute(this)
         }
@@ -99,6 +98,7 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
         0x86 -> Add(A, registers.hl)
         0x87 -> Add(A, A)
         0xc6 -> Add(A, read())
+        0xe8 -> Add(SP, read())
         // adc
         0x88 -> Adc(B)
         0x89 -> Adc(C)

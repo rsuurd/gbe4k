@@ -5,7 +5,7 @@ import gbe4k.core.Cpu.Companion.hex
 import java.io.ByteArrayOutputStream
 
 class Serial : Addressable {
-    private val bytes = ByteArrayOutputStream()
+    val bytes = ByteArrayOutputStream()
 
     override fun get(address: Int): Byte = when (address) {
         SB -> bytes.toByteArray().lastOrNull() ?: 0x00
@@ -24,8 +24,6 @@ class Serial : Addressable {
     fun clear() {
         bytes.reset()
     }
-
-    val contents: String get() = String(bytes.toByteArray())
 
     companion object {
         const val SB = 0xff01

@@ -21,7 +21,7 @@ open class Rr(private val destination: Any, private val mode: Mode) : Instructio
         cpu.flags.h = false
         cpu.flags.c = result > 0xff
 
-        destination.set(result.toByte(), cpu)
+        destination.set(result.and(0xff).toByte(), cpu)
     }
 }
 

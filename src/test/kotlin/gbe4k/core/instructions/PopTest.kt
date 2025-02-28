@@ -27,7 +27,12 @@ class PopTest : CpuTestSupport() {
 
     @Test
     fun `should pop AF`() {
-        checkRegisterPopped(AF, 0xf1)
+        cpu.registers.sp = 0x253a
+
+        stepWith(0xf1, 0xa0, 0x35)
+
+        assertThat(cpu.registers.sp).isEqualTo(0x253c)
+        assertThat(cpu.registers.af).isEqualTo(0x35a0)
     }
 
     private fun checkRegisterPopped(register: Register, opcode: Int) {

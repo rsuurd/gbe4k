@@ -1,5 +1,6 @@
 package gbe4k.core.instructions.bit
 
+import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.CpuTestSupport
 import gbe4k.core.Register
 import gbe4k.core.Register.A
@@ -20,12 +21,14 @@ import java.util.stream.Stream
 class RrTest : CpuTestSupport() {
     @ParameterizedTest
     @MethodSource("r8")
-    fun `should rr r8`(registers: Register, opcode: Int) {
-        cpu.registers[registers] = 0b00000001
+    fun `should rr r8`(register: Register, opcode: Int) {
+        cpu.flags.c = false
+        cpu.registers[register] = 0b00000001
 
         stepWith(0xcb, opcode)
 
-        assertThat(cpu.registers[registers].toByte()).isEqualTo(0x00.toByte())
+        println(cpu.registers[register].hex())
+        assertThat(cpu.registers[register].toByte()).isEqualTo(0x00.toByte())
         assertThat(cpu.flags.z).isTrue()
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()

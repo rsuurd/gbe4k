@@ -22,7 +22,14 @@ abstract class CpuTestSupport {
     @BeforeEach
     fun `create cpu`() {
         interrupts = Interrupts()
+
         cpu = Cpu(bus, interrupts)
+
+        // reset flags for tests
+        cpu.registers.af = 0
+        cpu.registers.bc = 0
+        cpu.registers.de = 0
+        cpu.registers.hl = 0
     }
 
     private fun withBytes(vararg bytes: Number, block: () -> Unit) {

@@ -101,19 +101,19 @@ class RegistersTest {
     }
 
     @Test
-    fun `should set and get register F`() {
+    fun `should only set upper 4 bits and get register F`() {
         registers.f = 0x33
 
-        assertThat(registers.f).isEqualTo(0x33)
-        assertThat(registers[F]).isEqualTo(0x33)
+        assertThat(registers.f).isEqualTo(0x30)
+        assertThat(registers[F]).isEqualTo(0x30)
     }
 
     @Test
-    fun `should not set and get register F by name`() {
+    fun `should only set upper 4 bites and get register F by name`() {
         registers[F] = 0x33
 
-        assertThat(registers.f).isEqualTo(0x33)
-        assertThat(registers[F]).isEqualTo(0x33)
+        assertThat(registers.f).isEqualTo(0x30)
+        assertThat(registers[F]).isEqualTo(0x30)
     }
 
     @Test
@@ -164,12 +164,12 @@ class RegistersTest {
     fun `should set and get register AF by name`() {
         registers[AF] = 0x3323
 
-        assertThat(registers.af).isEqualTo(0x3323)
-        assertThat(registers[AF]).isEqualTo(0x3323)
+        assertThat(registers.af).isEqualTo(0x3320)
+        assertThat(registers[AF]).isEqualTo(0x3320)
         assertThat(registers.a).isEqualTo(0x33)
-        assertThat(registers.f).isEqualTo(0x23)
+        assertThat(registers.f).isEqualTo(0x20)
         assertThat(registers[A]).isEqualTo(0x33)
-        assertThat(registers[F]).isEqualTo(0x23)
+        assertThat(registers[F]).isEqualTo(0x20)
     }
 
     @Test

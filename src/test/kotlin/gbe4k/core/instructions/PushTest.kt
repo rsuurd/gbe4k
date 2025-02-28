@@ -34,14 +34,14 @@ class PushTest : CpuTestSupport() {
 
     private fun checkRegisterPushed(register: Register, opcode: Int) {
         cpu.registers.sp = 0x253c
-        cpu.registers[register] = 0x0a35
+        cpu.registers[register] = 0x35a0
 
         stepWith(opcode)
 
         assertThat(cpu.registers.sp).isEqualTo(0x253a)
         verify {
+            bus.write(0x253a, 0xa0.toByte())
             bus.write(0x253b, 0x35)
-            bus.write(0x253a, 0xa)
         }
     }
 }

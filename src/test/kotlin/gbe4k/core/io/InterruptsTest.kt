@@ -89,7 +89,7 @@ class InterruptsTest : CpuTestSupport() {
         interrupts.ie = 0x1f
         interrupts.dispatch(VBLANK)
 
-        cpu.step()
+        stepWith(0x00)
 
         assertThat(cpu.halted).isFalse()
     }
@@ -102,7 +102,7 @@ class InterruptsTest : CpuTestSupport() {
         interrupts.ie = 0x1f
         interrupts.dispatch(VBLANK)
 
-        cpu.step()
+        stepWith(0x00)
 
         assertThat(cpu.halted).isFalse()
     }

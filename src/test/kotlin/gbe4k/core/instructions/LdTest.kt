@@ -44,8 +44,8 @@ class LdTest : CpuTestSupport() {
         stepWith(0x08, 0xaa, 0x43)
 
         verify {
-            bus.write(0x43aa, 0x00)
-            bus.write(0x43ab, 0x23)
+            bus.write(0x43aa, 0x23)
+            bus.write(0x43ab, 0x00)
         }
     }
 

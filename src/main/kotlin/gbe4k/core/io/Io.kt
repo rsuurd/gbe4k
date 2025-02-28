@@ -2,9 +2,7 @@ package gbe4k.core.io
 
 import gbe4k.core.Addressable
 
-class Io(private val lcd: Lcd, private val interrupts: Interrupts) : Addressable {
-    private val serial = Serial()
-
+class Io(private val serial: Serial, private val lcd: Lcd, private val interrupts: Interrupts) : Addressable {
     override fun get(address: Int): Byte = when (address) {
         in SERIAL -> serial[address]
         in LCD -> lcd[address]

@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 class IoTest {
     @MockK
+    private lateinit var serial: Serial
+
+    @MockK
     private lateinit var lcd: Lcd
 
     @MockK

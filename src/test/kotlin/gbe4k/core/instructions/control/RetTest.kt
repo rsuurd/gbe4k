@@ -2,15 +2,21 @@ package gbe4k.core.instructions.control
 
 import gbe4k.core.CpuTestSupport
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RetTest : CpuTestSupport() {
+    @BeforeEach
+    fun `move sp`() {
+        cpu.registers.sp = 0xff00
+    }
+
     @Test
     fun `should ret`() {
         stepWith(0xc9, 0x40, 0x15)
 
         assertThat(cpu.pc).isEqualTo(0x1540)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
     }
 
     @Test
@@ -20,7 +26,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xc0, 0x40, 0x00)
 
         assertThat(cpu.pc).isEqualTo(0x0040)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
     }
 
     @Test
@@ -30,7 +36,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xc0)
 
         assertThat(cpu.pc).isEqualTo(0x101)
-        assertThat(cpu.registers.sp).isEqualTo(0x00)
+        assertThat(cpu.registers.sp).isEqualTo(0xff00)
     }
 
     @Test
@@ -40,7 +46,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xd0, 0x40, 0x40)
 
         assertThat(cpu.pc).isEqualTo(0x4040)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
     }
 
     @Test
@@ -50,7 +56,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xd0)
 
         assertThat(cpu.pc).isEqualTo(0x101)
-        assertThat(cpu.registers.sp).isEqualTo(0x00)
+        assertThat(cpu.registers.sp).isEqualTo(0xff00)
     }
 
     @Test
@@ -60,7 +66,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xc8, 0x00, 0x40)
 
         assertThat(cpu.pc).isEqualTo(0x4000)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
     }
 
     @Test
@@ -70,7 +76,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xc8)
 
         assertThat(cpu.pc).isEqualTo(0x101)
-        assertThat(cpu.registers.sp).isEqualTo(0x00)
+        assertThat(cpu.registers.sp).isEqualTo(0xff00)
     }
 
     @Test
@@ -80,7 +86,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xd8, 0x40, 0xaa)
 
         assertThat(cpu.pc).isEqualTo(0xaa40)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
     }
 
     @Test
@@ -90,7 +96,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xd8)
 
         assertThat(cpu.pc).isEqualTo(0x101)
-        assertThat(cpu.registers.sp).isEqualTo(0x00)
+        assertThat(cpu.registers.sp).isEqualTo(0xff00)
     }
 
     @Test
@@ -98,7 +104,7 @@ class RetTest : CpuTestSupport() {
         stepWith(0xd9, 0x40, 0x00)
 
         assertThat(cpu.pc).isEqualTo(0x0040)
-        assertThat(cpu.registers.sp).isEqualTo(0x02)
+        assertThat(cpu.registers.sp).isEqualTo(0xff02)
         assertThat(cpu.interrupts.ime).isTrue()
     }
 }

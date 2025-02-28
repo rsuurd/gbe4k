@@ -61,6 +61,19 @@ class AddTest : CpuTestSupport() {
     }
 
     @Test
+    fun `should add sp, d8`() {
+        cpu.registers.sp = 0xff00
+
+        stepWith(0xe8, 0x23)
+
+        assertThat(cpu.registers.sp).isEqualTo(0xff23)
+        assertThat(cpu.flags.z).isFalse()
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isFalse()
+        assertThat(cpu.flags.c).isFalse()
+    }
+
+    @Test
     fun `should set flags for 8bit`() {
         cpu.registers.a = 0x04
 

@@ -14,10 +14,10 @@ class Cp private constructor(private val source: Any, private val mode: Mode = M
     constructor(address: Int) : this(address as Any, Mode.INDIRECT)
 
     override fun execute(cpu: Cpu) {
-        val value = source.get(cpu, mode) as Byte
-        val result = cpu.registers.a - value
+        val value = source.get(cpu, mode).toInt().and(0xff)
+        val result = cpu.registers.a.toInt().and(0xff) - value
 
-        cpu.flags.z = result == 0x00
+        cpu.flags.z = result.and(0xff) == 0x00
         cpu.flags.n = true
         cpu.flags.h = cpu.registers.a.and(0x0f) - value.and(0x0f) < 0
         cpu.flags.c = result < 0

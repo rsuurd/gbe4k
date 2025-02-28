@@ -11,24 +11,6 @@ import org.junit.jupiter.api.Test
 
 class CpuTest : CpuTestSupport() {
     @Test
-    fun `should init`() {
-        assertThat(cpu.pc).isEqualTo(0x100)
-        assertThat(cpu.registers.a).isEqualTo(0x00)
-        assertThat(cpu.registers.b).isEqualTo(0x00)
-        assertThat(cpu.registers.c).isEqualTo(0x00)
-        assertThat(cpu.registers.d).isEqualTo(0x00)
-        assertThat(cpu.registers.e).isEqualTo(0x00)
-        assertThat(cpu.registers.f).isEqualTo(0x00)
-        assertThat(cpu.registers.h).isEqualTo(0x00)
-        assertThat(cpu.registers.l).isEqualTo(0x00)
-        assertThat(cpu.registers.af).isEqualTo(0x00)
-        assertThat(cpu.registers.bc).isEqualTo(0x00)
-        assertThat(cpu.registers.de).isEqualTo(0x00)
-        assertThat(cpu.registers.hl).isEqualTo(0x00)
-        assertThat(cpu.registers.sp).isEqualTo(0x00)
-    }
-
-    @Test
     fun `should split int to bytes`() {
         val value = 0xfc44
 

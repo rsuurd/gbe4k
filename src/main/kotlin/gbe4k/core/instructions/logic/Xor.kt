@@ -22,4 +22,6 @@ class Xor private constructor(private val source: Any, private val mode: Mode = 
         cpu.flags.h = false
         cpu.flags.c = false
     }
+
+    override fun toString(): String = "XOR $source"
 }

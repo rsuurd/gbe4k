@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Register.AF
+import gbe4k.core.Register.BC
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -37,14 +38,14 @@ class StackTest {
         stack.push(0xffaa)
 
         verify {
-            bus.write(0x2fff, 0xaa.toByte())
-            bus.write(0x2ffe, 0xff.toByte())
+            bus.write(0x2fff, 0xff.toByte())
+            bus.write(0x2ffe, 0xaa.toByte())
         }
     }
 
     @Test
     fun `should pop value from the stack`() {
-        every { bus.read(any()) }.returnsMany(0x12, 0x1a)
+        every { bus.read(any()) }.returnsMany(0x1a, 0x12)
 
         registers.sp = 0x3000
 
@@ -59,26 +60,26 @@ class StackTest {
     fun `should push register on the stack`(register: Register) {
         every { bus.write(any(), any()) } just runs
 
-        registers[register] = 0x1f03
+        registers[register] = 0x1f00
         registers.sp = 0x3000
 
         stack.push(register)
 
         verify {
-            bus.write(0x2fff, 0x03.toByte())
-            bus.write(0x2ffe, 0x1f.toByte())
+            bus.write(0x2fff, 0x1f.toByte())
+            bus.write(0x2ffe, 0x00.toByte())
         }
     }
 
     @Test
     fun `should pop value to register`() {
-        every { bus.read(any()) }.returnsMany(0x12, 0x1a)
+        every { bus.read(any()) }.returnsMany( 0x1a, 0x12)
 
         registers.sp = 0x3000
 
-        stack.pop(AF)
+        stack.pop(BC)
 
         assertThat(registers.sp).isEqualTo(0x3002)
-        assertThat(registers.af).isEqualTo(0x121a)
+        assertThat(registers.bc).isEqualTo(0x121a)
     }
 }

@@ -84,7 +84,7 @@ data class Registers(
     var f: Byte
         get() = af.lo()
         set(value) {
-            af = n16(a, value)
+            af = n16(a, value.and(0xf0.toByte()))
         }
 
     var b: Byte
