@@ -25,11 +25,11 @@ abstract class CpuTestSupport {
 
         cpu = Cpu(bus, interrupts)
 
-        // reset flags for tests
-        cpu.registers.af = 0
-        cpu.registers.bc = 0
-        cpu.registers.de = 0
-        cpu.registers.hl = 0
+        // reset registers for tests
+        cpu.registers.af = 0x000
+        cpu.registers.bc = 0x000
+        cpu.registers.de = 0x000
+        cpu.registers.hl = 0x000
     }
 
     private fun withBytes(vararg bytes: Number, block: () -> Unit) {

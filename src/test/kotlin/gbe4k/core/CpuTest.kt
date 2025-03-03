@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Cpu.Companion.hi
 import gbe4k.core.Cpu.Companion.hiNibble
 import gbe4k.core.Cpu.Companion.lo
@@ -34,5 +35,10 @@ class CpuTest : CpuTestSupport() {
     @Test
     fun `should combine nibbles to byte`() {
         assertThat(n8(0xa, 0xf)).isEqualTo(0xaf)
+    }
+
+    @Test
+    fun `should convert byte to int`() {
+        assertThat(0xff.toByte().asInt()).isEqualTo(0xff)
     }
 }

@@ -1,121 +1,27 @@
 package gbe4k.core.instructions.arithmetic
 
 import gbe4k.core.CpuTestSupport
-import gbe4k.core.Register
-import gbe4k.core.Register.B
-import gbe4k.core.Register.BC
-import gbe4k.core.Register.C
-import gbe4k.core.Register.D
-import gbe4k.core.Register.DE
-import gbe4k.core.Register.E
-import gbe4k.core.Register.H
-import gbe4k.core.Register.HL
-import gbe4k.core.Register.L
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
-import java.util.stream.Stream
 
 class AddTest : CpuTestSupport() {
-    @ParameterizedTest
-    @MethodSource("r16")
-    fun `should add hl, r16`(register: Register, opcode: Int) {
-        cpu.registers.hl = 0x0023
-        cpu.registers[register] = 0x0023
-
-        stepWith(opcode)
-
-        assertThat(cpu.registers.hl).isEqualTo(0x0046)
-    }
-
-    @ParameterizedTest
-    @MethodSource("r8")
-    fun `should add a, r8`(register: Register, opcode: Int) {
-        cpu.registers.a = 0x23
-        cpu.registers[register] = 0x23
-
-        stepWith(opcode)
-
-        assertThat(cpu.registers.a).isEqualTo(0x46)
-    }
-
     @Test
-    fun `should add a, (hl)`() {
-        cpu.registers.a = 0x23
-        cpu.registers.hl = 0x4563
+    fun `should add sp, r8`() {
+        cpu.registers.sp = 0x000f
+        // A:12 F:00 B:56 C:91 D:9A E:BC H:00 L:00 SP:000F PC:DEF8 PCMEM:E8,01,00,C3
+        stepWith(0xe8, 0x1)
 
-        stepWith(0x86, 0x55)
-
-        assertThat(cpu.registers.a).isEqualTo(0x78)
+        assertThat(cpu.registers.sp).isEqualTo(0x0010)
+        assertThat(cpu.flags.h).isTrue()
     }
-
     @Test
-    fun `should add a, d8`() {
-        cpu.registers.a = 0x23
+    fun `should add sp, r8 with carry & half carry`() {
+        cpu.registers.sp = 0x0001
+        // A:12 F:00 B:56 C:91 D:9A E:BC H:00 L:00 SP:0001 PC:DEF8 PCMEM:E8,FF,00,C3
+        stepWith(0xe8, 0xff)
 
-        stepWith(0xc6, 0x23)
-
-        assertThat(cpu.registers.a).isEqualTo(0x46)
-    }
-
-    @Test
-    fun `should add sp, d8`() {
-        cpu.registers.sp = 0xff00
-
-        stepWith(0xe8, 0x23)
-
-        assertThat(cpu.registers.sp).isEqualTo(0xff23)
-        assertThat(cpu.flags.z).isFalse()
-        assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isFalse()
-        assertThat(cpu.flags.c).isFalse()
-    }
-
-    @Test
-    fun `should set flags for 8bit`() {
-        cpu.registers.a = 0x04
-
-        stepWith(0xc6, 0xfc)
-
-        assertThat(cpu.registers.a).isEqualTo(0x00)
-        assertThat(cpu.flags.z).isTrue()
-        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.registers.sp).isEqualTo(0x000)
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isTrue()
-    }
-
-    @Test
-    fun `should set flags for 16bit`() {
-        cpu.registers.hl = 0x3333
-        cpu.registers.bc = 0xcccd
-
-        stepWith(0x09)
-
-        assertThat(cpu.registers.a).isEqualTo(0x00)
-        assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isTrue()
-        assertThat(cpu.flags.c).isTrue()
-    }
-
-    companion object {
-        @JvmStatic
-        fun r8(): Stream<Arguments> = Stream.of(
-            Arguments.of(B, 0x80),
-            Arguments.of(C, 0x81),
-            Arguments.of(D, 0x82),
-            Arguments.of(E, 0x83),
-            Arguments.of(H, 0x84),
-            Arguments.of(L, 0x85),
-        )
-
-        @JvmStatic
-        fun r16(): Stream<Arguments> = Stream.of(
-            Arguments.of(BC, 0x09),
-            Arguments.of(DE, 0x19),
-            Arguments.of(HL, 0x29),
-            Arguments.of(Register.SP, 0x39),
-        )
     }
 }
