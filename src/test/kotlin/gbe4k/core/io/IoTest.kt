@@ -3,6 +3,8 @@ package gbe4k.core.io
 import gbe4k.core.io.Io.Companion.INTERRUPT_ENABLE
 import gbe4k.core.io.Io.Companion.INTERRUPT_FLAG
 import gbe4k.core.io.Io.Companion.LCD
+import gbe4k.core.io.Io.Companion.SERIAL
+import gbe4k.core.io.Io.Companion.TIMER
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -20,6 +22,9 @@ class IoTest {
     private lateinit var serial: Serial
 
     @MockK
+    private lateinit var timer: Timer
+
+    @MockK
     private lateinit var lcd: Lcd
 
     @MockK
@@ -29,11 +34,55 @@ class IoTest {
     private lateinit var io: Io
 
     @Test
+    fun `should read serial`() {
+        every { serial[any()] } returns 0x00
+
+        for (address in SERIAL) {
+            assertThat(io[address]).isEqualTo(0x00)
+        }
+
+        verify(exactly = 2) { serial[any()] }
+    }
+
+    @Test
+    fun `should write serial`() {
+        every { serial[any()] = any() } just runs
+
+        for (address in SERIAL) {
+            io[address] = 0x12
+        }
+
+        verify(exactly = 2) { serial[any()] = 0x12 }
+    }
+
+    @Test
+    fun `should read timer`() {
+        every { timer[any()] } returns 0x00
+
+        for (address in TIMER) {
+            assertThat(io[address]).isEqualTo(0x00)
+        }
+
+        verify(exactly = 4) { timer[any()] }
+    }
+
+    @Test
+    fun `should write timer`() {
+        every { timer[any()] = any() } just runs
+
+        for (address in TIMER) {
+            io[address] = 0x12
+        }
+
+        verify(exactly = 4) { timer[any()] = 0x12 }
+    }
+
+    @Test
     fun `should read lcd`() {
         every { lcd[any()] } returns 0x00
 
         for (address in LCD) {
-            assertThat(lcd[address]).isEqualTo(0x00)
+            assertThat(io[address]).isEqualTo(0x00)
         }
 
         verify(exactly = 0xc) { lcd[any()] }

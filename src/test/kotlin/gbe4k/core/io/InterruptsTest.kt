@@ -25,7 +25,7 @@ class InterruptsTest : CpuTestSupport() {
         every { bus.write(any(), any()) } just runs
         interrupts.ime = true
         interrupts.ie = 0x1f
-        interrupts.dispatch(interrupt)
+        interrupts.request(interrupt)
 
         val pending = interrupts.handle(cpu)
 
@@ -40,7 +40,7 @@ class InterruptsTest : CpuTestSupport() {
     fun `should indicate pending interrupt but not call if ime is disabled`(interrupt: Interrupts.Interrupt) {
         interrupts.ime = false
         interrupts.ie = 0x1f
-        interrupts.dispatch(interrupt)
+        interrupts.request(interrupt)
 
         val pending = interrupts.handle(cpu)
 
@@ -55,7 +55,7 @@ class InterruptsTest : CpuTestSupport() {
     fun `should not indicate pending interrupt if disabled`(interrupt: Interrupts.Interrupt) {
         interrupts.ime = true
         interrupts.ie = 0x0
-        interrupts.dispatch(interrupt)
+        interrupts.request(interrupt)
 
         val pending = interrupts.handle(cpu)
 
@@ -87,7 +87,7 @@ class InterruptsTest : CpuTestSupport() {
         cpu.halted = true
         interrupts.ime = true
         interrupts.ie = 0x1f
-        interrupts.dispatch(VBLANK)
+        interrupts.request(VBLANK)
 
         stepWith(0x00)
 
@@ -100,7 +100,7 @@ class InterruptsTest : CpuTestSupport() {
         cpu.halted = true
         interrupts.ime = false
         interrupts.ie = 0x1f
-        interrupts.dispatch(VBLANK)
+        interrupts.request(VBLANK)
 
         stepWith(0x00)
 
@@ -123,7 +123,7 @@ class InterruptsTest : CpuTestSupport() {
         cpu.halted = true
         interrupts.ime = true
         interrupts.ie = 0x00
-        interrupts.dispatch(VBLANK)
+        interrupts.request(VBLANK)
 
         cpu.step()
 

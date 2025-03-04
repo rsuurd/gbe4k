@@ -30,7 +30,7 @@ class Interrupts(var `if`: Byte = 0, var ie: Byte = 0) {
         } != null
     }
 
-    fun dispatch(interrupt: Interrupt) {
+    fun request(interrupt: Interrupt) {
         `if` = `if`.setBit(true, interrupt.ordinal)
     }
 
