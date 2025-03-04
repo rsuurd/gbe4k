@@ -2,7 +2,6 @@ package gbe4k.core.instructions
 
 import gbe4k.core.Bus
 import gbe4k.core.Cpu.Companion.asInt
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Cpu.Companion.hi
 import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Cpu.Companion.n16
@@ -116,9 +115,14 @@ object LdInstructions : Decoder {
             cpu.flags.n = false
             cpu.flags.h = cpu.registers.sp.and(0x0f) + value.and(0x0f) > 0xf
             cpu.flags.c = cpu.registers.sp.and(0xff) + value.asInt() > 0xff
+
+            cpu.cycle()
         }
 
-        0xf9 -> Ld { cpu -> cpu.registers.sp = cpu.registers.hl }
+        0xf9 -> Ld { cpu ->
+            cpu.registers.sp = cpu.registers.hl
+            cpu.cycle()
+        }
 
         0xc1 -> Pop { cpu -> cpu.registers.bc = cpu.stack.pop() }
         0xd1 -> Pop { cpu -> cpu.registers.de = cpu.stack.pop() }

@@ -2,10 +2,11 @@ package gbe4k.core
 
 import gbe4k.core.instructions.InstructionDecoder
 import gbe4k.core.io.Interrupts
+import gbe4k.core.io.Timer
 import kotlin.experimental.and
 import kotlin.experimental.or
 
-class Cpu(val bus: Bus, val interrupts: Interrupts) {
+class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
     var pc = 0x0100
 
     val registers = Registers()
@@ -51,6 +52,8 @@ class Cpu(val bus: Bus, val interrupts: Interrupts) {
 
         return n16(hi, lo)
     }
+
+    fun cycle(cycles: Int = 4) = timer.cycle(cycles)
 
     companion object {
         fun n8(hiNibble: Byte, loNibble: Byte) = hiNibble.toInt().shl(4) + loNibble

@@ -19,7 +19,7 @@ class Bus(
         in IO, INTERRUPT_ENABLE -> io[address]
         in HRAM -> hram[address]
         else -> throw IllegalArgumentException("Can not read from: ${address.hex()}")
-    }
+    }.also { io.timer.cycle(4) }
 
     fun write(address: Int, value: Byte) {
         when (address) {
@@ -29,6 +29,8 @@ class Bus(
             in IO, INTERRUPT_ENABLE -> io[address] = value
             else -> { /* nop */ }
         }
+
+        io.timer.cycle(4)
     }
 
     companion object {

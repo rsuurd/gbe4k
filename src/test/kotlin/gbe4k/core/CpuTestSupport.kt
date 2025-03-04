@@ -19,6 +19,7 @@ abstract class CpuTestSupport {
     protected lateinit var cart: Cart
 
     protected lateinit var bus: Bus
+    protected lateinit var timer: Timer
     protected lateinit var interrupts: Interrupts
 
     protected lateinit var cpu: Cpu
@@ -26,9 +27,10 @@ abstract class CpuTestSupport {
     @BeforeEach
     fun `create cpu`() {
         interrupts = Interrupts()
+        timer = spyk(Timer(interrupts))
+        bus = spyk(Bus(cart, Io(Serial(), timer, Lcd(), interrupts)))
 
-        bus = spyk(Bus(cart, Io(Serial(), Timer(interrupts), Lcd(), interrupts)))
-        cpu = Cpu(bus, interrupts)
+        cpu = Cpu(bus, timer, interrupts)
 
         // reset registers for tests
         cpu.registers.af = 0x000

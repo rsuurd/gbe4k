@@ -43,9 +43,12 @@ class Timer(private val interrupts: Interrupts) : Addressable {
         else -> throw IllegalArgumentException("${address.hex()} is not a timer register")
     }
 
+    fun cycle(cycles: Int) = repeat(cycles) {
+        tick()
+    }
+
     fun tick() {
         div = div.inc()
-
 
         if (enabled && (div.asInt() % frequency == 0)) {
             tima = tima.inc()

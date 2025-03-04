@@ -12,6 +12,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x01, 0x32, 0xaf)
 
         assertThat(cpu.registers.bc).isEqualTo(0xaf32)
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -19,6 +20,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x11, 0x32, 0xaf)
 
         assertThat(cpu.registers.de).isEqualTo(0xaf32)
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -26,6 +28,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x21, 0x32, 0xaf)
 
         assertThat(cpu.registers.hl).isEqualTo(0xaf32)
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -33,6 +36,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x31, 0x32, 0xaf)
 
         assertThat(cpu.registers.sp).isEqualTo(0xaf32)
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -43,6 +47,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x02)
 
         verify { cpu.bus.write(0x343a, 0x23) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -53,6 +58,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x12)
 
         verify { cpu.bus.write(0x343a, 0x23) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -64,6 +70,7 @@ class LdTest : CpuTestSupport() {
 
         verify { cpu.bus.write(0x343a, 0x23) }
         assertThat(cpu.registers.hl).isEqualTo(0x343b)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -75,6 +82,7 @@ class LdTest : CpuTestSupport() {
 
         verify { cpu.bus.write(0x343a, 0x23) }
         assertThat(cpu.registers.hl).isEqualTo(0x3439)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -82,6 +90,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x06, 0xa3)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0xa3)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -89,6 +98,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x16, 0xa3)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0xa3)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -96,6 +106,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x26, 0xa3)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0xa3)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -104,6 +115,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x36, 0xa3)
 
         verify { cpu.bus.write(0xa3ff, 0xa3.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -116,6 +128,7 @@ class LdTest : CpuTestSupport() {
             cpu.bus.write(0x3000, 0xef.toByte())
             cpu.bus.write(0x3001, 0xff.toByte())
         }
+        assertThat(cpu.timer.div).isEqualTo(20)
     }
 
     @Test
@@ -126,6 +139,7 @@ class LdTest : CpuTestSupport() {
 
         verify { cpu.bus.read(0x3543) }
         assertThat(cpu.registers.a.asInt()).isEqualTo(0x0b)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -136,6 +150,7 @@ class LdTest : CpuTestSupport() {
 
         verify { cpu.bus.read(0x3543) }
         assertThat(cpu.registers.a.asInt()).isEqualTo(0x0b)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -147,6 +162,7 @@ class LdTest : CpuTestSupport() {
         verify { cpu.bus.read(0x3543) }
         assertThat(cpu.registers.a.asInt()).isEqualTo(0x0b)
         assertThat(cpu.registers.hl).isEqualTo(0x3544)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -158,6 +174,7 @@ class LdTest : CpuTestSupport() {
         verify { cpu.bus.read(0x3543) }
         assertThat(cpu.registers.a.asInt()).isEqualTo(0x0b)
         assertThat(cpu.registers.hl).isEqualTo(0x3542)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -165,6 +182,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x0e, 0x99)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x99)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -172,6 +190,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x1e, 0x99)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x99)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -179,6 +198,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x2e, 0x99)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x99)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -186,6 +206,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x3e, 0x99)
 
         assertThat(cpu.registers.a.asInt()).isEqualTo(0x99)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -195,6 +216,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x40)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -204,6 +226,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x41)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -213,6 +236,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x42)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -222,6 +246,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x43)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -231,6 +256,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x44)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -240,17 +266,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x45)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld b, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x46)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -260,6 +289,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x47)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -269,6 +299,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x48)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -278,6 +309,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x49)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -287,6 +319,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x4a)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -296,6 +329,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x4b)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -305,6 +339,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x4c)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -314,17 +349,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x4d)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld c, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x4e)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -334,6 +372,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x4f)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -343,6 +382,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x50)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -352,6 +392,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x51)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -361,6 +402,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x52)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -370,6 +412,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x53)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -379,6 +422,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x54)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -388,17 +432,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x55)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld d, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x56, 0x11)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -408,6 +455,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x57)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -417,6 +465,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x58)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -426,6 +475,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x59)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -435,6 +485,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x5a)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -444,6 +495,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x5b)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -453,6 +505,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x5c)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -462,17 +515,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x5d)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld e, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x5e, 0x11)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -482,6 +538,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x5f)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -491,6 +548,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x60)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -500,6 +558,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x61)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -509,6 +568,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x62)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -518,6 +578,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x63)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -527,6 +588,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x64)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -536,17 +598,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x65)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld h, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x66, 0x11)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -556,6 +621,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x67)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -565,6 +631,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x68)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -574,6 +641,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x69)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -583,6 +651,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x6a)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -592,6 +661,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x6b)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -601,6 +671,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x6c)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -610,17 +681,20 @@ class LdTest : CpuTestSupport() {
         stepWith(0x6d)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
     fun `should ld l, (hl)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.hl = 0xff80
 
         stepWith(0x6e)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
         verify { bus.read(0xff80) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -630,6 +704,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x6f)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -640,6 +715,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x70)
 
         verify { bus.write(0xffef, 0xc3.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -650,6 +726,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x71)
 
         verify { bus.write(0xffef, 0xc3.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -660,6 +737,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x72)
 
         verify { bus.write(0xffef, 0xc3.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -670,6 +748,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x73)
 
         verify { bus.write(0xffef, 0xc3.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -679,6 +758,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x74)
 
         verify { bus.write(0xffef, 0xff.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -688,6 +768,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x75)
 
         verify { bus.write(0xffef, 0xef.toByte()) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -698,6 +779,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x77)
 
         verify { bus.write(0xffef, 0x11) }
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
@@ -707,6 +789,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x78)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -716,6 +799,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x79)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -725,6 +809,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7a)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -734,6 +819,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7b)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -743,6 +829,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7c)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -752,6 +839,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7d)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -761,6 +849,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7e, 0x11)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(8)
         verify { bus.read(0x6a0f) }
     }
 
@@ -771,6 +860,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0x7f)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(4)
     }
 
     @Test
@@ -779,15 +869,18 @@ class LdTest : CpuTestSupport() {
 
         stepWith(0xe0, 0x44)
 
+        assertThat(cpu.timer.div).isEqualTo(12)
         verify { bus.write(0xff44, 0x11) }
     }
 
     @Test
     fun `should ldh a, (a8)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         stepWith(0xf0, 0x80)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(12)
         verify { bus.read(0xff80) }
     }
 
@@ -798,17 +891,20 @@ class LdTest : CpuTestSupport() {
 
         stepWith(0xe2)
 
+        assertThat(cpu.timer.div).isEqualTo(8)
         verify { bus.write(0xff00, 0x22) }
     }
 
     @Test
     fun `should ldh a, (c)`() {
         cpu.bus.write(0xff80, 0x11)
+        cpu.timer.div = 0 // the bus write incremented the timer
         cpu.registers.c = 0x80.toByte()
 
         stepWith(0xf2)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
+        assertThat(cpu.timer.div).isEqualTo(8)
         verify { bus.read(0xff80) }
     }
 
@@ -818,6 +914,7 @@ class LdTest : CpuTestSupport() {
 
         stepWith(0xea, 0x33, 0x66)
 
+        assertThat(cpu.timer.div).isEqualTo(16)
         verify { bus.write(0x6633, 0xaa.toByte()) }
     }
 
@@ -826,6 +923,7 @@ class LdTest : CpuTestSupport() {
         stepWith(0xfa, 0x33, 0x66, 0xaa)
 
         assertThat(cpu.registers.a.asInt()).isEqualTo(0xaa)
+        assertThat(cpu.timer.div).isEqualTo(16)
         verify { bus.read(0x6633) }
     }
 
@@ -840,6 +938,7 @@ class LdTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(cpu.timer.div).isEqualTo(12)
     }
 
     @Test
@@ -849,5 +948,6 @@ class LdTest : CpuTestSupport() {
         stepWith(0xf9)
 
         assertThat(cpu.registers.sp).isEqualTo(0xffef)
+        assertThat(cpu.timer.div).isEqualTo(8)
     }
 }
