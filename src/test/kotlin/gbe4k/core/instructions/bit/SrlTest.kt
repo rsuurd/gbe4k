@@ -13,5 +13,8 @@ class SrlTest : CpuTestSupport() {
 
         assertThat(cpu.registers.b).isEqualTo(0x7f)
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(8)
     }
+
+    // TODO add tests
 }

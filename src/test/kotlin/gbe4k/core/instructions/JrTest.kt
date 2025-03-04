@@ -12,6 +12,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x18, 0xfd.toByte())
 
         assertThat(cpu.pc).isEqualTo(0x14f)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -22,6 +23,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x20, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x154)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -32,6 +34,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x20, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x152)
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -42,6 +45,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x28, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x154)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -52,6 +56,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x28, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x152)
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -62,6 +67,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x30, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x154)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -72,6 +78,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x30, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x152)
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -82,6 +89,7 @@ class JrTest : CpuTestSupport() {
         stepWith(0x38, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x154)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -92,5 +100,6 @@ class JrTest : CpuTestSupport() {
         stepWith(0x38, 0x02)
 
         assertThat(cpu.pc).isEqualTo(0x152)
+        assertThat(timer.div).isEqualTo(8)
     }
 }

@@ -10,5 +10,6 @@ class NopTest : CpuTestSupport() {
         stepWith(0x00)
 
         assertThat(cpu.pc).isEqualTo(0x0101)
+        assertThat(timer.div).isEqualTo(4)
     }
 }

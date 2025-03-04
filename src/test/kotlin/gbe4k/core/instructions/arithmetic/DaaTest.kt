@@ -14,6 +14,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -27,6 +28,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -40,6 +42,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -53,6 +56,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -68,6 +72,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -83,6 +88,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isTrue()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -98,6 +104,7 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isTrue()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(timer.div).isEqualTo(4)
     }
 
     @Test
@@ -111,5 +118,6 @@ class DaaTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(timer.div).isEqualTo(4)
     }
 }

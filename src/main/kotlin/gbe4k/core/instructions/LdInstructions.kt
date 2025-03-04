@@ -129,10 +129,25 @@ object LdInstructions : Decoder {
         0xe1 -> Pop { cpu -> cpu.registers.hl = cpu.stack.pop() }
         0xf1 -> Pop { cpu -> cpu.registers.af = cpu.stack.pop() }
 
-        0xc5 -> Push { cpu -> cpu.stack.push(cpu.registers.bc) }
-        0xd5 -> Push { cpu -> cpu.stack.push(cpu.registers.de) }
-        0xe5 -> Push { cpu -> cpu.stack.push(cpu.registers.hl) }
-        0xf5 -> Push { cpu -> cpu.stack.push(cpu.registers.af) }
+        0xc5 -> Push { cpu ->
+            cpu.stack.push(cpu.registers.bc)
+            cpu.cycle()
+        }
+
+        0xd5 -> Push { cpu ->
+            cpu.stack.push(cpu.registers.de)
+            cpu.cycle()
+        }
+
+        0xe5 -> Push { cpu ->
+            cpu.stack.push(cpu.registers.hl)
+            cpu.cycle()
+        }
+
+        0xf5 -> Push { cpu ->
+            cpu.stack.push(cpu.registers.af)
+            cpu.cycle()
+        }
 
         else -> null
     }

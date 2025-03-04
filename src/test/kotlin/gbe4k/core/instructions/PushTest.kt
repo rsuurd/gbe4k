@@ -16,6 +16,7 @@ class PushTest : CpuTestSupport() {
             bus.write(0x253a, 0x2c)
             bus.write(0x253b, 0x53)
         }
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -28,6 +29,7 @@ class PushTest : CpuTestSupport() {
             bus.write(0x253a, 0x2c)
             bus.write(0x253b, 0x53)
         }
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -40,6 +42,7 @@ class PushTest : CpuTestSupport() {
             bus.write(0x253a, 0x2c)
             bus.write(0x253b, 0x53)
         }
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -52,6 +55,7 @@ class PushTest : CpuTestSupport() {
             bus.write(0x253a, 0x20)
             bus.write(0x253b, 0x53)
         }
+        assertThat(timer.div).isEqualTo(16)
     }
 
     private fun push(opcode: Int) {

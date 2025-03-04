@@ -10,5 +10,6 @@ class HaltTest : CpuTestSupport() {
         stepWith(0x76)
 
         assertThat(cpu.halted).isTrue()
+        assertThat(timer.div).isEqualTo(4)
     }
 }

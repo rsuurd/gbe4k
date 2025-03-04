@@ -10,6 +10,7 @@ class PopTest : CpuTestSupport() {
         pop(0xc1)
 
         assertThat(cpu.registers.bc).isEqualTo(0x350a)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -17,6 +18,7 @@ class PopTest : CpuTestSupport() {
         pop(0xd1)
 
         assertThat(cpu.registers.de).isEqualTo(0x350a)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -24,6 +26,7 @@ class PopTest : CpuTestSupport() {
         pop(0xe1)
 
         assertThat(cpu.registers.hl).isEqualTo(0x350a)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -31,6 +34,7 @@ class PopTest : CpuTestSupport() {
         pop(0xf1)
 
         assertThat(cpu.registers.af).isEqualTo(0x3500)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     private fun pop(opcode: Int) {

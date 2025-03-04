@@ -10,13 +10,15 @@ class EiTest : CpuTestSupport() {
         stepWith(0xfb)
 
         assertThat(cpu.pc).isEqualTo(0x0101)
-        assertThat(cpu.interrupts.ime).isFalse()
-        assertThat(cpu.interrupts.enableIme).isTrue()
+        assertThat(interrupts.ime).isFalse()
+        assertThat(interrupts.enableIme).isTrue()
+        assertThat(timer.div).isEqualTo(4)
 
         stepWith(0x00)
 
         assertThat(cpu.pc).isEqualTo(0x0102)
-        assertThat(cpu.interrupts.ime).isTrue()
-        assertThat(cpu.interrupts.enableIme).isFalse()
+        assertThat(interrupts.ime).isTrue()
+        assertThat(interrupts.enableIme).isFalse()
+        assertThat(timer.div).isEqualTo(8)
     }
 }

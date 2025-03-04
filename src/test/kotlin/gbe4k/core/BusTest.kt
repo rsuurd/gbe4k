@@ -6,6 +6,7 @@ import gbe4k.core.Bus.Companion.IO
 import gbe4k.core.Bus.Companion.VRAM
 import gbe4k.core.Bus.Companion.WRAM
 import gbe4k.core.io.Io
+import gbe4k.core.io.Timer
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -14,6 +15,7 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -25,8 +27,17 @@ class BusTest {
     @MockK
     private lateinit var io: Io
 
+    @MockK
+    private lateinit var timer: Timer
+
     @InjectMockKs
     private lateinit var bus: Bus
+
+    @BeforeEach
+    fun `mock io`() {
+        every { io.timer } returns timer
+        every { timer.cycle(any()) } just runs
+    }
 
     @Test
     fun `should read from cart`() {
@@ -89,5 +100,21 @@ class BusTest {
         }
 
         verify(exactly = 0x80) { io[any()] = 0x4a }
+    }
+
+    @Test
+    fun `reading should cycle`() {
+        every { cart[any()] } returns 0x00
+
+        bus.read(0x000)
+
+        verify { timer.cycle(4) }
+    }
+
+    @Test
+    fun `writing should cycle`() {
+        bus.write(WRAM.first, 0x00)
+
+        verify { timer.cycle(4) }
     }
 }

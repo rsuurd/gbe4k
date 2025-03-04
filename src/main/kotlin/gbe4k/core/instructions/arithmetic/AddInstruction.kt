@@ -24,6 +24,8 @@ object AddInstruction : Decoder {
             cpu.flags.c = cpu.registers.sp.and(0xff) + offset.asInt() > 0xff
 
             cpu.registers.sp += offset
+
+            cpu.cycle(8)
         }
 
         // 8 bit

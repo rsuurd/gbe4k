@@ -1,5 +1,6 @@
 package gbe4k.core.instructions
 
+import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.instructions.JumpInstructions.Call
 import gbe4k.core.instructions.JumpInstructions.Jp
@@ -12,12 +13,13 @@ object JumpInstructions : Decoder {
     override fun decode(opcode: Byte): Instruction? = when (opcode.asInt()) {
         0x18 -> Jr { cpu ->
             val offset = cpu.read()
-            cpu.pc += offset
+            cpu.jump(cpu.pc + offset)
         }
+
         0x20 -> Jr { cpu ->
             val offset = cpu.read()
             if (!cpu.flags.z) {
-                cpu.pc += offset
+                cpu.jump(cpu.pc + offset)
             }
         }
 
@@ -25,7 +27,7 @@ object JumpInstructions : Decoder {
             val offset = cpu.read()
 
             if (cpu.flags.z) {
-                cpu.pc += offset
+                cpu.jump(cpu.pc + offset)
             }
         }
 
@@ -33,7 +35,7 @@ object JumpInstructions : Decoder {
             val offset = cpu.read()
 
             if (!cpu.flags.c) {
-                cpu.pc += offset
+                cpu.jump(cpu.pc + offset)
             }
         }
 
@@ -41,7 +43,7 @@ object JumpInstructions : Decoder {
             val offset = cpu.read()
 
             if (cpu.flags.c) {
-                cpu.pc += offset
+                cpu.jump(cpu.pc + offset)
             }
         }
 
@@ -49,20 +51,20 @@ object JumpInstructions : Decoder {
             val address = cpu.readInt()
 
             if (!cpu.flags.z) {
-                cpu.pc = address
+                cpu.jump(address)
             }
         }
 
         0xc3 -> Jp { cpu ->
             val address = cpu.readInt()
-            cpu.pc = address
+            cpu.jump(address)
         }
 
         0xca -> Jp { cpu ->
             val address = cpu.readInt()
 
             if (cpu.flags.z) {
-                cpu.pc = address
+                cpu.jump(address)
             }
         }
 
@@ -70,7 +72,7 @@ object JumpInstructions : Decoder {
             val address = cpu.readInt()
 
             if (!cpu.flags.c) {
-                cpu.pc = address
+                cpu.jump(address)
             }
         }
 
@@ -78,17 +80,17 @@ object JumpInstructions : Decoder {
             val address = cpu.readInt()
 
             if (cpu.flags.c) {
-                cpu.pc = address
+                cpu.jump(address)
             }
         }
 
         0xe9 -> Jp { cpu -> cpu.pc = cpu.registers.hl }
+
         0xc4 -> Call { cpu ->
             val address = cpu.readInt()
 
             if (!cpu.flags.z) {
-                cpu.stack.push(cpu.pc)
-                cpu.pc = address
+                cpu.call(address)
             }
         }
 
@@ -96,23 +98,20 @@ object JumpInstructions : Decoder {
             val address = cpu.readInt()
 
             if (cpu.flags.z) {
-                cpu.stack.push(cpu.pc)
-                cpu.pc = address
+                cpu.call(address)
             }
         }
 
         0xcd -> Call { cpu ->
             val address = cpu.readInt()
-            cpu.stack.push(cpu.pc)
-            cpu.pc = address
+            cpu.call(address)
         }
 
         0xd4 -> Call { cpu ->
             val address = cpu.readInt()
 
             if (!cpu.flags.c) {
-                cpu.stack.push(cpu.pc)
-                cpu.pc = address
+                cpu.call(address)
             }
         }
 
@@ -120,85 +119,74 @@ object JumpInstructions : Decoder {
             val address = cpu.readInt()
 
             if (cpu.flags.c) {
-                cpu.stack.push(cpu.pc)
-                cpu.pc = address
+                cpu.call(address)
             }
         }
 
         0xc0 -> Ret { cpu ->
             if (!cpu.flags.z) {
-                cpu.pc = cpu.stack.pop()
+                cpu.ret()
             }
+
+            cpu.cycle()
         }
 
         0xc8 -> Ret { cpu ->
             if (cpu.flags.z) {
-                cpu.pc = cpu.stack.pop()
+                cpu.ret()
             }
+
+            cpu.cycle()
         }
 
-        0xc9 -> Ret { cpu ->
-            cpu.pc = cpu.stack.pop()
-        }
+        0xc9 -> Ret { cpu -> cpu.ret() }
 
         0xd0 -> Ret { cpu ->
             if (!cpu.flags.c) {
-                cpu.pc = cpu.stack.pop()
+                cpu.ret()
             }
+
+            cpu.cycle()
         }
 
         0xd8 -> Ret { cpu ->
             if (cpu.flags.c) {
-                cpu.pc = cpu.stack.pop()
+                cpu.ret()
             }
+
+            cpu.cycle()
         }
 
         0xd9 -> Reti { cpu ->
-            cpu.pc = cpu.stack.pop()
+            cpu.ret()
             cpu.interrupts.ime = true
         }
 
-        0xc7 -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x00
-        }
-
-        0xcf -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x08
-        }
-
-        0xd7 -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x10
-        }
-
-        0xdf -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x18
-        }
-
-        0xe7 -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x20
-        }
-
-        0xef -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x28
-        }
-
-        0xf7 -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x30
-        }
-
-        0xff -> Rst { cpu ->
-            cpu.stack.push(cpu.pc)
-            cpu.pc = 0x38
-        }
+        0xc7 -> Rst { cpu -> cpu.call(0x00) }
+        0xcf -> Rst { cpu -> cpu.call(0x08) }
+        0xd7 -> Rst { cpu -> cpu.call(0x10) }
+        0xdf -> Rst { cpu -> cpu.call(0x18) }
+        0xe7 -> Rst { cpu -> cpu.call(0x20) }
+        0xef -> Rst { cpu -> cpu.call(0x28) }
+        0xf7 -> Rst { cpu -> cpu.call(0x30) }
+        0xff -> Rst { cpu -> cpu.call(0x38) }
 
         else -> null
+    }
+
+    private fun Cpu.call(address: Int) {
+        stack.push(pc)
+        jump(address)
+    }
+
+    private fun Cpu.jump(address: Int) {
+        pc = address
+        cycle()
+    }
+
+    private fun Cpu.ret() {
+        pc = stack.pop()
+        cycle()
     }
 
     fun interface Jp : Instruction

@@ -10,6 +10,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xc3, 0x3f, 0x42)
 
         assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -19,6 +20,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xc2, 0x3f, 0x42)
 
         assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -28,6 +30,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xc2, 0x3f, 0x42)
 
         assertThat(cpu.pc).isNotEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -37,6 +40,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xca, 0x3f, 0x42)
 
         assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -46,6 +50,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xca, 0x3f, 0x42)
 
         assertThat(cpu.pc).isNotEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -55,6 +60,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xd2, 0x3f, 0x42)
 
         assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -64,6 +70,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xd2, 0x3f, 0x42)
 
         assertThat(cpu.pc).isNotEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(12)
     }
 
     @Test
@@ -73,6 +80,7 @@ class JpTest : CpuTestSupport() {
         stepWith(0xda, 0x3f, 0x42)
 
         assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(16)
     }
 
     @Test
@@ -82,5 +90,16 @@ class JpTest : CpuTestSupport() {
         stepWith(0xda, 0x3f, 0x42)
 
         assertThat(cpu.pc).isNotEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(12)
+    }
+
+    @Test
+    fun `should jp (hl)`() {
+        cpu.registers.hl = 0x423f
+
+        stepWith(0xe9)
+
+        assertThat(cpu.pc).isEqualTo(0x423f)
+        assertThat(timer.div).isEqualTo(4)
     }
 }
