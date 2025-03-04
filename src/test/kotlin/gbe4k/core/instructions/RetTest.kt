@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test
 class RetTest : CpuTestSupport() {
     @Test
     fun `should ret`() {
-        cpu.registers.sp = 0xfffc
+        cpu.stack.push(0x3a64)
 
-        stepWith(0xc9, 0x64, 0x3a)
+        stepWith(0xc9)
 
         assertThat(cpu.pc).isEqualTo(0x3a64)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)
@@ -17,10 +17,11 @@ class RetTest : CpuTestSupport() {
 
     @Test
     fun `should reti`() {
-        cpu.interrupts.ime = false
-        cpu.registers.sp = 0xfffc
+        cpu.stack.push(0x3a64)
 
-        stepWith(0xd9, 0x64, 0x3a)
+        cpu.interrupts.ime = false
+
+        stepWith(0xd9)
 
         assertThat(cpu.pc).isEqualTo(0x3a64)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)

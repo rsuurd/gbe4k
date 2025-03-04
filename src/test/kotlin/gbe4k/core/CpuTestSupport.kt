@@ -1,11 +1,14 @@
 package gbe4k.core
 
 import gbe4k.core.io.Interrupts
+import gbe4k.core.io.Io
+import gbe4k.core.io.Lcd
+import gbe4k.core.io.Serial
+import gbe4k.core.io.Timer
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.just
-import io.mockk.runs
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -13,8 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 abstract class CpuTestSupport {
     @MockK
-    protected lateinit var bus: Bus
+    protected lateinit var cart: Cart
 
+    protected lateinit var bus: Bus
     protected lateinit var interrupts: Interrupts
 
     protected lateinit var cpu: Cpu
@@ -23,6 +27,7 @@ abstract class CpuTestSupport {
     fun `create cpu`() {
         interrupts = Interrupts()
 
+        bus = spyk(Bus(cart, Io(Serial(), Timer(interrupts), Lcd(), interrupts)))
         cpu = Cpu(bus, interrupts)
 
         // reset registers for tests
@@ -33,16 +38,14 @@ abstract class CpuTestSupport {
     }
 
     private fun withBytes(vararg bytes: Number, block: () -> Unit) {
-        every { bus.read(any()) }.returnsMany(bytes.toList().map { it.toByte() })
+        every { cart[any()] }.returnsMany(bytes.toList().map { it.toByte() })
 
         block()
 
-        verify { bus.read(any())  }
+        verify { cart[any()] }
     }
 
     protected fun stepWith(vararg bytes: Number) {
-        every { bus.write(any(), any()) } just runs
-
         withBytes(*bytes) {
             cpu.step()
         }

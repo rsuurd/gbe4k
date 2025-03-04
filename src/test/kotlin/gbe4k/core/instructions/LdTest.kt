@@ -244,12 +244,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld b, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
-        stepWith(0x46, 0x11)
+        stepWith(0x46)
 
         assertThat(cpu.registers.b.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -317,12 +318,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld c, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
-        stepWith(0x4e, 0x11)
+        stepWith(0x4e)
 
         assertThat(cpu.registers.c.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -390,12 +392,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld d, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
         stepWith(0x56, 0x11)
 
         assertThat(cpu.registers.d.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -463,12 +466,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld e, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
         stepWith(0x5e, 0x11)
 
         assertThat(cpu.registers.e.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -536,12 +540,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld h, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
         stepWith(0x66, 0x11)
 
         assertThat(cpu.registers.h.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -609,12 +614,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld l, (hl)`() {
-        cpu.registers.hl = 0xff33
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.hl = 0xff80
 
-        stepWith(0x6e, 0x11)
+        stepWith(0x6e)
 
         assertThat(cpu.registers.l.asInt()).isEqualTo(0x11)
-        verify { bus.read(0xff33) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -778,10 +784,11 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ldh a, (a8)`() {
-        stepWith(0xf0, 0x44, 0x11)
+        cpu.bus.write(0xff80, 0x11)
+        stepWith(0xf0, 0x80)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
-        verify { bus.read(0xff44) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
@@ -796,12 +803,13 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ldh a, (c)`() {
-        cpu.registers.c = 0x00
+        cpu.bus.write(0xff80, 0x11)
+        cpu.registers.c = 0x80.toByte()
 
-        stepWith(0xf2, 0x11)
+        stepWith(0xf2)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
-        verify { bus.read(0xff00) }
+        verify { bus.read(0xff80) }
     }
 
     @Test
