@@ -46,7 +46,8 @@ class TimerTest {
     fun `should tick div`() {
         timer.tick()
 
-        assertThat(timer.div).isEqualTo(0x1)
+        assertThat(timer.div).isEqualTo(0xac01)
+        assertThat(timer[DIV]).isEqualTo(0x01)
     }
 
     @ParameterizedTest
@@ -91,7 +92,7 @@ class TimerTest {
         every { interrupts.request(any()) } just runs
 
         timer.enabled = true
-        timer.div = 0xff.toByte()
+        timer.div = 0xacff
         timer.tima = 0xff.toByte()
 
         timer.tick()
@@ -99,6 +100,7 @@ class TimerTest {
         verify { interrupts.request(TIMER) }
 
         assertThat(timer.tima).isEqualTo(0x00)
+        assertThat(timer.div).isEqualTo(0xad00)
     }
 
     @Test
@@ -106,7 +108,7 @@ class TimerTest {
         every { interrupts.request(any()) } just runs
 
         timer.enabled = true
-        timer.div = 0xff.toByte()
+        timer.div = 0xacff
         timer.tma = 0xff.toByte()
         timer.tima = 0xff.toByte()
 

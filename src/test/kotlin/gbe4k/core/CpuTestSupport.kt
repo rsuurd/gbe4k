@@ -28,6 +28,7 @@ abstract class CpuTestSupport {
     fun `create cpu`() {
         interrupts = Interrupts()
         timer = spyk(Timer(interrupts))
+        timer.div = 0x00
         bus = spyk(Bus(cart, Io(Serial(), timer, Lcd(), interrupts)))
 
         cpu = Cpu(bus, timer, interrupts)

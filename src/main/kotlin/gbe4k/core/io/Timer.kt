@@ -8,7 +8,7 @@ import gbe4k.core.Cpu.Companion.setBit
 import kotlin.experimental.and
 
 class Timer(private val interrupts: Interrupts) : Addressable {
-    var div: Byte = 0x00
+    var div: Int = 0xac00
     var tima: Byte = 0x00
     var tma: Byte = 0x00
     var tac: Byte = 0x00
@@ -28,7 +28,7 @@ class Timer(private val interrupts: Interrupts) : Addressable {
         }
 
     override fun get(address: Int) = when (address) {
-        DIV -> div
+        DIV -> div.and(0xff).toByte()
         TIMA -> tima
         TMA -> tma
         TAC -> tac
@@ -50,7 +50,7 @@ class Timer(private val interrupts: Interrupts) : Addressable {
     fun tick() {
         div = div.inc()
 
-        if (enabled && (div.asInt() % frequency == 0)) {
+        if (enabled && (div % frequency == 0)) {
             tima = tima.inc()
 
             if (tima.asInt() == 0x00) {
