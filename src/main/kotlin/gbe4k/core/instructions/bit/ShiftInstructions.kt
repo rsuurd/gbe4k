@@ -17,7 +17,7 @@ object ShiftInstructions : Decoder {
         0x23 -> Sla { cpu -> cpu.registers.e = cpu.registers.e.sla(cpu.flags) }
         0x24 -> Sla { cpu -> cpu.registers.h = cpu.registers.h.sla(cpu.flags) }
         0x25 -> Sla { cpu -> cpu.registers.l = cpu.registers.l.sla(cpu.flags) }
-        0x26 -> Sla { cpu -> cpu.bus.write(cpu.registers.hl, cpu.bus.read(cpu.registers.hl).sla(cpu.flags)) }
+        0x26 -> Sla { cpu -> cpu.bus.write(cpu.registers.hl, cpu.bus.read(cpu.registers.hl).sla(cpu.flags))}
         0x27 -> Sla { cpu -> cpu.registers.a = cpu.registers.a.sla(cpu.flags) }
 
         0x28 -> Sra { cpu -> cpu.registers.b = cpu.registers.b.sra(cpu.flags) }

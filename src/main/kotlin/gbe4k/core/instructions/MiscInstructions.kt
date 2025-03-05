@@ -1,5 +1,6 @@
 package gbe4k.core.instructions
 
+import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.instructions.bit.ExtendedInstructions
 import gbe4k.core.instructions.bit.RotateInstructions.Rl
@@ -13,9 +14,9 @@ import gbe4k.core.instructions.bit.RotateInstructions.rrc
 
 object MiscInstructions : Decoder {
     override fun decode(opcode: Byte): Instruction? = when (opcode.asInt()) {
-        0x00 -> Instruction { _ -> /* nop */ }
-        0x10 -> Instruction { cpu -> cpu.read() /* stop */ }
-        0x76 -> Instruction { cpu -> cpu.halted = true }
+        0x00 -> Nop
+        0x10 -> Stop
+        0x76 -> Halt
         0x07 -> Rlc { cpu ->
             cpu.registers.a = cpu.registers.a.rlc(cpu.flags)
             cpu.flags.z = false
@@ -37,11 +38,37 @@ object MiscInstructions : Decoder {
         }
 
         0xcb -> Instruction { cpu ->
-            // this looks weird, decoder should probably just be fetchNext(cpu: Cput) instead
+            // this looks weird, decoder should probably just be fetchNext(cpu: Cpu) instead
             ExtendedInstructions.decode(cpu.read())?.execute(cpu)
         }
-        0xf3 -> Instruction { cpu -> cpu.interrupts.ime = false }
-        0xfb -> Instruction { cpu -> cpu.interrupts.enableIme = true }
+        0xf3 -> Di
+        0xfb -> Ei
         else -> null
+    }
+}
+
+object Nop : Instruction {
+    override fun execute(cpu: Cpu) {}
+}
+
+object Halt : Instruction {
+    override fun execute(cpu: Cpu) {
+        cpu.halted = true
+    }
+}
+
+object Stop : Instruction {
+    override fun execute(cpu: Cpu) {}
+}
+
+object Di : Instruction {
+    override fun execute(cpu: Cpu) {
+        cpu.interrupts.ime = false
+    }
+}
+
+object Ei : Instruction {
+    override fun execute(cpu: Cpu) {
+        cpu.interrupts.enableIme = true
     }
 }
