@@ -271,8 +271,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld b, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x46)
@@ -354,8 +353,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld c, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x4e)
@@ -437,8 +435,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld d, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x56, 0x11)
@@ -520,8 +517,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld e, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x5e, 0x11)
@@ -603,8 +599,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld h, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x66, 0x11)
@@ -686,8 +681,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld l, (hl)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.hl = 0xff80
 
         stepWith(0x6e)
@@ -875,8 +869,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ldh a, (a8)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         stepWith(0xf0, 0x80)
 
         assertThat(cpu.registers.a).isEqualTo(0x11)
@@ -897,8 +890,7 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ldh a, (c)`() {
-        cpu.bus.write(0xff80, 0x11)
-        cpu.timer.div = 0 // the bus write incremented the timer
+        setupMemory(0xff80, 0x11)
         cpu.registers.c = 0x80.toByte()
 
         stepWith(0xf2)

@@ -52,4 +52,13 @@ abstract class CpuTestSupport {
             cpu.step()
         }
     }
+
+    protected fun setupMemory(address: Int, value: Byte) {
+        cpu.bus.write(address, value)
+        timer.div = 0 // reset the timer
+    }
+
+    protected fun read(address: Int) = cpu.bus.read(address).also {
+        timer.div = 0
+    }
 }

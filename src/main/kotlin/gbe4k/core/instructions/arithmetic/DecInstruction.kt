@@ -9,10 +9,22 @@ import kotlin.experimental.and
 object DecInstruction : Decoder {
     override fun decode(opcode: Byte): Instruction? = when (opcode.asInt()) {
         // 16 bit
-        0x0b -> Dec { cpu -> cpu.registers.bc-- }
-        0x1b -> Dec { cpu -> cpu.registers.de-- }
-        0x2b -> Dec { cpu -> cpu.registers.hl-- }
-        0x3b -> Dec { cpu -> cpu.registers.sp-- }
+        0x0b -> Dec { cpu ->
+            cpu.registers.bc--
+            cpu.cycle()
+        }
+        0x1b -> Dec { cpu ->
+            cpu.registers.de--
+            cpu.cycle()
+        }
+        0x2b -> Dec { cpu ->
+            cpu.registers.hl--
+            cpu.cycle()
+        }
+        0x3b -> Dec { cpu ->
+            cpu.registers.sp--
+            cpu.cycle()
+        }
         // 8 bit
         0x05 -> Dec { cpu -> cpu.registers.b = dec(cpu.registers.b, cpu.flags) }
         0x15 -> Dec { cpu -> cpu.registers.d = dec(cpu.registers.d, cpu.flags) }
