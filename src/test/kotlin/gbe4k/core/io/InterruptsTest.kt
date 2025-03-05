@@ -2,9 +2,6 @@ package gbe4k.core.io
 
 import gbe4k.core.CpuTestSupport
 import gbe4k.core.io.Interrupts.Interrupt.VBLANK
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -22,7 +19,6 @@ class InterruptsTest : CpuTestSupport() {
     @ParameterizedTest
     @EnumSource
     fun `should indicate pending interrupt and call`(interrupt: Interrupts.Interrupt) {
-        every { bus.write(any(), any()) } just runs
         interrupts.ime = true
         interrupts.ie = 0x1f
         interrupts.request(interrupt)
@@ -67,7 +63,6 @@ class InterruptsTest : CpuTestSupport() {
 
     @Test
     fun `should prioritize interrupts in order`() {
-        every { bus.write(any(), any()) } just runs
         interrupts.`if` = 0x1f
         interrupts.ie = 0x1f
 
@@ -83,7 +78,6 @@ class InterruptsTest : CpuTestSupport() {
 
     @Test
     fun `should wake up cpu when halted and interrupt pending`() {
-        every { bus.write(any(), any()) } just runs
         cpu.halted = true
         interrupts.ime = true
         interrupts.ie = 0x1f
@@ -96,7 +90,6 @@ class InterruptsTest : CpuTestSupport() {
 
     @Test
     fun `should wake up cpu when halted and interrupt pending even if ime is disabled`() {
-        every { bus.write(any(), any()) } just runs
         cpu.halted = true
         interrupts.ime = false
         interrupts.ie = 0x1f
@@ -128,5 +121,17 @@ class InterruptsTest : CpuTestSupport() {
         cpu.step()
 
         assertThat(cpu.halted).isTrue()
+    }
+
+    @Test
+    fun `handling an interrupt should take 20 cycles`() {
+        interrupts.`if` = 0x05
+        interrupts.ie = 0x1f
+        interrupts.ime = true
+
+        val pending = interrupts.handle(cpu)
+
+        assertThat(pending).isTrue()
+        assertThat(timer.div).isEqualTo(20)
     }
 }

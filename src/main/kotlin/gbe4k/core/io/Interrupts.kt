@@ -21,11 +21,10 @@ class Interrupts(var `if`: Byte = 0, var ie: Byte = 0) {
                 ime = false
                 `if` = `if`.setBit(false, interrupt.ordinal)
 
-                // TODO helper function (see JumpInstructions)
+                // TODO cpu.call() (see JumpInstructions)
                 cpu.stack.push(cpu.pc)
                 cpu.pc = interrupt.address
-
-                // do we need to dump here?
+                cpu.cycle(12)
             }
         } != null
     }
