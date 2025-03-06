@@ -21,10 +21,10 @@ class Timer(private val interrupts: Interrupts) : Addressable {
 
     val frequency: Int
         get() = when (tac.and(0b11).asInt()) {
-            0b01 -> 4
-            0b10 -> 16
-            0b11 -> 64
-            else -> 256
+            0b01 -> 16
+            0b10 -> 64
+            0b11 -> 256
+            else -> 1024
         }
 
     override fun get(address: Int) = when (address) {
@@ -48,7 +48,7 @@ class Timer(private val interrupts: Interrupts) : Addressable {
     }
 
     fun tick() {
-        div = div.inc()
+        div = div.inc().and(0xffff)
 
         if (enabled && (div % frequency == 0)) {
             tima = tima.inc()

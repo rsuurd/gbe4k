@@ -37,7 +37,9 @@ class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
             halted = false
         }
 
-        if (!halted) {
+        if (halted) {
+            timer.tick() // even when halted the timer should tick
+        } else {
             val instruction = InstructionDecoder.decode(read())
 
             instruction.execute(this)

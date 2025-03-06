@@ -25,16 +25,16 @@ class CpTest : CpuTestSupport() {
 
     @Test
     fun `should cp (hl)`() {
-        setupMemory(0xff80, 0x0f)
-        cpu.registers.a = 0xfa.toByte()
+        setupMemory(0xff80, 0xfa.toByte())
+        cpu.registers.a = 0x0f.toByte()
         cpu.registers.hl = 0xff80
 
         stepWith(0xbe)
 
-        assertThat(cpu.registers.a).isEqualTo(0xfa.toByte())
+        assertThat(cpu.registers.a).isEqualTo(0x0f.toByte())
         assertThat(cpu.flags.z).isFalse()
         assertThat(cpu.flags.n).isTrue()
-        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
         assertThat(timer.div).isEqualTo(8)
     }

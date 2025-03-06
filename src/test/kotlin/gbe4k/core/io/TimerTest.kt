@@ -78,7 +78,7 @@ class TimerTest {
 
     @Test
     fun `should clock select`() {
-        val frequencies = listOf(0x100, 0x04, 0x10, 0x40)
+        val frequencies = listOf(1024, 16, 64, 256)
 
         frequencies.forEachIndexed { tac, frequency ->
             timer.tac = tac.toByte()
@@ -92,7 +92,7 @@ class TimerTest {
         every { interrupts.request(any()) } just runs
 
         timer.enabled = true
-        timer.div = 0xacff
+        timer.div = 0x3ff
         timer.tima = 0xff.toByte()
 
         timer.tick()
@@ -100,7 +100,7 @@ class TimerTest {
         verify { interrupts.request(TIMER) }
 
         assertThat(timer.tima).isEqualTo(0x00)
-        assertThat(timer.div).isEqualTo(0xad00)
+        assertThat(timer.div).isEqualTo(0x0400)
     }
 
     @Test

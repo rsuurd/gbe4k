@@ -24,7 +24,7 @@ object CpInstructions : Decoder {
 
     private fun cp(cpu: Cpu, value: Byte) {
         cpu.apply {
-            val result = cpu.registers.a - value
+            val result = cpu.registers.a.asInt() - value.asInt()
 
             cpu.flags.z = result.and(0xff) == 0x00
             cpu.flags.n = true
