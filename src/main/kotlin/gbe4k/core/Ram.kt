@@ -1,6 +1,6 @@
 package gbe4k.core
 
-class Ram(private val range: IntRange) {
+class Ram(private val range: IntRange) : Iterable<Byte> {
     private val data = ByteArray((range.last - range.first) + 1)
 
     operator fun get(address: Int) = data[address.index()]
@@ -9,4 +9,5 @@ class Ram(private val range: IntRange) {
     }
 
     private fun Int.index() = this - range.first
+    override fun iterator(): Iterator<Byte> = data.iterator()
 }

@@ -5,6 +5,7 @@ import gbe4k.core.Bus.Companion.HRAM
 import gbe4k.core.Bus.Companion.IO
 import gbe4k.core.Bus.Companion.VRAM
 import gbe4k.core.Bus.Companion.WRAM
+import gbe4k.core.Oam.Companion.OAM
 import gbe4k.core.io.Io
 import gbe4k.core.io.Timer
 import io.mockk.every
@@ -77,6 +78,15 @@ class BusTest {
 
             bus.write(address, value)
             assertThat(bus.read(address)).isEqualTo(value)
+        }
+    }
+
+    @Test
+    fun `should should write & rad oam`() {
+        for (address in OAM) {
+            bus.write(address, 0x0a)
+
+            assertThat(bus.read(address)).isEqualTo(0x0a)
         }
     }
 
