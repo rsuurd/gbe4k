@@ -1,12 +1,13 @@
 package gbe4k.core
 
 import gbe4k.core.instructions.InstructionDecoder
+import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Timer
 import kotlin.experimental.and
 import kotlin.experimental.or
 
-class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
+class Cpu(val bus: Bus, val dma: Dma, val timer: Timer, val interrupts: Interrupts) {
     var pc = 0x0100
 
     val registers = Registers()
@@ -38,12 +39,14 @@ class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
         }
 
         if (halted) {
-            timer.tick() // even when halted the timer should tick
+            cycle()
         } else {
             val instruction = InstructionDecoder.decode(read())
 
             instruction.execute(this)
         }
+
+        dma.transfer(this)
     }
 
     fun read() = bus.read(pc++)

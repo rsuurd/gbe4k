@@ -26,6 +26,11 @@ class Bus(
         else -> throw IllegalArgumentException("Can not read from: ${address.hex()}")
     }
 
+    fun write(address: Int, value: Byte) {
+        this[address] = value
+        io.timer.cycle(4)
+    }
+
     override fun set(address: Int, value: Byte) {
         when (address) {
             in VRAM -> vram[address] = value
@@ -36,11 +41,6 @@ class Bus(
             else -> { /* nop */
             }
         }
-    }
-
-    fun write(address: Int, value: Byte) {
-        this[address] = value
-        io.timer.cycle(4)
     }
 
     companion object {

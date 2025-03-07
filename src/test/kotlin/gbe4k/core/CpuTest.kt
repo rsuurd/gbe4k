@@ -7,10 +7,29 @@ import gbe4k.core.Cpu.Companion.lo
 import gbe4k.core.Cpu.Companion.loNibble
 import gbe4k.core.Cpu.Companion.n16
 import gbe4k.core.Cpu.Companion.n8
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class CpuTest : CpuTestSupport() {
+    @Test
+    fun `should dma even when halted`() {
+        cpu.halted = true
+
+        cpu.step()
+
+        verify { dma.transfer(cpu) }
+    }
+
+    @Test
+    fun `should consume 4 cycles when halted`() {
+        cpu.halted = true
+
+        cpu.step()
+
+        verify(exactly = 4) { timer.tick() }
+    }
+
     @Test
     fun `should split int to bytes`() {
         val value = 0xfc44

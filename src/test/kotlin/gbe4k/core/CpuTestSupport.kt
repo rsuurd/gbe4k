@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Io
 import gbe4k.core.io.Lcd
@@ -19,6 +20,7 @@ abstract class CpuTestSupport {
     protected lateinit var cart: Cart
 
     protected lateinit var bus: Bus
+    protected lateinit var dma: Dma
     protected lateinit var timer: Timer
     protected lateinit var interrupts: Interrupts
 
@@ -26,12 +28,13 @@ abstract class CpuTestSupport {
 
     @BeforeEach
     fun `create cpu`() {
+        dma = spyk(Dma())
         interrupts = Interrupts()
         timer = spyk(Timer(interrupts))
         timer.div = 0x00
-        bus = spyk(Bus(cart, Io(Serial(), timer, Lcd(), interrupts)))
+        bus = spyk(Bus(cart, Io(Serial(), timer, Lcd(dma), interrupts)))
 
-        cpu = Cpu(bus, timer, interrupts)
+        cpu = Cpu(bus, dma, timer, interrupts)
 
         // reset registers for tests
         cpu.registers.af = 0x000
