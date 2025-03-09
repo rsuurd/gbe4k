@@ -16,7 +16,7 @@ class DmaTest : CpuTestSupport() {
 
     @Test
     fun `should not transfer when not started`() {
-        dma.transfer(cpu)
+        dma.transfer(bus, 4)
 
         verify(exactly = 0) { cpu.bus[any()] = any() }
     }
@@ -25,7 +25,7 @@ class DmaTest : CpuTestSupport() {
     fun `should wait one cycle before transferring`() {
         dma.start(0xc0.toByte())
 
-        dma.transfer(cpu)
+        dma.transfer(bus, 4)
 
         verify(exactly = 0) { cpu.bus[any()] = any() }
     }
@@ -35,11 +35,7 @@ class DmaTest : CpuTestSupport() {
         dma.start(0xc0.toByte())
 
         // first transfer is the wait
-        dma.transfer(cpu)
-
-        for (i in 0..160) {
-            dma.transfer(cpu)
-        }
+        dma.transfer(bus, 644)
 
         verify(exactly = 160) { cpu.bus[any()] = any() }
         assertThat(dma.transferring).isFalse()

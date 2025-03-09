@@ -2,6 +2,7 @@ package gbe4k.core.io
 
 import gbe4k.core.io.Io.Companion.INTERRUPT_ENABLE
 import gbe4k.core.io.Io.Companion.INTERRUPT_FLAG
+import gbe4k.core.io.Io.Companion.JOYPAD
 import gbe4k.core.io.Io.Companion.LCD
 import gbe4k.core.io.Io.Companion.SERIAL
 import gbe4k.core.io.Io.Companion.TIMER
@@ -19,6 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 class IoTest {
     @MockK
+    private lateinit var joypad: Joypad
+
+    @MockK
     private lateinit var serial: Serial
 
     @MockK
@@ -32,6 +36,22 @@ class IoTest {
 
     @InjectMockKs
     private lateinit var io: Io
+
+    @Test
+    fun `should read joypad`() {
+        every { joypad.value } returns 0x3f
+
+        assertThat(io[JOYPAD]).isEqualTo(0x3f)
+    }
+
+    @Test
+    fun `should write joypad`() {
+        every { joypad.value = any() } just runs
+
+        io[JOYPAD] = 0x30
+
+        verify { joypad.value = 0x30 }
+    }
 
     @Test
     fun `should read serial`() {

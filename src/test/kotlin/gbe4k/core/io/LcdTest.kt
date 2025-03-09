@@ -32,7 +32,7 @@ class LcdTest {
 
     @Test
     fun `should read ly`() {
-        lcd[Lcd.LY] = 0x90.toByte()
+        lcd.ly = 0x90.toByte()
 
         assertThat(lcd.ly.asInt()).isEqualTo(0x90)
         assertThat(lcd[Lcd.LY].asInt()).isEqualTo(0x90)

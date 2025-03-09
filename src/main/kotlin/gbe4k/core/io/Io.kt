@@ -2,8 +2,9 @@ package gbe4k.core.io
 
 import gbe4k.core.Addressable
 
-class Io(private val serial: Serial, val timer: Timer, private val lcd: Lcd, private val interrupts: Interrupts) : Addressable {
+class Io(private val joypad: Joypad, private val serial: Serial, val timer: Timer, private val lcd: Lcd, private val interrupts: Interrupts) : Addressable {
     override fun get(address: Int): Byte = when (address) {
+        JOYPAD -> joypad.value
         in SERIAL -> serial[address]
         in TIMER -> timer[address]
         in LCD -> lcd[address]
@@ -13,6 +14,7 @@ class Io(private val serial: Serial, val timer: Timer, private val lcd: Lcd, pri
     }
 
     override fun set(address: Int, value: Byte) = when (address) {
+        JOYPAD -> joypad.value = value
         in SERIAL -> serial[address] = value
         in TIMER -> timer[address] = value
         in LCD -> lcd[address] = value
@@ -22,6 +24,7 @@ class Io(private val serial: Serial, val timer: Timer, private val lcd: Lcd, pri
     }
 
     companion object {
+        const val JOYPAD = 0xff00
         val SERIAL = 0xff01..0xff02
         val TIMER = Timer.DIV..Timer.TAC
         val LCD = 0xff40..0xff4b

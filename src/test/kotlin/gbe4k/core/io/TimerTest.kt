@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import kotlin.math.absoluteValue
 
 @ExtendWith(MockKExtension::class)
 class TimerTest {
@@ -115,5 +116,14 @@ class TimerTest {
         timer.tick()
 
         assertThat(timer.tima.asInt()).isEqualTo(0xff)
+    }
+
+    @Test
+    fun `should track cycles`() {
+        val result = timer.track {
+            timer.tick()
+        }
+
+        assertThat(result).isEqualTo(1)
     }
 }

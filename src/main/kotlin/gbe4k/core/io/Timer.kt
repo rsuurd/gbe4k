@@ -61,6 +61,14 @@ class Timer(private val interrupts: Interrupts) : Addressable {
         }
     }
 
+    fun track(body: () -> Unit): Int {
+        val last = div
+
+        body()
+
+        return (div - last).and(0xffff)
+    }
+
     companion object {
         const val DIV = 0xff04
         const val TIMA = 0xff05

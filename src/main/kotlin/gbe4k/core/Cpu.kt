@@ -7,7 +7,7 @@ import gbe4k.core.io.Timer
 import kotlin.experimental.and
 import kotlin.experimental.or
 
-class Cpu(val bus: Bus, val dma: Dma, val timer: Timer, val interrupts: Interrupts) {
+class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
     var pc = 0x0100
 
     val registers = Registers()
@@ -45,8 +45,6 @@ class Cpu(val bus: Bus, val dma: Dma, val timer: Timer, val interrupts: Interrup
 
             instruction.execute(this)
         }
-
-        dma.transfer(this)
     }
 
     fun read() = bus.read(pc++)

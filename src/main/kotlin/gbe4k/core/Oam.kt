@@ -40,8 +40,4 @@ data class OamEntry(val x: Byte, val y: Byte, val tile: Byte, val attributes: By
 
     val priority: Boolean
         get() = attributes.isBitSet(7)
-
-    companion object {
-        val BLANK = OamEntry(0, 0, 0, 0)
-    }
 }

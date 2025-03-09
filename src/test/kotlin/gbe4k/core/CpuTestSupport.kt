@@ -3,6 +3,7 @@ package gbe4k.core
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Io
+import gbe4k.core.io.Joypad
 import gbe4k.core.io.Lcd
 import gbe4k.core.io.Serial
 import gbe4k.core.io.Timer
@@ -32,9 +33,9 @@ abstract class CpuTestSupport {
         interrupts = Interrupts()
         timer = spyk(Timer(interrupts))
         timer.div = 0x00
-        bus = spyk(Bus(cart, Io(Serial(), timer, Lcd(dma), interrupts)))
+        bus = spyk(Bus(cart, Io(Joypad(), Serial(), timer, Lcd(dma), interrupts)))
 
-        cpu = Cpu(bus, dma, timer, interrupts)
+        cpu = Cpu(bus, timer, interrupts)
 
         // reset registers for tests
         cpu.registers.af = 0x000

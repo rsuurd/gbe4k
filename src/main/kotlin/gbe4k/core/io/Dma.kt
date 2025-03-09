@@ -1,6 +1,6 @@
 package gbe4k.core.io
 
-import gbe4k.core.Cpu
+import gbe4k.core.Bus
 import gbe4k.core.Cpu.Companion.n16
 import gbe4k.core.Oam.Companion.OAM
 
@@ -19,17 +19,20 @@ class Dma {
         index = -1 // one cpu cycle of setup
     }
 
-    fun transfer(cpu: Cpu) {
+    fun transfer(bus: Bus, cycles: Int) {
         if (transferring) {
-            if (index >= 0) {
-                cpu.bus[OAM.first + index] = cpu.bus[address + index]
-            }
+            // every 4 cycles a byte is copied
+            repeat(cycles / 4) {
+                if (index >= 0) {
+                    bus[OAM.first + index] = bus[address + index]
+                }
 
-            index++
+                index++
 
-            if (index == 0xa0) {
-                transferring = false
-                index = -1
+                if (index == 0xa0) {
+                    transferring = false
+                    index = -1
+                }
             }
         }
     }

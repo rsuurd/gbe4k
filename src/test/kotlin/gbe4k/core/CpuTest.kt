@@ -13,15 +13,6 @@ import org.junit.jupiter.api.Test
 
 class CpuTest : CpuTestSupport() {
     @Test
-    fun `should dma even when halted`() {
-        cpu.halted = true
-
-        cpu.step()
-
-        verify { dma.transfer(cpu) }
-    }
-
-    @Test
     fun `should consume 4 cycles when halted`() {
         cpu.halted = true
 
