@@ -20,8 +20,8 @@ class OamTest {
 
         val entry = oam.entries.first()
 
-        assertThat(entry.x).isEqualTo(0x14)
-        assertThat(entry.y).isEqualTo(0x10)
+        assertThat(entry.x).isEqualTo(0xc)
+        assertThat(entry.y).isEqualTo(0x0)
         assertThat(entry.tile).isEqualTo(0x01)
         assertThat(entry.cgbPalette).isEqualTo(0x00)
         assertThat(entry.bank).isEqualTo(0x00)

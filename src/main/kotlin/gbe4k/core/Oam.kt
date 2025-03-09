@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Cpu.Companion.isBitSet
 import kotlin.experimental.and
 
@@ -14,7 +15,7 @@ class Oam : Addressable {
 
     val entries: List<OamEntry>
         get() = ram.chunked(4).map { chunk ->
-            OamEntry(chunk[1], chunk[0], chunk[2], chunk[3])
+            OamEntry(chunk[1].asInt() - 8, chunk[0].asInt() - 16, chunk[2], chunk[3])
         }
 
     companion object {
@@ -22,7 +23,7 @@ class Oam : Addressable {
     }
 }
 
-data class OamEntry(val x: Byte, val y: Byte, val tile: Byte, val attributes: Byte) {
+data class OamEntry(val x: Int, val y: Int, val tile: Byte, val attributes: Byte) {
     val cgbPalette: Byte
         get() = attributes.and(0b111)
 

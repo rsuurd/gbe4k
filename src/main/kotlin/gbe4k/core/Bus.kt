@@ -12,7 +12,7 @@ class Bus(
     private val vram = Ram(VRAM)
     private val wram = Ram(WRAM)
     private val hram = Ram(HRAM)
-    private val oam = Oam()
+    val oam = Oam()
 
     fun read(address: Int): Byte = this[address].also { io.timer.cycle(4) }
 

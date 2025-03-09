@@ -37,12 +37,33 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
                 val g = buffer.createGraphics()
                 g.color = GRAY[colorBit]
                 g.fillRect(x, lcd.ly.asInt(), 1, 1)
+
+                drawObjects(x)
             }
 
             nextLine()
         }
 
         dots++
+    }
+
+    private fun drawObjects(x: Int) {
+        bus.oam.entries.filter {
+            (x in it.x until it.x + 8) && (lcd.ly.asInt() in (it.y until it.y + lcd.control.objSize.asInt()))
+        }.take(10).forEach {
+            val lineInTile = lcd.ly.asInt() - it.y
+            val address = 0x9000 + (it.tile * 16)
+            val tileLow = bus[address + lineInTile * 2]
+            val tileHigh = bus[address + lineInTile * 2 + 1]
+
+            // TODO xflip / yflip etc
+            val bitIndex = 7 - (x % 8)
+            val colorBit = ((tileHigh.toInt() shr bitIndex) and 1) shl 1 or ((tileLow.toInt() shr bitIndex) and 1)
+
+            val g = buffer.createGraphics()
+            g.color = GRAY[colorBit]
+            g.fillRect(x, lcd.ly.asInt(), 1, 1)
+        }
     }
 
     private fun nextLine() {
