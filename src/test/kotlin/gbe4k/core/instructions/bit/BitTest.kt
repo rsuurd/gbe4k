@@ -43,7 +43,7 @@ class BitTest : CpuTestSupport() {
         assertThat(cpu.flags.h).isTrue()
 
         if (opcode % 0x8 == 6) {
-            assertThat(timer.div).isEqualTo(16)
+            assertThat(timer.div).isEqualTo(12)
         } else {
             assertThat(timer.div).isEqualTo(8)
         }

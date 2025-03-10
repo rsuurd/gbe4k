@@ -153,6 +153,7 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -166,6 +167,7 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isFalse()
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -178,6 +180,7 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(8)
     }
 
     @Test
@@ -191,5 +194,6 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.flags.n).isFalse()
         assertThat(cpu.flags.h).isTrue()
         assertThat(cpu.flags.c).isTrue()
+        assertThat(timer.div).isEqualTo(8)
     }
 }

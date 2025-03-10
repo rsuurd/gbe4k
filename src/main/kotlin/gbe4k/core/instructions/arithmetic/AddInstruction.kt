@@ -53,6 +53,7 @@ object AddInstruction : Decoder {
             c = result > 0xffff
         }
 
+        cycle(4)
         return result.and(0xffff)
     }
 
