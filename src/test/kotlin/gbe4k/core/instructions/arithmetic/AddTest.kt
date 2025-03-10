@@ -141,4 +141,55 @@ class AddTest : CpuTestSupport() {
         assertThat(cpu.flags.c).isTrue()
         assertThat(timer.div).isEqualTo(16)
     }
+
+    @Test
+    fun `should add hl, bc`() {
+        cpu.registers.hl = 0x9999
+        cpu.registers.bc = 0x9999
+
+        stepWith(0x09)
+
+        assertThat(cpu.registers.hl).isEqualTo(0x3332)
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
+    }
+
+    @Test
+    fun `should add hl, de`() {
+        cpu.registers.hl = 0x9999
+        cpu.registers.de = 0x7
+
+        stepWith(0x19)
+
+        assertThat(cpu.registers.hl).isEqualTo(0x99a0)
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isFalse()
+    }
+
+    @Test
+    fun `should add hl, hl`() {
+        cpu.registers.hl = 0x8000
+
+        stepWith(0x29)
+
+        assertThat(cpu.registers.hl).isEqualTo(0x0000)
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
+    }
+
+    @Test
+    fun `should add hl, sp`() {
+        cpu.registers.hl = 0x00af
+        cpu.registers.sp = 0xffef
+
+        stepWith(0x39)
+
+        assertThat(cpu.registers.hl).isEqualTo(0x09e)
+        assertThat(cpu.flags.n).isFalse()
+        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.c).isTrue()
+    }
 }

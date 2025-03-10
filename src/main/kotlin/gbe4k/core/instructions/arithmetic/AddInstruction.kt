@@ -49,11 +49,11 @@ object AddInstruction : Decoder {
 
         flags.apply {
             n = false
-            h = a.and(0x0fff) + b.and(0x0fff) > 0x0fff
+            h = result > 0x0fff
             c = result > 0xffff
         }
 
-        return result
+        return result.and(0xffff)
     }
 
     private fun Cpu.add8(a: Byte, b: Byte): Byte {
