@@ -165,7 +165,7 @@ class AddTest : CpuTestSupport() {
 
         assertThat(cpu.registers.hl).isEqualTo(0x99a0)
         assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isFalse()
         assertThat(timer.div).isEqualTo(8)
     }
@@ -178,7 +178,7 @@ class AddTest : CpuTestSupport() {
 
         assertThat(cpu.registers.hl).isEqualTo(0x0000)
         assertThat(cpu.flags.n).isFalse()
-        assertThat(cpu.flags.h).isTrue()
+        assertThat(cpu.flags.h).isFalse()
         assertThat(cpu.flags.c).isTrue()
         assertThat(timer.div).isEqualTo(8)
     }

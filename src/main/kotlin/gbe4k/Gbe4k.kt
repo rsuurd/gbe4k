@@ -29,13 +29,12 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
 
     fun emulate() {
         var lastUpdateTime = System.nanoTime()
-        var frames = 0
 
         while (true) {
-            var cycles = 0
             val now = System.nanoTime()
 
             while ((now - lastUpdateTime) >= DELAY.nano) {
+                var cycles = 0
                 while (cycles < CYCLES_PER_FRAME) {
                     val elapsed = timer.track {
                         cpu.step()
@@ -47,7 +46,6 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
                     cycles += elapsed
                 }
 
-                frames++
                 lastUpdateTime += DELAY.nano;
             }
 
@@ -57,15 +55,13 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
 
     companion object {
         private val DELAY: Duration = Duration.ofNanos(16600000) // 16.6ms
-        private const val CYCLES_PER_FRAME = 4 * 1024 * 1024 / 60 // 4mhz for 60 fps
+        private const val CYCLES_PER_FRAME = (4 * 1024 * 1024) / 60 // 4mhz for 60 fps
     }
 }
 
 fun main() {
-    // passed: 1, 3, 4, 5, 6, 7, 8, 9, 10, 11
-    // failed: 2
-    val gbe4k =
-        Gbe4k(Cart.load(Paths.get("/Users/rolf/code/gbe4k/.roms/cpu_instrs/individual/01-special.gb")), System.out)
+    // passed: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    val gbe4k = Gbe4k(Cart.load(Paths.get("/Users/rolf/code/gbe4k/.roms/cpu_instrs/individual/01-special.gb")), System.out)
     gbe4k.emulate()
 }
 

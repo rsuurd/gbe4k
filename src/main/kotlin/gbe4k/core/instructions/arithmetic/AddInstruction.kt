@@ -2,7 +2,6 @@ package gbe4k.core.instructions.arithmetic
 
 import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.asInt
-import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.instructions.Decoder
 import gbe4k.core.instructions.Instruction
 import gbe4k.core.instructions.arithmetic.AddInstruction.Add
@@ -49,7 +48,7 @@ object AddInstruction : Decoder {
 
         flags.apply {
             n = false
-            h = result > 0x0fff
+            h = a.and(0xfff) + b.and(0xfff) > 0x0fff
             c = result > 0xffff
         }
 

@@ -1,14 +1,13 @@
 package gbe4k.core
 
 import gbe4k.core.instructions.InstructionDecoder
-import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Timer
 import kotlin.experimental.and
 import kotlin.experimental.or
 
 class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
-    var pc = 0x0100
+    var pc = 0x0000
 
     val registers = Registers()
     val flags = Flags(registers)

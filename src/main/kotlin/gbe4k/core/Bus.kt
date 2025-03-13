@@ -36,12 +36,12 @@ class Bus(
         when (address) {
             in VRAM -> vram[address] = value
             in CART_RAM -> { /* nop */ }
+
             in WRAM -> wram[address] = value
             in HRAM -> hram[address] = value
             in OAM -> oam[address] = value
             in IO, INTERRUPT_ENABLE -> io[address] = value
-            else -> { /* nop */
-            }
+            else -> { /* nop */ }
         }
     }
 

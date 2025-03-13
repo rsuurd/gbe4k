@@ -1,32 +1,31 @@
 package gbe4k.core.io
 
 import gbe4k.core.Addressable
+import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Cpu.Companion.isBitSet
-import gbe4k.core.Cpu.Companion.setBit
 import gbe4k.core.Ppu
 import gbe4k.core.io.Dma.Companion.DMA_TRANSFER
-import kotlin.experimental.and
 
 class Lcd(private val dma: Dma) : Addressable {
     val control = Control(0x00)
-    val stat = Stat(0x00)
+    val stat = Stat()
 
-    var scx: Byte = 0x00
-    var scy: Byte = 0x00
-    var ly: Byte = 0x00
-    var lyc: Byte = 0x00
-    var wx: Byte = 0x00
-    var wy: Byte = 0x00
+    var scx: Int = 0x00
+    var scy: Int = 0x00
+    var ly: Int = 0x00
+    var lyc: Int = 0x00
+    var wx: Int = 0x00
+    var wy: Int = 0x00
 
     override operator fun get(address: Int) = when (address) {
         LCDC -> control.value
         STAT -> stat.value
-        SCY -> scy
-        SCX -> scx
-        LY -> ly
-        LYC -> lyc
-        WY -> wy
-        WX -> wx
+        SCY -> scy.toByte()
+        SCX -> scx.toByte()
+        LY -> ly.toByte()
+        LYC -> lyc.toByte()
+        WY -> wy.toByte()
+        WX -> wx.toByte()
         else -> 0xff.toByte()
     }
 
@@ -34,12 +33,11 @@ class Lcd(private val dma: Dma) : Addressable {
         when (address) {
             LCDC -> control.value = value
             STAT -> stat.value = value
-            SCY -> scy = value
-            SCX -> scx = value
-            LY -> { /* read only */ }
-            LYC -> lyc = value
-            WY -> wy = value
-            WX -> wx = value
+            SCY -> scy = value.asInt()
+            SCX -> scx = value.asInt()
+            LYC -> lyc = value.asInt()
+            WY -> wy = value.asInt()
+            WX -> wx = value.asInt()
             DMA_TRANSFER -> dma.start(value)
         }
     }
@@ -66,31 +64,28 @@ class Lcd(private val dma: Dma) : Addressable {
         val windowTileMap: IntRange
             get() = if (value.isBitSet(6)) 0x9c00..0x9fff else 0x9800..0x9bff
 
-        val lcdPpuEnabled: Boolean
+        val enabled: Boolean
             get() = value.isBitSet(7)
     }
 
-    data class Stat(var value: Byte) {
-        val lycSelected: Boolean
-            get() = value.isBitSet(6)
-
-        val mode2Selected: Boolean
-            get() = value.isBitSet(5)
-
-        val mode1Selected: Boolean
-            get() = value.isBitSet(4)
-
-        val mode0Selected: Boolean
-            get() = value.isBitSet(3)
-
-        var lyEqLyc: Boolean
-            get() = value.isBitSet(2)
-            set(eq) {
-                value = value.setBit(eq, 2)
+    class Stat {
+        var value: Byte = 0x00
+            // value is composed of top 5 bits + lycSelected (bit 2) and ppuMode (bits 1 and 0)
+            get() = (field + (if (lyEqLyc) 1 else 0).shl(2) + ppuMode.ordinal).toByte()
+            set(value) {
+                field = value.asInt().and(0b11111000).toByte()
             }
 
-        val ppuMode: Byte
-            get() = value.and(0b00000011)
+        var ppuMode: Ppu.Mode = Ppu.Mode.HBLANK
+        var lyEqLyc: Boolean = false
+
+        fun isSelected(mode: Ppu.Mode) = when (mode) {
+            Ppu.Mode.HBLANK, Ppu.Mode.VBLANK, Ppu.Mode.OAM_SCAN -> value.isBitSet(3 + mode.ordinal)
+            Ppu.Mode.DRAWING -> false
+        }
+
+        val lycSelected: Boolean
+            get() = value.isBitSet(6)
     }
 
     companion object {

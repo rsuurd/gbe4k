@@ -7,86 +7,144 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 
 class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
-    // PPU draws to this buffer, or maybe pass in the Graphics object in the update?
-    val buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
-
+    private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
     private var dots = 0
+    private var drawn = false
 
-    fun update(cycles: Int) = repeat(cycles) {
-        if (dots == DOTS_PER_LINE) { // ready to draw a line.
-            for (x in 0..160) {
-                val bgX = (lcd.scx.asInt() + x) % 256
-                val bgY = (lcd.scy.asInt() + lcd.ly.asInt()) % 256
-                val tileX = bgX / 8
-                val tileY = bgY / 8
-                val tileIndex = tileY * 32 + tileX
-                val lineInTile = bgY % 8
+    private val listeners = mutableListOf<VBlankListener>()
 
-                val tilemap = lcd.control.backgroundTileMap
-                val tileNumber = bus[tilemap.first + tileIndex]
-                val tiledata = lcd.control.tileData
-
-                val address = tiledata.first.takeIf { it == 0x8800 }?.let {
-                    0x9000 + (tileNumber * 16)
-                } ?: (tiledata.first + (tileNumber.asInt() * 16))
-                val tileLow = bus[address + lineInTile * 2]
-                val tileHigh = bus[address + lineInTile * 2 + 1]
-                val bitIndex = 7 - (bgX % 8)
-                val colorBit = ((tileHigh.toInt() shr bitIndex) and 1) shl 1 or ((tileLow.toInt() shr bitIndex) and 1)
-
-                val g = buffer.createGraphics()
-                g.color = GRAY[colorBit]
-                g.fillRect(x, lcd.ly.asInt(), 1, 1)
-
-                drawObjects(x)
-            }
-
-            nextLine()
-        }
-
-        dots++
+    fun addVBlankListener(listener: VBlankListener) {
+        listeners.add(listener)
     }
 
-    private fun drawObjects(x: Int) {
-        bus.oam.entries.filter {
-            (x in it.x until it.x + 8) && (lcd.ly.asInt() in (it.y until it.y + lcd.control.objSize.asInt()))
-        }.take(10).forEach {
-            val lineInTile = lcd.ly.asInt() - it.y
-            val address = 0x9000 + (it.tile * 16)
-            val tileLow = bus[address + lineInTile * 2]
-            val tileHigh = bus[address + lineInTile * 2 + 1]
+    fun update(cycles: Int) {
+        dots += cycles
 
-            // TODO xflip / yflip etc
-            val bitIndex = 7 - (x % 8)
-            val colorBit = ((tileHigh.toInt() shr bitIndex) and 1) shl 1 or ((tileLow.toInt() shr bitIndex) and 1)
+        if (lcd.stat.ppuMode != Mode.VBLANK) {
+            setMode(
+                when {
+                    dots < OAM_SCAN_DOTS -> Mode.OAM_SCAN
+                    dots < HBLANK_DOTS -> Mode.DRAWING
+                    else -> Mode.HBLANK
+                }
+            )
 
-            val g = buffer.createGraphics()
-            g.color = GRAY[colorBit]
-            g.fillRect(x, lcd.ly.asInt(), 1, 1)
+            if (lcd.stat.ppuMode == Mode.DRAWING) {
+                draw()
+            }
+        }
+
+        if (dots >= DOTS_PER_LINE) {
+            nextLine()
+        }
+    }
+
+    private fun setMode(mode: Mode) {
+        if (lcd.stat.ppuMode != mode) {
+            lcd.stat.ppuMode = mode
+
+            if (lcd.stat.isSelected(mode)) {
+                interrupts.request(Interrupts.Interrupt.STAT)
+            }
+        }
+    }
+
+    private fun draw() {
+        if (drawn) return
+
+        drawTiles()
+        drawOam()
+
+        drawn = true
+    }
+
+    private fun drawTiles() {
+        val g = buffer.graphics
+
+        for (x in 0 until 160) {
+            val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
+
+            g.color = GREEN[backgroundPixel]
+            g.fillRect(x, lcd.ly, 1, 1)
+        }
+    }
+
+    private fun fetchPixel(screenX: Int, offsetX: Int, offsetY: Int, tileMap: IntRange): Int {
+        val x = (offsetX + screenX) % 256
+        val y = (offsetY + lcd.ly) % 256
+
+        val tileX = x / 8
+        val tileY = y / 8
+        val lineInTile = y % 8
+        val tileIndex = tileY * 32 + tileX
+        val tileNumber = bus[tileMap.first + tileIndex]
+        val address = lcd.control.tileData.first.takeIf { it == 0x8800 }?.let {
+            0x9000 + (tileNumber * 16)
+        } ?: (lcd.control.tileData.first + (tileNumber.asInt() * 16))
+        val tileLow = bus[address + lineInTile * 2]
+        val tileHigh = bus[address + lineInTile * 2 + 1]
+        val bitIndex = 7 - (x % 8)
+        val index = ((tileHigh.toInt() shr bitIndex) and 1) shl 1 or ((tileLow.toInt() shr bitIndex) and 1)
+
+        return index
+    }
+
+    private fun drawOam() {
+        val g = buffer.graphics
+
+        if (!lcd.control.objEnable) return
+
+        bus.oam.entries.filter { e -> e.y <= lcd.ly && (e.y + lcd.control.objSize) > lcd.ly }.forEach { e ->
+            val address = 0x8000 + (e.tile.asInt() * 16)
+            val line = lcd.ly - e.y
+            val offset = if (e.yFlip) 7 - (line * 2) else line * 2
+            val lo = bus[address + offset]
+            val hi = bus[address + offset + 1]
+
+            // check prio & palette
+
+            for (x in 0..7) {
+                val bitIndex = if (e.xFlip) x else 7 - x
+
+                val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
+
+                if (index > 0) {
+                    g.color = GREEN[index]
+                    g.fillRect(e.x + x, lcd.ly, 1, 1)
+                }
+            }
         }
     }
 
     private fun nextLine() {
-        dots = 0
-
-        if (lcd.stat.mode2Selected) {
-            interrupts.request(Interrupts.Interrupt.STAT)
-        }
-
-        lcd.ly = ((lcd.ly.asInt() + 1) % TOTAL_SCANLINES).toByte()
+        dots -= DOTS_PER_LINE
+        lcd.ly++
         lcd.stat.lyEqLyc = lcd.ly == lcd.lyc
+        drawn = false
 
         if (lcd.stat.lycSelected && lcd.stat.lyEqLyc) {
             interrupts.request(Interrupts.Interrupt.STAT)
         }
 
-        if (lcd.ly.asInt() == VISIBLE_SCANLINES) {
+        if (lcd.ly < VISIBLE_SCANLINES) {
+            setMode(Mode.OAM_SCAN)
+        } else if (lcd.ly == VISIBLE_SCANLINES) {
             interrupts.request(Interrupts.Interrupt.VBLANK)
+            setMode(Mode.VBLANK)
+
+            // inform the listeners of a complete frame
+            listeners.forEach { it.onVBlank(buffer) }
+        } else if (lcd.ly == TOTAL_SCANLINES) {
+            lcd.ly = 0
+            setMode(Mode.OAM_SCAN)
         }
     }
 
     companion object {
+        private const val OAM_SCAN_DOTS = 80
+        private const val HBLANK_DOTS = 252
         private const val DOTS_PER_LINE = 456
+
         private const val VISIBLE_SCANLINES = 144
         private const val TOTAL_SCANLINES = 154
 
@@ -110,5 +168,9 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         VBLANK,
         OAM_SCAN,
         DRAWING
+    }
+
+    fun interface VBlankListener {
+        fun onVBlank(frame: BufferedImage)
     }
 }

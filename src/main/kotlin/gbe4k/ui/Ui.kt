@@ -18,7 +18,7 @@ import javax.swing.WindowConstants
 class Ui : JFrame("GBE 4k") {
     private var status = JLabel("No ROM Selected", SwingConstants.CENTER)
     private var emulator: Gbe4k? = null
-    private val screen = Screen(emulator)
+    private val screen = Screen()
 
     init {
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
@@ -51,6 +51,8 @@ class Ui : JFrame("GBE 4k") {
     }
 
     private fun emulate(path: Path) {
+        // TODO: stop any previous emulator!
+
         emulator = Gbe4k(Cart.load(path), System.out)
         screen.emulator = emulator
         Thread {
