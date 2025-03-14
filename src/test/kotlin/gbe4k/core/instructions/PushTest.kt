@@ -13,8 +13,8 @@ class PushTest : CpuTestSupport() {
         push(0xc5)
 
         verify {
-            bus.write(0x253a, 0x2c)
-            bus.write(0x253b, 0x53)
+            bus.write(0xdffd, 0x2c)
+            bus.write(0xdffe, 0x53)
         }
         assertThat(timer.div).isEqualTo(16)
     }
@@ -26,8 +26,8 @@ class PushTest : CpuTestSupport() {
         push(0xd5)
 
         verify {
-            bus.write(0x253a, 0x2c)
-            bus.write(0x253b, 0x53)
+            bus.write(0xdffd, 0x2c)
+            bus.write(0xdffe, 0x53)
         }
         assertThat(timer.div).isEqualTo(16)
     }
@@ -39,8 +39,8 @@ class PushTest : CpuTestSupport() {
         push(0xe5)
 
         verify {
-            bus.write(0x253a, 0x2c)
-            bus.write(0x253b, 0x53)
+            bus.write(0xdffd, 0x2c)
+            bus.write(0xdffe, 0x53)
         }
         assertThat(timer.div).isEqualTo(16)
     }
@@ -52,17 +52,17 @@ class PushTest : CpuTestSupport() {
         push(0xf5)
 
         verify {
-            bus.write(0x253a, 0x20)
-            bus.write(0x253b, 0x53)
+            bus.write(0xdffd, 0x20)
+            bus.write(0xdffe, 0x53)
         }
         assertThat(timer.div).isEqualTo(16)
     }
 
     private fun push(opcode: Int) {
-        cpu.registers.sp = 0x253c
+        cpu.registers.sp = 0xdfff
 
         stepWith(opcode)
 
-        assertThat(cpu.registers.sp).isEqualTo(0x253a)
+        assertThat(cpu.registers.sp).isEqualTo(0xdffd)
     }
 }

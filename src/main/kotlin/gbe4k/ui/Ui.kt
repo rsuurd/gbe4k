@@ -53,8 +53,9 @@ class Ui : JFrame("GBE 4k") {
     private fun emulate(path: Path) {
         emulator?.stop()
         val cart = Cart.load(path)
+        println("Loaded cart: $cart")
         title = "GBE 4k - ${cart.title}"
-        emulator = Gbe4k(cart, System.out)
+        emulator = Gbe4k(cart)
         screen.emulator = emulator
 
         Thread {

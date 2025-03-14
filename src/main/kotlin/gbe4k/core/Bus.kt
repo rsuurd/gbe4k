@@ -34,9 +34,9 @@ class Bus(
 
     override fun set(address: Int, value: Byte) {
         when (address) {
+            in CART_DATA -> cart[address] = value
             in VRAM -> vram[address] = value
-            in CART_RAM -> { /* nop */ }
-
+            in CART_RAM -> cart[address] = value
             in WRAM -> wram[address] = value
             in HRAM -> hram[address] = value
             in OAM -> oam[address] = value

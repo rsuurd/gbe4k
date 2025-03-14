@@ -11,14 +11,13 @@ import gbe4k.core.io.Joypad
 import gbe4k.core.io.Lcd
 import gbe4k.core.io.Serial
 import gbe4k.core.io.Timer
-import java.io.OutputStream
-import java.nio.file.Paths
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 
-class Gbe4k(cart: Cart, outputStream: OutputStream) {
+class Gbe4k(cart: Cart) {
     val joypad = Joypad()
     val interrupts = Interrupts()
-    val serial = Serial(outputStream)
+    val serial = Serial(ByteArrayOutputStream())
     val timer = Timer(interrupts)
     val dma = Dma()
     val lcd = Lcd(dma)
@@ -65,14 +64,8 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
     }
 }
 
-fun main() {
-    // passed: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-    val gbe4k = Gbe4k(Cart.load(Paths.get("/Users/rolf/code/gbe4k/.roms/cpu_instrs/individual/01-special.gb")), System.out)
-    gbe4k.emulate()
-}
-
 fun Cpu.dump() =
-    "A:%02x F:%02x B:%02x C:%02x D:%02x E:%02x H:%02x L:%02x SP:%04x PC:%04x PCMEM:%02x,%02x,%02x,%02x\n".format(
+    "A:%02x F:%02x B:%02x C:%02x D:%02x E:%02x H:%02x L:%02x SP:%04x PC:%04x PCMEM:%02x,%02x,%02x,%02x".format(
         this.registers.a,
         this.registers.f,
         this.registers.b,

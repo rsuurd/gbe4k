@@ -42,46 +42,46 @@ class LdTest : CpuTestSupport() {
     @Test
     fun `should ld (bc), a`() {
         cpu.registers.a = 0x23
-        cpu.registers.bc = 0x343a
+        cpu.registers.bc = 0xc000
 
         stepWith(0x02)
 
-        verify { cpu.bus.write(0x343a, 0x23) }
+        verify { cpu.bus.write(0xc000, 0x23) }
         assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
     fun `should ld (de), a`() {
         cpu.registers.a = 0x23
-        cpu.registers.de = 0x343a
+        cpu.registers.de = 0xc000
 
         stepWith(0x12)
 
-        verify { cpu.bus.write(0x343a, 0x23) }
+        verify { cpu.bus.write(0xc000, 0x23) }
         assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
     fun `should ld (hl++), a`() {
         cpu.registers.a = 0x23
-        cpu.registers.hl = 0x343a
+        cpu.registers.hl = 0xc000
 
         stepWith(0x22)
 
-        verify { cpu.bus.write(0x343a, 0x23) }
-        assertThat(cpu.registers.hl).isEqualTo(0x343b)
+        verify { cpu.bus.write(0xc000, 0x23) }
+        assertThat(cpu.registers.hl).isEqualTo(0xc001)
         assertThat(cpu.timer.div).isEqualTo(8)
     }
 
     @Test
     fun `should ld (hl--), a`() {
         cpu.registers.a = 0x23
-        cpu.registers.hl = 0x343a
+        cpu.registers.hl = 0xc005
 
         stepWith(0x32)
 
-        verify { cpu.bus.write(0x343a, 0x23) }
-        assertThat(cpu.registers.hl).isEqualTo(0x3439)
+        verify { cpu.bus.write(0xc005, 0x23) }
+        assertThat(cpu.registers.hl).isEqualTo(0xc004)
         assertThat(cpu.timer.div).isEqualTo(8)
     }
 
@@ -111,10 +111,10 @@ class LdTest : CpuTestSupport() {
 
     @Test
     fun `should ld (hl), d8`() {
-        cpu.registers.hl = 0xa3ff
+        cpu.registers.hl = 0xc000
         stepWith(0x36, 0xa3)
 
-        verify { cpu.bus.write(0xa3ff, 0xa3.toByte()) }
+        verify { cpu.bus.write(0xc000, 0xa3.toByte()) }
         assertThat(cpu.timer.div).isEqualTo(12)
     }
 
@@ -122,11 +122,11 @@ class LdTest : CpuTestSupport() {
     fun `shoud ld (a16), sp`() {
         cpu.registers.sp = 0xffef
 
-        stepWith(0x08, 0x00, 0x30)
+        stepWith(0x08, 0x00, 0xc0)
 
         verify {
-            cpu.bus.write(0x3000, 0xef.toByte())
-            cpu.bus.write(0x3001, 0xff.toByte())
+            cpu.bus.write(0xc000, 0xef.toByte())
+            cpu.bus.write(0xc001, 0xff.toByte())
         }
         assertThat(cpu.timer.div).isEqualTo(20)
     }
@@ -904,10 +904,10 @@ class LdTest : CpuTestSupport() {
     fun `should ld (a16), a`() {
         cpu.registers.a = 0xaa.toByte()
 
-        stepWith(0xea, 0x33, 0x66)
+        stepWith(0xea, 0x00, 0xc0)
 
         assertThat(cpu.timer.div).isEqualTo(16)
-        verify { bus.write(0x6633, 0xaa.toByte()) }
+        verify { bus.write(0xc000, 0xaa.toByte()) }
     }
 
     @Test
