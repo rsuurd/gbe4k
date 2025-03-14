@@ -27,10 +27,12 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
     val cpu = Cpu(bus, timer, interrupts)
     val ppu = Ppu(bus, lcd, interrupts)
 
+    private var emulating = true
+
     fun emulate() {
         var lastUpdateTime = System.nanoTime()
 
-        while (true) {
+        while (emulating) {
             val now = System.nanoTime()
 
             while ((now - lastUpdateTime) >= DELAY.nano) {
@@ -51,6 +53,10 @@ class Gbe4k(cart: Cart, outputStream: OutputStream) {
 
             Thread.sleep(DELAY)
         }
+    }
+
+    fun stop() {
+        emulating = false
     }
 
     companion object {
