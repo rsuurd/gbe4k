@@ -21,6 +21,9 @@ class LcdTest {
     @MockK
     private lateinit var dma: Dma
 
+    @MockK
+    private lateinit var interrupts: Interrupts
+
     @InjectMockKs
     private lateinit var lcd: Lcd
 

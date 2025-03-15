@@ -6,13 +6,22 @@ import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Ppu
 import gbe4k.core.io.Dma.Companion.DMA_TRANSFER
 
-class Lcd(private val dma: Dma) : Addressable {
+class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressable {
     val control = Control(0x00)
     val stat = Stat()
 
     var scx: Int = 0x00
     var scy: Int = 0x00
     var ly: Int = 0x00
+        set(value) {
+            field = value
+
+            stat.lyEqLyc = value == lyc
+
+            if (stat.lycSelected && stat.lyEqLyc) {
+                interrupts.request(Interrupts.Interrupt.STAT)
+            }
+        }
     var lyc: Int = 0x00
     var wx: Int = 0x00
     var wy: Int = 0x00

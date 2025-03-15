@@ -20,7 +20,7 @@ class Gbe4k(cart: Cart) {
     val serial = Serial(ByteArrayOutputStream())
     val timer = Timer(interrupts)
     val dma = Dma()
-    val lcd = Lcd(dma)
+    val lcd = Lcd(dma, interrupts)
     val io = Io(joypad, serial, timer, lcd, interrupts)
     val bus = Bus(cart, io)
     val cpu = Cpu(bus, timer, interrupts)

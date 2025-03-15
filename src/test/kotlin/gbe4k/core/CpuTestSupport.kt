@@ -33,7 +33,7 @@ abstract class CpuTestSupport {
         interrupts = Interrupts()
         timer = spyk(Timer(interrupts))
         timer.div = 0x00
-        bus = spyk(Bus(cart, Io(Joypad(), Serial(), timer, Lcd(dma), interrupts)))
+        bus = spyk(Bus(cart, Io(Joypad(), Serial(), timer, Lcd(dma, interrupts), interrupts)))
 
         cpu = Cpu(bus, timer, interrupts)
 

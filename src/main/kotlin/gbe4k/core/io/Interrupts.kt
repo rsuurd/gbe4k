@@ -4,7 +4,7 @@ import gbe4k.core.Cpu
 import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Cpu.Companion.setBit
 
-class Interrupts(var `if`: Byte = 0, var ie: Byte = 0) {
+class Interrupts(var `if`: Byte = 0x00, var ie: Byte = 0x00) {
     var ime = false
     var enableIme = false
 

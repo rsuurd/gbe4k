@@ -22,13 +22,17 @@ class PpuTest {
     @MockK
     private lateinit var bus: Bus
 
+    @MockK
+    private lateinit var interrupts: Interrupts
+
     private lateinit var ppu: Ppu
 
     @BeforeEach
     fun `create ppu`() {
         every { bus[any()] } returns 0xff.toByte()
+        every { interrupts.request(any()) } just runs
 
-        ppu = Ppu(bus, Lcd(Dma()), Interrupts())
+        ppu = Ppu(bus, Lcd(Dma(), interrupts), interrupts)
     }
 
     @Test
@@ -75,7 +79,7 @@ class PpuTest {
         ppu.lcd.ly = 143
         ppu.update(456)
 
-        assertThat(ppu.interrupts.`if`.isBitSet(Interrupts.Interrupt.VBLANK.ordinal)).isTrue()
+        verify(exactly = 1) { interrupts.request(Interrupts.Interrupt.VBLANK) }
         assertThat(ppu.lcd.stat.ppuMode).isEqualTo(Ppu.Mode.VBLANK)
     }
 
@@ -129,7 +133,7 @@ class PpuTest {
             ppu.update(1)
         }
 
-        assertThat(ppu.interrupts.`if`.isBitSet(Interrupts.Interrupt.STAT.ordinal)).isTrue()
+        verify(exactly = 3) { interrupts.request(Interrupts.Interrupt.STAT) }
     }
 
     @Test
@@ -140,19 +144,17 @@ class PpuTest {
             ppu.update(1)
         }
 
-        assertThat(ppu.interrupts.`if`.isBitSet(Interrupts.Interrupt.STAT.ordinal)).isFalse()
+        verify(exactly = 0) { interrupts.request(Interrupts.Interrupt.STAT) }
     }
 
     @Test
     fun `should request stat when ly == lyc when enabled`() {
         ppu.lcd.stat.value = 0x00.toByte().setBit(true, 6)
-        ppu.lcd.ly = 89
         ppu.lcd.lyc = 90
+        ppu.lcd.ly = 90
 
-        ppu.update(456)
-
+        verify(exactly = 1) { interrupts.request(Interrupts.Interrupt.STAT) }
         assertThat(ppu.lcd.stat.lycSelected).isTrue()
-        assertThat(ppu.interrupts.`if`.isBitSet(Interrupts.Interrupt.STAT.ordinal)).isTrue()
     }
 
     @Test
@@ -163,7 +165,7 @@ class PpuTest {
 
         ppu.update(456)
 
+        verify(exactly = 0) { interrupts.request(Interrupts.Interrupt.VBLANK) }
         assertThat(ppu.lcd.stat.lycSelected).isFalse()
-        assertThat(ppu.interrupts.`if`.isBitSet(Interrupts.Interrupt.STAT.ordinal)).isFalse()
     }
 }

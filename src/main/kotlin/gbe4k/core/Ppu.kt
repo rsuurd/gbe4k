@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.asInt
+import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Lcd
 import java.awt.Color
@@ -118,13 +119,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
     private fun nextLine() {
         dots -= DOTS_PER_LINE
-        lcd.ly++
-        lcd.stat.lyEqLyc = lcd.ly == lcd.lyc
+        lcd.ly ++
         drawn = false
-
-        if (lcd.stat.lycSelected && lcd.stat.lyEqLyc) {
-            interrupts.request(Interrupts.Interrupt.STAT)
-        }
 
         if (lcd.ly < VISIBLE_SCANLINES) {
             setMode(Mode.OAM_SCAN)
