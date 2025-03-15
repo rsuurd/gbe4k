@@ -3,6 +3,9 @@ package gbe4k.core.io
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Ppu
 import gbe4k.core.io.Dma.Companion.DMA_TRANSFER
+import gbe4k.core.io.Lcd.Companion.BG_PALETTE
+import gbe4k.core.io.Lcd.Companion.OBJ_PALETTE_0
+import gbe4k.core.io.Lcd.Companion.OBJ_PALETTE_1
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -74,5 +77,33 @@ class LcdTest {
         assertThat(lcd.stat.isSelected(Ppu.Mode.OAM_SCAN)).isTrue()
         assertThat(lcd.stat.isSelected(Ppu.Mode.DRAWING)).isFalse()
         assertThat(lcd.stat.lycSelected).isTrue()
+    }
+
+    @Test
+    fun `changing ly should cause interrupt if requested`() {
+        every { interrupts.request(any()) } just runs
+
+        lcd.stat.value = 0b01000000
+
+        lcd.lyc = 3
+        lcd.ly = 3
+
+        verify { interrupts.request(Interrupts.Interrupt.STAT) }
+    }
+
+    @Test
+    fun `should set background palette`() {
+        lcd[BG_PALETTE] = 0x12
+
+        assertThat(lcd.bgPalette).isEqualTo(0x12)
+    }
+
+    @Test
+    fun `should set object palettes`() {
+        lcd[OBJ_PALETTE_0] = 0x12
+        lcd[OBJ_PALETTE_1] = 0x13
+
+        assertThat(lcd.objPalette0).isEqualTo(0x12)
+        assertThat(lcd.objPalette1).isEqualTo(0x13)
     }
 }

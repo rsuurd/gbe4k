@@ -23,6 +23,9 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
             }
         }
     var lyc: Int = 0x00
+    var bgPalette: Int = 0x00
+    var objPalette0: Int = 0x00
+    var objPalette1: Int = 0x00
     var wx: Int = 0x00
     var wy: Int = 0x00
 
@@ -33,6 +36,9 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
         SCX -> scx.toByte()
         LY -> ly.toByte()
         LYC -> lyc.toByte()
+        BG_PALETTE -> bgPalette.toByte()
+        OBJ_PALETTE_0 -> objPalette0.toByte()
+        OBJ_PALETTE_1 -> objPalette1.toByte()
         WY -> wy.toByte()
         WX -> wx.toByte()
         else -> 0xff.toByte()
@@ -45,6 +51,9 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
             SCY -> scy = value.asInt()
             SCX -> scx = value.asInt()
             LYC -> lyc = value.asInt()
+            BG_PALETTE -> bgPalette = value.asInt()
+            OBJ_PALETTE_0 -> objPalette0 = value.asInt()
+            OBJ_PALETTE_1 -> objPalette1 = value.asInt()
             WY -> wy = value.asInt()
             WX -> wx = value.asInt()
             DMA_TRANSFER -> dma.start(value)
@@ -104,7 +113,9 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
         const val SCX = 0xff43
         const val LY = 0xff44
         const val LYC = 0xff45
-
+        const val BG_PALETTE = 0xff47
+        const val OBJ_PALETTE_0 = 0xff48
+        const val OBJ_PALETTE_1 = 0xff49
         const val WY = 0xff4a
         const val WX = 0xff4b
     }

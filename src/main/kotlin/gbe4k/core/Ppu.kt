@@ -1,7 +1,6 @@
 package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.asInt
-import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Lcd
 import java.awt.Color
@@ -13,6 +12,31 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var drawn = false
 
     private val listeners = mutableListOf<VBlankListener>()
+
+    private val backgroundPalette: Array<Color>
+        get() = arrayOf(
+            GRAY[lcd.bgPalette.and(0x3)],
+            GRAY[lcd.bgPalette.shr(2).and(0x3)],
+            GRAY[lcd.bgPalette.shr(4).and(0x3)],
+            GRAY[lcd.bgPalette.shr(6).and(0x3)]
+        )
+
+    private val objectPalettes: Array<Array<Color>>
+        get() = arrayOf(
+            arrayOf(
+                GRAY[lcd.objPalette0.and(0x3)],
+                GRAY[lcd.objPalette0.shr(2).and(0x3)],
+                GRAY[lcd.objPalette0.shr(4).and(0x3)],
+                GRAY[lcd.objPalette0.shr(6).and(0x3)]
+            ),
+            arrayOf(
+                GRAY[lcd.objPalette1.and(0x3)],
+                GRAY[lcd.objPalette1.shr(2).and(0x3)],
+                GRAY[lcd.objPalette1.shr(4).and(0x3)],
+                GRAY[lcd.objPalette1.shr(6).and(0x3)]
+            ),
+        )
+
 
     fun addVBlankListener(listener: VBlankListener) {
         listeners.add(listener)
@@ -65,7 +89,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         for (x in 0 until 160) {
             val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
 
-            g.color = GREEN[backgroundPixel]
+            g.color = backgroundPalette[backgroundPixel]
             g.fillRect(x, lcd.ly, 1, 1)
         }
     }
@@ -110,7 +134,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
                 val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
 
                 if (index > 0) {
-                    g.color = GREEN[index]
+                    g.color = objectPalettes[e.palette.asInt()][index]
                     g.fillRect(e.x + x, lcd.ly, 1, 1)
                 }
             }
@@ -119,7 +143,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
     private fun nextLine() {
         dots -= DOTS_PER_LINE
-        lcd.ly ++
+        lcd.ly++
         drawn = false
 
         if (lcd.ly < VISIBLE_SCANLINES) {
