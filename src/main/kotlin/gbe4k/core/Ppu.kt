@@ -10,6 +10,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
     private var dots = 0
     private var drawn = false
+    private var drawWindow = false
 
     private val listeners = mutableListOf<VBlankListener>()
 
@@ -79,6 +80,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
         drawTiles()
         drawOam()
+        drawWindow()
 
         drawn = true
     }
@@ -88,7 +90,6 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
         for (x in 0 until 160) {
             val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
-
             g.color = backgroundPalette[backgroundPixel]
             g.fillRect(x, lcd.ly, 1, 1)
         }
@@ -102,6 +103,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         val tileY = y / 8
         val lineInTile = y % 8
         val tileIndex = tileY * 32 + tileX
+
         val tileNumber = bus[tileMap.first + tileIndex]
         val address = lcd.control.tileData.first.takeIf { it == 0x8800 }?.let {
             0x9000 + (tileNumber * 16)
@@ -115,9 +117,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     }
 
     private fun drawOam() {
-        val g = buffer.graphics
-
         if (!lcd.control.objEnable) return
+        val g = buffer.graphics
 
         bus.oam.entries.filter { e -> e.y <= lcd.ly && (e.y + lcd.control.objSize) > lcd.ly }.forEach { e ->
             val address = 0x8000 + (e.tile.asInt() * 16)
@@ -126,17 +127,32 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
             val lo = bus[address + offset]
             val hi = bus[address + offset + 1]
 
-            // check prio & palette
-
             for (x in 0..7) {
                 val bitIndex = if (e.xFlip) x else 7 - x
 
                 val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
 
                 if (index > 0) {
-                    g.color = objectPalettes[e.palette.asInt()][index]
-                    g.fillRect(e.x + x, lcd.ly, 1, 1)
+                    if (e.priority) {
+                        // TODO check if background pixel is 0: draw
+                    } else {
+                        g.color = objectPalettes[e.palette.asInt()][index]
+                        g.fillRect(e.x + x, lcd.ly, 1, 1)
+                    }
                 }
+            }
+        }
+    }
+
+    private fun drawWindow() {
+        if (lcd.control.windowEnabled && drawWindow) {
+            val g = buffer.graphics
+
+            for (x in lcd.wx until 160) {
+                val colorIndex = fetchPixel(x, 0, 0, lcd.control.windowTileMap)
+
+                g.color = backgroundPalette[colorIndex]
+                g.fillRect(x, lcd.ly, 1, 1)
             }
         }
     }
@@ -151,13 +167,15 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         } else if (lcd.ly == VISIBLE_SCANLINES) {
             interrupts.request(Interrupts.Interrupt.VBLANK)
             setMode(Mode.VBLANK)
-
             // inform the listeners of a complete frame
             listeners.forEach { it.onVBlank(buffer) }
         } else if (lcd.ly == TOTAL_SCANLINES) {
             lcd.ly = 0
+            drawWindow = false
             setMode(Mode.OAM_SCAN)
         }
+
+        drawWindow = drawWindow || (lcd.wy == lcd.ly)
     }
 
     companion object {

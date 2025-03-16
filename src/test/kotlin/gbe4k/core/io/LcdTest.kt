@@ -6,6 +6,8 @@ import gbe4k.core.io.Dma.Companion.DMA_TRANSFER
 import gbe4k.core.io.Lcd.Companion.BG_PALETTE
 import gbe4k.core.io.Lcd.Companion.OBJ_PALETTE_0
 import gbe4k.core.io.Lcd.Companion.OBJ_PALETTE_1
+import gbe4k.core.io.Lcd.Companion.WX
+import gbe4k.core.io.Lcd.Companion.WY
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -105,5 +107,14 @@ class LcdTest {
 
         assertThat(lcd.objPalette0).isEqualTo(0x12)
         assertThat(lcd.objPalette1).isEqualTo(0x13)
+    }
+
+    @Test
+    fun `should set wx, wy`() {
+        lcd[WX] = 20
+        lcd[WY] = 16
+
+        assertThat(lcd.wx).isEqualTo(13)
+        assertThat(lcd.wy).isEqualTo(16)
     }
 }

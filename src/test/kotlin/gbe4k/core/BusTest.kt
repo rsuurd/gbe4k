@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Bus.Companion.CART_DATA
+import gbe4k.core.Bus.Companion.CART_RAM
 import gbe4k.core.Bus.Companion.HRAM
 import gbe4k.core.Bus.Companion.IO
 import gbe4k.core.Bus.Companion.VRAM
@@ -49,6 +50,28 @@ class BusTest {
         }
 
         verify(exactly = 0x8000) { cart[any()] }
+    }
+
+    @Test
+    fun `should read cart ram`() {
+        every { cart[any()] } returns 0x00
+
+        for (address in CART_RAM) {
+            bus.read(address)
+        }
+
+        verify(exactly = 0x2000) { cart[any()] }
+    }
+
+    @Test
+    fun `should write cart ram`() {
+        every { cart[any()] = any() } just runs
+
+        for (address in CART_RAM) {
+            bus.write(address, 0xa)
+        }
+
+        verify(exactly = 0x2000) { cart[any()] = 0xa }
     }
 
     @Test

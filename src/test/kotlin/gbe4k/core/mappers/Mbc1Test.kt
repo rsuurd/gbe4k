@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class Mbc1Test {
-    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, hasRam = true)
+    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = true, battery = false)
 
     @Test
     fun `should directly read from first rom bank`() {
@@ -80,7 +80,7 @@ class Mbc1Test {
 
     @Test
     fun `should not read ram if cart has no ram`() {
-        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, hasRam = false)
+        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = false)
 
         for (address in RAM_BANK) {
             assertThat(noRam[address].asInt()).isEqualTo(0xff)
@@ -89,7 +89,7 @@ class Mbc1Test {
 
     @Test
     fun `should not enable ram if cart has no ram`() {
-        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, hasRam = false)
+        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = false)
 
         for (address in RAM_ENABLE) {
             noRam[address] = 0xa

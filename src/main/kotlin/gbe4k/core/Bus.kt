@@ -19,7 +19,7 @@ class Bus(
     override fun get(address: Int) = when (address) {
         in CART_DATA -> cart[address]
         in VRAM -> vram[address]
-        in CART_RAM -> 0xff.toByte()
+        in CART_RAM -> cart[address]
         in WRAM -> wram[address]
         in OAM -> oam[address]
         in IO, INTERRUPT_ENABLE -> io[address]

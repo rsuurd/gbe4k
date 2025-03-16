@@ -12,18 +12,16 @@ class Cart(private val data: ByteArray) : Addressable {
     val size: Int get() = 32 shl data[0x148].toInt()
     val type: Byte get() = data[0x147]
 
-    private val mapper: Mapper? = when(type.asInt()) {
-        0x1 -> Mbc1(data, hasRam = false)
-        0x2 -> Mbc1(data, hasRam = true)
-        0x3 -> Mbc1(data, hasRam = true) // battery
+    private val mapper: Mapper? = when (type.asInt()) {
+        0x1 -> Mbc1(data)
+        0x2 -> Mbc1(data, ram = true)
+        0x3 -> Mbc1(data, ram = true, battery = true)
         else -> null
     }
 
     override fun get(address: Int): Byte = mapper?.get(address) ?: data[address]
     override fun set(address: Int, value: Byte) {
         mapper?.set(address, value)
-
-        // TODO
     }
 
     override fun toString() = "Cart(title=$title, size=$size kb, rom size=${data.size.hex()}, type=${type.hex()}"
