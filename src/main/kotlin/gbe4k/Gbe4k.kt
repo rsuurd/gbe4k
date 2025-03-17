@@ -14,7 +14,7 @@ import gbe4k.core.io.Timer
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 
-class Gbe4k(cart: Cart) {
+class Gbe4k(private val cart: Cart) {
     val joypad = Joypad()
     val interrupts = Interrupts()
     val serial = Serial(ByteArrayOutputStream())
@@ -29,7 +29,11 @@ class Gbe4k(cart: Cart) {
     private var emulating = true
 
     fun emulate() {
-        // cart.restoreSave()
+        cart.load()
+        Runtime.getRuntime().addShutdownHook(Thread {
+            cart.save()
+        })
+
         // shutdownhook save cart ram
 
         var lastUpdateTime = System.nanoTime()
@@ -59,8 +63,7 @@ class Gbe4k(cart: Cart) {
 
     fun stop() {
         emulating = false
-
-        // save ram
+        cart.save()
     }
 
     companion object {

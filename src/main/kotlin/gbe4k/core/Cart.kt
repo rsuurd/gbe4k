@@ -24,6 +24,20 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
         mapper?.set(address, value)
     }
 
+    fun load() {
+        when (mapper) {
+            is Mbc1 -> mapper.load()
+            else -> {}
+        }
+    }
+
+    fun save() {
+        when(mapper) {
+            is Mbc1 -> mapper.save()
+            else -> {}
+        }
+    }
+
     override fun toString() = "Cart(title=$title, size=$size kb, rom size=${data.size.hex()}, type=${type.hex()}"
 
     companion object {

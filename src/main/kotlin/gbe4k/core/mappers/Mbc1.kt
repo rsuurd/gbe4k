@@ -70,21 +70,18 @@ class Mbc1(
             in RAM_BANK -> {
                 if (ram && ramEnabled) {
                     ramBanks[ramBank][address] = value
-
-                    // TODO probably more efficient to just do a write save file when emulation stops
-                    if (battery) {
-                        save()
-                    }
                 }
             }
         }
     }
 
-    private fun save() {
-        Files.write(savePath!!, ramBanks.flatten().toByteArray())
+    fun save() {
+        if (ram && battery) {
+            Files.write(savePath!!, ramBanks.flatten().toByteArray())
+        }
     }
 
-    private fun load() {
+    fun load() {
         if (ram && battery && savePath?.exists() == true) {
             val bytes = Files.readAllBytes(savePath)
 

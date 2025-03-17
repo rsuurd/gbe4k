@@ -119,6 +119,8 @@ class Mbc1Test {
         mbc[RAM_ENABLE.random()] = 0xa
         mbc[CART_RAM.random()] = 0x23
 
+        mbc.save()
+
         val save = temp.resolve("game.sav")
         assertThat(save.exists()).isTrue()
         assertThat(save.readBytes()).contains(0x23)
@@ -130,6 +132,7 @@ class Mbc1Test {
         temp.resolve("game.sav").writeBytes(ByteArray(32 * 1024) { 0x11 })
 
         val mbc = Mbc1(ByteArray(512 * 1024), ram = true, battery = true, path = temp.resolve("game.gb"))
+        mbc.load()
         mbc[RAM_ENABLE.random()] = 0xa
 
         for (bank in 0..3) {
