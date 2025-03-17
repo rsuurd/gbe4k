@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage
 
 class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
+    private val graphics = buffer.graphics
     private var dots = 0
     private var drawn = false
     private var drawWindow = false
@@ -86,12 +87,10 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     }
 
     private fun drawTiles() {
-        val g = buffer.graphics
-
         for (x in 0 until 160) {
             val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
-            g.color = backgroundPalette[backgroundPixel]
-            g.fillRect(x, lcd.ly, 1, 1)
+            graphics.color = backgroundPalette[backgroundPixel]
+            graphics.fillRect(x, lcd.ly, 1, 1)
         }
     }
 
@@ -118,7 +117,6 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
     private fun drawOam() {
         if (!lcd.control.objEnable) return
-        val g = buffer.graphics
 
         bus.oam.entries.filter { e -> e.y <= lcd.ly && (e.y + lcd.control.objSize) > lcd.ly }.forEach { e ->
             val address = 0x8000 + (e.tile.asInt() * 16)
@@ -136,8 +134,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
                     if (e.priority) {
                         // TODO check if background pixel is 0: draw
                     } else {
-                        g.color = objectPalettes[e.palette.asInt()][index]
-                        g.fillRect(e.x + x, lcd.ly, 1, 1)
+                        graphics.color = objectPalettes[e.palette.asInt()][index]
+                        graphics.fillRect(e.x + x, lcd.ly, 1, 1)
                     }
                 }
             }
@@ -145,15 +143,12 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     }
 
     private fun drawWindow() {
-        if (lcd.control.windowEnabled && drawWindow) {
-            val g = buffer.graphics
+        if (!lcd.control.windowEnabled || !drawWindow) return
 
-            for (x in lcd.wx until 160) {
-                val colorIndex = fetchPixel(x, 0, 0, lcd.control.windowTileMap)
-
-                g.color = backgroundPalette[colorIndex]
-                g.fillRect(x, lcd.ly, 1, 1)
-            }
+        for (x in lcd.wx until 160) {
+            val index = fetchPixel(x, 0, -lcd.wy, lcd.control.windowTileMap)
+            graphics.color = backgroundPalette[index]
+            graphics.fillRect(x, lcd.ly, 1, 1)
         }
     }
 
