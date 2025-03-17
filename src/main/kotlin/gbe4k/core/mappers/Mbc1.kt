@@ -12,7 +12,7 @@ class Mbc1(
     private val ram: Boolean = false,
     private val battery: Boolean = false,
     path: Path? = null
-) : Mapper {
+) : Mapper, BatteryPowered {
     var romBank = 1
         private set(value) {
             val bank = value.and(0b00011111)
@@ -43,10 +43,6 @@ class Mbc1(
 
     private val savePath = path?.parent?.resolve("${path.toFile().nameWithoutExtension}.sav")
 
-    init {
-        load()
-    }
-
     override fun get(address: Int) = when (address) {
         in ROM -> data[address]
         in ROM_BANK -> data[(romBank * ROM_BANK_SIZE) + (address - ROM_BANK_SIZE)]
@@ -75,13 +71,13 @@ class Mbc1(
         }
     }
 
-    fun save() {
+    override fun save() {
         if (ram && battery) {
             Files.write(savePath!!, ramBanks.flatten().toByteArray())
         }
     }
 
-    fun load() {
+    override fun load() {
         if (ram && battery && savePath?.exists() == true) {
             val bytes = Files.readAllBytes(savePath)
 

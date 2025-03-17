@@ -2,8 +2,10 @@ package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Cpu.Companion.hex
+import gbe4k.core.mappers.BatteryPowered
 import gbe4k.core.mappers.Mapper
 import gbe4k.core.mappers.Mbc1
+import gbe4k.core.mappers.Mbc2
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -16,6 +18,9 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
         0x1 -> Mbc1(data)
         0x2 -> Mbc1(data, ram = true)
         0x3 -> Mbc1(data, ram = true, battery = true, path = path)
+        0x5 -> Mbc2(data)
+        0x6 -> Mbc2(data, battery = true, path = path)
+
         else -> null
     }
 
@@ -25,16 +30,14 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
     }
 
     fun load() {
-        when (mapper) {
-            is Mbc1 -> mapper.load()
-            else -> {}
+        if (mapper is BatteryPowered) {
+            mapper.load()
         }
     }
 
     fun save() {
-        when(mapper) {
-            is Mbc1 -> mapper.save()
-            else -> {}
+        if (mapper is BatteryPowered) {
+            mapper.save()
         }
     }
 

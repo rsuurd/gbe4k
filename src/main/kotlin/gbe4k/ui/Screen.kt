@@ -30,8 +30,8 @@ class Screen : Canvas() {
                     when (e.keyCode) {
                         KeyEvent.VK_ENTER -> start = pressed
                         KeyEvent.VK_SHIFT -> select = pressed
-                        KeyEvent.VK_CONTROL -> a = pressed
-                        KeyEvent.VK_ALT -> b = pressed
+                        KeyEvent.VK_L -> a = pressed
+                        KeyEvent.VK_K -> b = pressed
                         KeyEvent.VK_W -> up = pressed
                         KeyEvent.VK_S -> down = pressed
                         KeyEvent.VK_A -> left = pressed

@@ -34,8 +34,6 @@ class Gbe4k(private val cart: Cart) {
             cart.save()
         })
 
-        // shutdownhook save cart ram
-
         var lastUpdateTime = System.nanoTime()
 
         while (emulating) {
