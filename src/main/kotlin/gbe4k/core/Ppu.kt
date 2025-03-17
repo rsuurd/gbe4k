@@ -131,12 +131,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
                 val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
 
                 if (index > 0) {
-                    if (e.priority) {
-                        // TODO check if background pixel is 0: draw
-                    } else {
-                        graphics.color = objectPalettes[e.palette.asInt()][index]
-                        graphics.fillRect(e.x + x, lcd.ly, 1, 1)
-                    }
+                    graphics.color = objectPalettes[e.palette.asInt()][index]
+                    graphics.fillRect(e.x + x, lcd.ly, 1, 1)
                 }
             }
         }

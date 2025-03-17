@@ -29,6 +29,9 @@ class Gbe4k(cart: Cart) {
     private var emulating = true
 
     fun emulate() {
+        // cart.restoreSave()
+        // shutdownhook save cart ram
+
         var lastUpdateTime = System.nanoTime()
 
         while (emulating) {
@@ -56,6 +59,8 @@ class Gbe4k(cart: Cart) {
 
     fun stop() {
         emulating = false
+
+        // save ram
     }
 
     companion object {

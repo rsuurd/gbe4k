@@ -7,7 +7,7 @@ import gbe4k.core.mappers.Mbc1
 import java.nio.file.Files
 import java.nio.file.Path
 
-class Cart(private val data: ByteArray) : Addressable {
+class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
     val title: String get() = String(data.sliceArray(IntRange(0x134, 0x142))).replace("\u0000", "")
     val size: Int get() = 32 shl data[0x148].toInt()
     val type: Byte get() = data[0x147]
@@ -15,7 +15,7 @@ class Cart(private val data: ByteArray) : Addressable {
     private val mapper: Mapper? = when (type.asInt()) {
         0x1 -> Mbc1(data)
         0x2 -> Mbc1(data, ram = true)
-        0x3 -> Mbc1(data, ram = true, battery = true)
+        0x3 -> Mbc1(data, ram = true, battery = true, path = path)
         else -> null
     }
 
@@ -30,7 +30,7 @@ class Cart(private val data: ByteArray) : Addressable {
         fun load(path: Path): Cart {
             val bytes = Files.readAllBytes(path)
 
-            return Cart(bytes)
+            return Cart(bytes, path)
         }
     }
 }

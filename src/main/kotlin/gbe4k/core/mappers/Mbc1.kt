@@ -2,12 +2,16 @@ package gbe4k.core.mappers
 
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Ram
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.experimental.and
+import kotlin.io.path.exists
 
 class Mbc1(
     private val data: ByteArray,
     private val ram: Boolean = false,
-    private val battery: Boolean = false
+    private val battery: Boolean = false,
+    path: Path? = null
 ) : Mapper {
     var romBank = 1
         private set(value) {
@@ -16,7 +20,7 @@ class Mbc1(
             field = if (bank == 0) {
                 1
             } else {
-                 // TODO mask by the amount of bits required to access the amount of banks
+                // TODO mask by the amount of bits required to access the amount of banks
                 bank
             }
         }
@@ -36,6 +40,12 @@ class Mbc1(
 
     var advancedBanking = false
         private set
+
+    private val savePath = path?.parent?.resolve("${path.toFile().nameWithoutExtension}.sav")
+
+    init {
+        load()
+    }
 
     override fun get(address: Int) = when (address) {
         in ROM -> data[address]
@@ -61,8 +71,25 @@ class Mbc1(
                 if (ram && ramEnabled) {
                     ramBanks[ramBank][address] = value
 
-                    // if battery; store the ram banks
+                    // TODO probably more efficient to just do a write save file when emulation stops
+                    if (battery) {
+                        save()
+                    }
                 }
+            }
+        }
+    }
+
+    private fun save() {
+        Files.write(savePath!!, ramBanks.flatten().toByteArray())
+    }
+
+    private fun load() {
+        if (ram && battery && savePath?.exists() == true) {
+            val bytes = Files.readAllBytes(savePath)
+
+            bytes.toList().chunked(RAM_BANK.last - RAM_BANK.first + 1).forEachIndexed { bank, data ->
+                ramBanks[bank].copyFrom(data.toByteArray())
             }
         }
     }

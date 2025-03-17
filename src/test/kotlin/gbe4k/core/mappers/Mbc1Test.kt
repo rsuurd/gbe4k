@@ -1,5 +1,6 @@
 package gbe4k.core.mappers
 
+import gbe4k.core.Bus.Companion.CART_RAM
 import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.mappers.Mbc1.Companion.MODE_SELECT
 import gbe4k.core.mappers.Mbc1.Companion.RAM_BANK
@@ -9,7 +10,12 @@ import gbe4k.core.mappers.Mbc1.Companion.ROM
 import gbe4k.core.mappers.Mbc1.Companion.ROM_BANK
 import gbe4k.core.mappers.Mbc1.Companion.ROM_BANK_SELECT
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.util.Files
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.readBytes
+import kotlin.io.path.writeBytes
 
 class Mbc1Test {
     private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = true, battery = false)
@@ -102,5 +108,36 @@ class Mbc1Test {
         mbc1[MODE_SELECT.random()] = 1
 
         assertThat(mbc1.advancedBanking).isTrue()
+    }
+
+    @Test
+    fun `should store ram if cart has battery`() {
+        val temp = Path.of(Files.temporaryFolderPath())
+
+        val mbc = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = true, battery = true, path = temp.resolve("game.gb"))
+
+        mbc[RAM_ENABLE.random()] = 0xa
+        mbc[CART_RAM.random()] = 0x23
+
+        val save = temp.resolve("game.sav")
+        assertThat(save.exists()).isTrue()
+        assertThat(save.readBytes()).contains(0x23)
+    }
+
+    @Test
+    fun `should load ram if cart has battery and save file exists`() {
+        val temp = Path.of(Files.temporaryFolderPath())
+        temp.resolve("game.sav").writeBytes(ByteArray(32 * 1024) { 0x11 })
+
+        val mbc = Mbc1(ByteArray(512 * 1024), ram = true, battery = true, path = temp.resolve("game.gb"))
+        mbc[RAM_ENABLE.random()] = 0xa
+
+        for (bank in 0..3) {
+            mbc[RAM_BANK_SELECT.random()] = bank.toByte()
+
+            for (address in RAM_BANK) {
+                assertThat(mbc[address]).isEqualTo(0x11)
+            }
+        }
     }
 }

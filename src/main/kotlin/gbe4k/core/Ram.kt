@@ -10,4 +10,6 @@ class Ram(private val range: IntRange) : Iterable<Byte> {
 
     private fun Int.index() = this - range.first
     override fun iterator(): Iterator<Byte> = data.iterator()
+
+    fun copyFrom(bytes: ByteArray) = bytes.copyInto(data)
 }
