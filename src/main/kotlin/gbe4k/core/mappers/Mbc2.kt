@@ -14,7 +14,7 @@ class Mbc2(
 ) : Mapper, BatteryPowered {
     private var romBank = 1
         set(value) {
-            field = value.takeUnless { it == 0 } ?: 1
+            field = value.and(0xf).takeUnless { it == 0 } ?: 1
         }
     private var ramEnabled: Boolean = false
     private val ram = Ram(RAM)
@@ -25,8 +25,7 @@ class Mbc2(
         in ROM_BANK -> data[(romBank * ROM_BANK_SIZE) + (address - ROM_BANK_SIZE)]
         in RAM, in ECHO_RAM -> {
             if (ramEnabled) {
-                // compensate the possible echo addresses to point to actual ram
-                ram[(address % RAM_SIZE) + RAM.first]
+                ram[address.ramAddress()]
             } else {
                 0xff.toByte()
             }
@@ -41,16 +40,19 @@ class Mbc2(
                 if (address.and(0x0100) == 0) { // bit 8 clear
                     ramEnabled = value.and(0xf) == 0xa.toByte()
                 } else { // bit 8 is set
-                    romBank = value.and(0xf).asInt()
+                    romBank = value.asInt()
                 }
             }
 
             in RAM, in ECHO_RAM -> {
-                // compensate the possible echo addresses to point to actual ram
-                ram[(address % RAM_SIZE) + RAM.first] = value
+                if (ramEnabled) {
+                    ram[address.ramAddress()] = value
+                }
             }
         }
     }
+
+    private fun Int.ramAddress() = (this % RAM_SIZE) + RAM.first
 
     override fun save() {
         if (battery) {
