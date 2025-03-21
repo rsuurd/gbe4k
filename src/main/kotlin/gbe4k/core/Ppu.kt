@@ -12,8 +12,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var dots = 0
     private var drawn = false
     private var drawWindow = false
-
     private val listeners = mutableListOf<VBlankListener>()
+    private val scanline = Array(160) { 0 }
 
     private val backgroundPalette: Array<Color>
         get() = arrayOf(
@@ -91,6 +91,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
         for (x in 0 until 160) {
             val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
+            scanline[x] = backgroundPixel
             graphics.color = backgroundPalette[backgroundPixel]
             graphics.fillRect(x, lcd.ly, 1, 1)
         }
@@ -133,10 +134,9 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
             for (x in 0..7) {
                 val bitIndex = if (e.xFlip) x else 7 - x
-
                 val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
 
-                if (index > 0) {
+                if (index > 0 && (!e.priority || scanline[e.x + x] == 0)) {
                     graphics.color = objectPalettes[e.palette.asInt()][index]
                     graphics.fillRect(e.x + x, lcd.ly, 1, 1)
                 }
