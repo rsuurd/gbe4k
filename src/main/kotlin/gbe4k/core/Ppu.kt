@@ -87,6 +87,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     }
 
     private fun drawTiles() {
+        if (!lcd.control.priority) return
+
         for (x in 0 until 160) {
             val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
             graphics.color = backgroundPalette[backgroundPixel]
@@ -118,10 +120,14 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private fun drawOam() {
         if (!lcd.control.objEnable) return
 
-        bus.oam.entries.filter { e -> e.y <= lcd.ly && (e.y + lcd.control.objSize) > lcd.ly }.forEach { e ->
+        bus.oam.entries.filter { e -> e.isVisible() }.take(10).forEach { e ->
             val address = 0x8000 + (e.tile.asInt() * 16)
-            val line = lcd.ly - e.y
-            val offset = if (e.yFlip) 7 - (line * 2) else line * 2
+            val offset = if (e.yFlip) {
+                (e.y + lcd.control.objSize - 1) - lcd.ly
+            } else {
+                lcd.ly - e.y
+            } * 2
+
             val lo = bus[address + offset]
             val hi = bus[address + offset + 1]
 
@@ -137,6 +143,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
             }
         }
     }
+
+    private fun OamEntry.isVisible() = y <= lcd.ly && (y + lcd.control.objSize) > lcd.ly
 
     private fun drawWindow() {
         if (!lcd.control.windowEnabled || !drawWindow) return
