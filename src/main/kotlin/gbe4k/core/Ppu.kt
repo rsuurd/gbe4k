@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.asInt
+import gbe4k.core.Cpu.Companion.setBit
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Lcd
 import java.awt.Color
@@ -9,11 +10,16 @@ import java.awt.image.BufferedImage
 class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
     private val graphics = buffer.graphics
+
     private var dots = 0
     private var drawn = false
     private var drawWindow = false
+
+    private var objects = listOf<OamEntry>()
     private val listeners = mutableListOf<VBlankListener>()
+
     private val scanline = Array(160) { 0 }
+    private var windowY = 0
 
     private val backgroundPalette: Array<Color>
         get() = arrayOf(
@@ -79,28 +85,36 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private fun draw() {
         if (drawn) return
 
-        drawTiles()
-        drawOam()
-        drawWindow()
+        objects = bus.oam.entries.filter { e -> e.isVisible() }.take(10).distinctBy { it.x }
+
+        var windowOnScanline = false
+
+        for (x in 0 until 160) {
+            windowOnScanline = lcd.control.windowEnabled && drawWindow && x >= lcd.wx
+
+            val index = if (windowOnScanline) {
+                fetchPixel((x - lcd.wx), windowY, lcd.control.windowTileMap)
+            } else if (lcd.control.priority) {
+                fetchPixel((x + lcd.scx) % 256, (lcd.ly + lcd.scy) % 256, lcd.control.backgroundTileMap)
+            } else {
+                0
+            }
+
+            scanline[x] = index
+            graphics.color = backgroundPalette[index]
+            graphics.fillRect(x, lcd.ly, 1, 1)
+
+            drawOam(x)
+        }
+
+        if (windowOnScanline) {
+            windowY++
+        }
 
         drawn = true
     }
 
-    private fun drawTiles() {
-        if (!lcd.control.priority) return
-
-        for (x in 0 until 160) {
-            val backgroundPixel = fetchPixel(x, lcd.scx, lcd.scy, lcd.control.backgroundTileMap)
-            scanline[x] = backgroundPixel
-            graphics.color = backgroundPalette[backgroundPixel]
-            graphics.fillRect(x, lcd.ly, 1, 1)
-        }
-    }
-
-    private fun fetchPixel(screenX: Int, offsetX: Int, offsetY: Int, tileMap: IntRange): Int {
-        val x = (offsetX + screenX) % 256
-        val y = (offsetY + lcd.ly) % 256
-
+    private fun fetchPixel(x: Int, y: Int, tileMap: IntRange): Int {
         val tileX = x / 8
         val tileY = y / 8
         val lineInTile = y % 8
@@ -118,43 +132,42 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         return index
     }
 
-    private fun drawOam() {
+    private fun drawOam(x: Int) {
         if (!lcd.control.objEnable) return
 
-        bus.oam.entries.filter { e -> e.isVisible() }.take(10).forEach { e ->
-            val address = 0x8000 + (e.tile.asInt() * 16)
-            val offset = if (e.yFlip) {
-                (e.y + lcd.control.objSize - 1) - lcd.ly
+        objects.filter { x in it.x until (it.x + 8) }.forEach { obj ->
+            val tile = if (lcd.control.objSize > 8) {
+                obj.tile.setBit(false, 0)
             } else {
-                lcd.ly - e.y
+                obj.tile
+            }
+
+            val address = 0x8000 + (tile.asInt() * 16)
+            val offset = if (obj.yFlip) {
+                (obj.y + lcd.control.objSize - 1) - lcd.ly
+            } else {
+                lcd.ly - obj.y
             } * 2
 
             val lo = bus[address + offset]
             val hi = bus[address + offset + 1]
 
-            for (x in 0..7) {
-                val bitIndex = if (e.xFlip) x else 7 - x
-                val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
+            val bitIndex = if (obj.xFlip) {
+                x - obj.x
+            } else {
+                7 - (x - obj.x)
+            }
 
-                if (index > 0 && (!e.priority || scanline[e.x + x] == 0)) {
-                    graphics.color = objectPalettes[e.palette.asInt()][index]
-                    graphics.fillRect(e.x + x, lcd.ly, 1, 1)
-                }
+            val index = ((hi.toInt() shr bitIndex) and 1) shl 1 or ((lo.toInt() shr bitIndex) and 1)
+
+            if ((index > 0) && (!obj.priority || scanline[x] == 0)) {
+                graphics.color = objectPalettes[obj.palette.asInt()][index]
+                graphics.fillRect(x, lcd.ly, 1, 1)
             }
         }
     }
 
     private fun OamEntry.isVisible() = y <= lcd.ly && (y + lcd.control.objSize) > lcd.ly
-
-    private fun drawWindow() {
-        if (!lcd.control.windowEnabled || !drawWindow) return
-
-        for (x in lcd.wx until 160) {
-            val index = fetchPixel(x, 0, -lcd.wy, lcd.control.windowTileMap)
-            graphics.color = backgroundPalette[index]
-            graphics.fillRect(x, lcd.ly, 1, 1)
-        }
-    }
 
     private fun nextLine() {
         dots -= DOTS_PER_LINE
@@ -170,6 +183,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
             listeners.forEach { it.onVBlank(buffer) }
         } else if (lcd.ly == TOTAL_SCANLINES) {
             lcd.ly = 0
+            windowY = 0
             drawWindow = false
             setMode(Mode.OAM_SCAN)
         }
