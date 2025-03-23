@@ -30,6 +30,7 @@ class PpuTest {
     @BeforeEach
     fun `create ppu`() {
         every { bus[any()] } returns 0xff.toByte()
+        every { bus.oam } returns Oam()
         every { interrupts.request(any()) } just runs
 
         ppu = Ppu(bus, Lcd(Dma(), interrupts), interrupts)

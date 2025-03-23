@@ -20,25 +20,22 @@ class Mbc1(
             field = if (bank == 0) {
                 1
             } else {
-                // TODO mask by the amount of bits required to access the amount of banks
-                bank
+                bank.and(banks)
             }
         }
 
-    var ramBank = 0
-        private set(value) {
-            val bank = value.and(0b00000011)
+    private val banks: Int
+        get() = (data.size / ROM_BANK_SIZE) - 1
 
-            // TODO might also select rom bank, depending on advanced banking mode
-            field = bank
-        }
+    var ramBank = 0
+        private set
 
     private var ramBanks = (0..3).map { Ram(RAM_BANK) }
 
     var ramEnabled = false
         private set
 
-    var advancedBanking = false
+    var advancedBanking = true
         private set
 
     private val savePath = path?.parent?.resolve("${path.toFile().nameWithoutExtension}.sav")
@@ -61,7 +58,15 @@ class Mbc1(
         when (address) {
             in RAM_ENABLE -> ramEnabled = ram && value.and(0xf).asInt() == 0xa
             in ROM_BANK_SELECT -> romBank = value.asInt()
-            in RAM_BANK_SELECT -> ramBank = value.asInt()
+            in RAM_BANK_SELECT -> {
+                val bank = value.asInt().and(0b00000011)
+
+                if (advancedBanking) {
+                    romBank = romBank.or(bank.shl(4))
+                } else {
+                    ramBank = bank
+                }
+            }
             in MODE_SELECT -> advancedBanking = value.asInt() == 1
             in RAM_BANK -> {
                 if (ram && ramEnabled) {
