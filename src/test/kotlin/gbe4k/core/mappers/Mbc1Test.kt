@@ -18,7 +18,7 @@ import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
 class Mbc1Test {
-    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = true, battery = false)
+    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 32, battery = false)
 
     @Test
     fun `should directly read from first rom bank`() {
@@ -86,7 +86,7 @@ class Mbc1Test {
 
     @Test
     fun `should not read ram if cart has no ram`() {
-        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = false)
+        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 0)
 
         for (address in RAM_BANK) {
             assertThat(noRam[address].asInt()).isEqualTo(0xff)
@@ -95,7 +95,7 @@ class Mbc1Test {
 
     @Test
     fun `should not enable ram if cart has no ram`() {
-        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = false)
+        val noRam = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 0)
 
         for (address in RAM_ENABLE) {
             noRam[address] = 0xa
@@ -114,7 +114,7 @@ class Mbc1Test {
     fun `should store ram if cart has battery`() {
         val temp = Path.of(Files.temporaryFolderPath())
 
-        val mbc = Mbc1(ByteArray(512 * 1024) { 0x32 }, ram = true, battery = true, path = temp.resolve("game.gb"))
+        val mbc = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 64, battery = true, path = temp.resolve("game.gb"))
 
         mbc[RAM_ENABLE.random()] = 0xa
         mbc[CART_RAM.random()] = 0x23
@@ -131,7 +131,7 @@ class Mbc1Test {
         val temp = Path.of(Files.temporaryFolderPath())
         temp.resolve("game.sav").writeBytes(ByteArray(32 * 1024) { 0x11 })
 
-        val mbc = Mbc1(ByteArray(512 * 1024), ram = true, battery = true, path = temp.resolve("game.gb"))
+        val mbc = Mbc1(ByteArray(512 * 1024), ramSize = 32, battery = true, path = temp.resolve("game.gb"))
         mbc.load()
         mbc[RAM_ENABLE.random()] = 0xa
 
@@ -142,5 +142,25 @@ class Mbc1Test {
                 assertThat(mbc[address]).isEqualTo(0x11)
             }
         }
+    }
+
+    @Test
+    fun `should ignore rom bank 0 and fallback to bank 1`() {
+        mbc1[ROM_BANK_SELECT.random()] = 0x00
+        assertThat(mbc1.romBank).isEqualTo(1)
+    }
+
+    @Test
+    fun `should select correct rom bank in advanced banking mode`() {
+        mbc1[MODE_SELECT.random()] = 1 // advanced banking mode
+        mbc1[RAM_BANK_SELECT.random()] = 1 // upper bits
+        mbc1[ROM_BANK_SELECT.random()] = 2 // lower bits
+
+        val combinedBank = (1 shl 5) or 2 // 0x22
+        val expectedOffset = (combinedBank * Mbc1.ROM_BANK_SIZE) - Mbc1.ROM_BANK_SIZE
+        val actualByte = mbc1[ROM_BANK.first]
+
+        assertThat(mbc1.romBank).isEqualTo(2) // still shows raw lower bits
+        assertThat(actualByte).isEqualTo(0x32)
     }
 }

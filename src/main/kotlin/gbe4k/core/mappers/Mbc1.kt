@@ -9,40 +9,48 @@ import kotlin.io.path.exists
 
 class Mbc1(
     private val data: ByteArray,
-    private val ram: Boolean = false,
+    private val ramSize: Int = 0,
     private val battery: Boolean = false,
     path: Path? = null
 ) : Mapper, BatteryPowered {
     var romBank = 1
         private set(value) {
-            val bank = value.and(0b00011111)
+            field = (value and 0b11111).coerceAtLeast(1)
+        }
+    private val banks: Int
+        get() = data.size / ROM_BANK_SIZE
 
-            field = if (bank == 0) {
-                1
-            } else {
-                bank.and(banks)
+    private val ram: Boolean = ramSize > 0
+
+    private var ramBank = 0
+        private set(value) {
+            field = value and 0b11
+        }
+    private var ramBanks = (0 until (ramSize / 8)).map { Ram(RAM_BANK) }
+
+    var ramEnabled = false
+        private set(value) {
+            field = value
+
+            if (!value) {
+                save()
             }
         }
 
-    private val banks: Int
-        get() = (data.size / ROM_BANK_SIZE) - 1
-
-    var ramBank = 0
-        private set
-
-    private var ramBanks = (0..3).map { Ram(RAM_BANK) }
-
-    var ramEnabled = false
-        private set
-
     var advancedBanking = true
-        private set
+        private set(value) {
+            field = value
+
+            if (!value) {
+                romBank = 1
+            }
+        }
 
     private val savePath = path?.parent?.resolve("${path.toFile().nameWithoutExtension}.sav")
 
     override fun get(address: Int) = when (address) {
-        in ROM -> data[address]
-        in ROM_BANK -> data[(romBank * ROM_BANK_SIZE) + (address - ROM_BANK_SIZE)]
+        in ROM -> data[address.bank0Address()]
+        in ROM_BANK -> data[address.bankAddress()]
         in RAM_BANK -> {
             if (ram && ramEnabled) {
                 ramBanks[ramBank][address]
@@ -58,16 +66,8 @@ class Mbc1(
         when (address) {
             in RAM_ENABLE -> ramEnabled = ram && value.and(0xf).asInt() == 0xa
             in ROM_BANK_SELECT -> romBank = value.asInt()
-            in RAM_BANK_SELECT -> {
-                val bank = value.asInt().and(0b00000011)
-
-                if (advancedBanking) {
-                    romBank = romBank.or(bank.shl(4))
-                } else {
-                    ramBank = bank
-                }
-            }
-            in MODE_SELECT -> advancedBanking = value.asInt() == 1
+            in RAM_BANK_SELECT -> ramBank = value.asInt()
+            in MODE_SELECT -> advancedBanking = value.asInt().and(0x1) == 1
             in RAM_BANK -> {
                 if (ram && ramEnabled) {
                     ramBanks[ramBank][address] = value
@@ -90,6 +90,22 @@ class Mbc1(
                 ramBanks[bank].copyFrom(data.toByteArray())
             }
         }
+    }
+
+    private fun Int.bank0Address() = if (advancedBanking) {
+        ((ramBank shl 5) * ROM_BANK_SIZE) + this
+    } else {
+        this
+    }
+
+    private fun Int.bankAddress(): Int {
+        val romBank = if (advancedBanking) {
+            ((ramBank shl 5) or romBank).and(0x7F)
+        } else {
+             romBank
+        }.coerceAtMost(banks - 1)
+
+        return (romBank * ROM_BANK_SIZE) + (this - ROM_BANK_SIZE)
     }
 
     companion object {

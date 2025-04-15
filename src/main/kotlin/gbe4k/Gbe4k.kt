@@ -30,9 +30,6 @@ class Gbe4k(private val cart: Cart) {
 
     fun emulate() {
         cart.load()
-        Runtime.getRuntime().addShutdownHook(Thread {
-            cart.save()
-        })
 
         var lastUpdateTime = System.nanoTime()
 
@@ -61,7 +58,6 @@ class Gbe4k(private val cart: Cart) {
 
     fun stop() {
         emulating = false
-        cart.save()
     }
 
     companion object {
