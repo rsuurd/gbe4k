@@ -5,6 +5,11 @@ import gbe4k.core.Cart
 import gbe4k.dump
 import java.awt.BorderLayout
 import java.awt.EventQueue
+import java.awt.dnd.DnDConstants
+import java.awt.dnd.DropTarget
+import java.awt.dnd.DropTargetAdapter
+import java.awt.dnd.DropTargetDropEvent
+import java.io.File
 import java.nio.file.Path
 import javax.swing.JFileChooser
 import javax.swing.JFrame
@@ -14,6 +19,7 @@ import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 import javax.swing.SwingConstants
 import javax.swing.WindowConstants
+
 
 class Ui : JFrame("GBE 4k") {
     private var status = JLabel("No ROM Selected", SwingConstants.CENTER)
@@ -44,6 +50,23 @@ class Ui : JFrame("GBE 4k") {
         setLocationRelativeTo(null)
 
         isVisible = true
+
+        DropTarget(this, object : DropTargetAdapter() {
+            override fun drop(e: DropTargetDropEvent) {
+                e.acceptDrop(DnDConstants.ACTION_COPY)
+
+                e.transferable.transferDataFlavors
+                    .filter { flavor -> flavor.isFlavorJavaFileListType }
+                    .flatMap { flavor ->
+                        @Suppress("UNCHECKED_CAST")
+                        e.transferable.getTransferData(flavor) as List<File>
+                    }.first().let { file ->
+                        emulate(file.toPath())
+                    }
+
+                e.dropComplete(true)
+            }
+        })
 
         javax.swing.Timer(10) {
             status.text = emulator?.cpu?.dump() ?: "No ROM selected"
