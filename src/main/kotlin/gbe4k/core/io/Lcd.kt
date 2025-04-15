@@ -29,6 +29,19 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
     var wx: Int = 0x00
     var wy: Int = 0x00
 
+    init {
+        init()
+    }
+
+    private fun init() {
+        // simulates a boot rom that has run
+        control.value = 0x91.toByte()
+        stat.value = 0x85.toByte()
+        bgPalette = 0xfc
+        objPalette0 = 0xff
+        objPalette1 = 0xff
+    }
+
     override operator fun get(address: Int) = when (address) {
         LCDC -> control.value
         STAT -> stat.value

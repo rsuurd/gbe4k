@@ -1,6 +1,7 @@
 package gbe4k.core.io
 
 import gbe4k.core.Cpu.Companion.asInt
+import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Ppu
 import gbe4k.core.io.Dma.Companion.DMA_TRANSFER
 import gbe4k.core.io.Lcd.Companion.BG_PALETTE
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import kotlin.experimental.and
 
 @ExtendWith(MockKExtension::class)
 class LcdTest {
@@ -52,10 +54,10 @@ class LcdTest {
     @ParameterizedTest
     @EnumSource
     fun `should set and get mode`(mode: Ppu.Mode) {
-        lcd.stat.lyEqLyc = false
         lcd.stat.ppuMode = mode
 
-        assertThat(lcd.stat.value).isEqualTo(mode.ordinal.toByte())
+        // stat value last 2 bits is the mode
+        assertThat(lcd.stat.value.and(3)).isEqualTo(mode.ordinal.toByte())
         assertThat(lcd.stat.ppuMode).isEqualTo(mode)
     }
 
@@ -63,7 +65,7 @@ class LcdTest {
     fun `should set and get ly == lyc`() {
         lcd.stat.lyEqLyc = true
 
-        assertThat(lcd.stat.value).isEqualTo(0b00000100)
+        assertThat(lcd.stat.value.isBitSet(2)).isTrue()
     }
 
     @Test

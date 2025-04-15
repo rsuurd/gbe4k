@@ -11,6 +11,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
     private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
     private val graphics = buffer.graphics
 
+    private var enabled = true
     private var dots = 0
     private var drawn = false
     private var drawWindow = false
@@ -50,7 +51,25 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         listeners.add(listener)
     }
 
+    private fun disable() {
+        enabled = false
+        drawn = false
+        windowY = 0
+        drawWindow = false
+        dots = 0
+        lcd.ly = 0
+        lcd.stat.ppuMode = Mode.HBLANK
+    }
+
     fun update(cycles: Int) {
+        if (enabled && !lcd.control.enabled) {
+            disable()
+        } else if (!enabled && lcd.control.enabled) {
+            enabled = true
+        }
+
+        if (!enabled) return
+
         dots += cycles
 
         if (lcd.stat.ppuMode != Mode.VBLANK) {
@@ -193,7 +212,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
     companion object {
         private const val OAM_SCAN_DOTS = 80
-        private const val HBLANK_DOTS = 252
+        private const val HBLANK_DOTS = 289
         private const val DOTS_PER_LINE = 456
 
         private const val VISIBLE_SCANLINES = 144

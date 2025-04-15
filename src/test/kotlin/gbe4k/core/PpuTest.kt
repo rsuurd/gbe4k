@@ -57,10 +57,10 @@ class PpuTest {
     }
 
     @Test
-    fun `should hblank between dots 252 and 456`() {
-        ppu.update(252)
+    fun `should hblank between dots 289 and 456`() {
+        ppu.update(289)
 
-        repeat(203) {
+        repeat(166) {
             ppu.update(1)
 
             assertThat(ppu.lcd.stat.ppuMode).isEqualTo(Ppu.Mode.HBLANK)
