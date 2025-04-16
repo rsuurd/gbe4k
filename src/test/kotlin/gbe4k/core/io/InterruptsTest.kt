@@ -13,7 +13,7 @@ class InterruptsTest : CpuTestSupport() {
         val interrupt = interrupts.handle(cpu)
 
         assertThat(interrupt).isFalse()
-        assertThat(cpu.pc).isEqualTo(0x100)
+        assertThat(cpu.pc).isEqualTo(0x0)
     }
 
     @ParameterizedTest
@@ -43,7 +43,7 @@ class InterruptsTest : CpuTestSupport() {
         assertThat(interrupts.ime).isFalse()
         assertThat(pending).isTrue()
         assertThat(interrupts.`if`).isEqualTo((1 shl interrupt.ordinal).toByte())
-        assertThat(cpu.pc).isEqualTo(0x100)
+        assertThat(cpu.pc).isEqualTo(0x0)
     }
 
     @ParameterizedTest
@@ -58,7 +58,7 @@ class InterruptsTest : CpuTestSupport() {
         assertThat(interrupts.ime).isTrue()
         assertThat(pending).isFalse()
         assertThat(interrupts.`if`).isEqualTo((1 shl interrupt.ordinal).toByte())
-        assertThat(cpu.pc).isEqualTo(0x100)
+        assertThat(cpu.pc).isEqualTo(0x0)
     }
 
     @Test
@@ -68,7 +68,6 @@ class InterruptsTest : CpuTestSupport() {
 
         for (interrupt in Interrupts.Interrupt.entries) {
             interrupts.ime = true
-
             val pending = interrupts.handle(cpu)
 
             assertThat(pending).isTrue()

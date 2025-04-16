@@ -2,12 +2,16 @@ package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Oam.Companion.OAM
+import gbe4k.core.boot.BootRom
+import gbe4k.core.boot.BootRom.Companion.BOOTROM
+import gbe4k.core.boot.BootRom.Companion.BOOTROM_BANK
 import gbe4k.core.io.Io
 import gbe4k.core.io.Io.Companion.INTERRUPT_ENABLE
 
 class Bus(
     private val cart: Cart,
-    private val io: Io
+    private val io: Io,
+    private val bootRom: BootRom? = null
 ) : Addressable {
     private val vram = Ram(VRAM)
     private val wram = Ram(WRAM)
@@ -17,6 +21,13 @@ class Bus(
     fun read(address: Int): Byte = this[address].also { io.timer.cycle(4) }
 
     override fun get(address: Int) = when (address) {
+        in BOOTROM -> {
+            if (bootRom?.booting == true) {
+                bootRom[address]
+            } else {
+                cart[address]
+            }
+        }
         in CART_DATA -> cart[address]
         in VRAM -> vram[address]
         in CART_RAM -> cart[address]
@@ -40,6 +51,7 @@ class Bus(
             in WRAM -> wram[address] = value
             in HRAM -> hram[address] = value
             in OAM -> oam[address] = value
+            BOOTROM_BANK -> bootRom?.set(address, value)
             in IO, INTERRUPT_ENABLE -> io[address] = value
             else -> { /* nop */ }
         }

@@ -6,7 +6,11 @@ import gbe4k.core.Bus.Companion.HRAM
 import gbe4k.core.Bus.Companion.IO
 import gbe4k.core.Bus.Companion.VRAM
 import gbe4k.core.Bus.Companion.WRAM
+import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.Oam.Companion.OAM
+import gbe4k.core.boot.BootRom
+import gbe4k.core.boot.BootRom.Companion.BOOTROM
+import gbe4k.core.boot.BootRom.Companion.BOOTROM_BANK
 import gbe4k.core.io.Io
 import gbe4k.core.io.Timer
 import io.mockk.every
@@ -24,6 +28,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 class BusTest {
     @MockK
+    private lateinit var bootrom: BootRom
+
+    @MockK
     private lateinit var cart: Cart
 
     @MockK
@@ -37,6 +44,7 @@ class BusTest {
 
     @BeforeEach
     fun `mock io`() {
+        every { bootrom.booting } returns false
         every { io.timer } returns timer
         every { timer.cycle(any()) } just runs
     }
@@ -128,11 +136,45 @@ class BusTest {
     fun `should write io`() {
         every { io[any()] = any() } just runs
 
-        for (address in IO) {
+        for (address in IO.filter { it != BOOTROM_BANK }) {
             assertThat(bus.write(address, 0x4a))
         }
 
-        verify(exactly = 0x80) { io[any()] = 0x4a }
+        verify(exactly = 0x7f) { io[any()] = 0x4a }
+    }
+
+    @Test
+    fun `should read from boot rom while booting`() {
+        every { bootrom.booting } returns true
+        every { bootrom[any()] } returns 0x3
+
+        for (address in BOOTROM) {
+            assertThat(bus.read(address)).isEqualTo(0x3)
+        }
+
+        verify(exactly = 0x100) { bootrom[any()] }
+    }
+
+    @Test
+    fun `should write to boot rom bank`() {
+        every { bootrom[BOOTROM_BANK] = any() } just runs
+
+        bus.write(BOOTROM_BANK, 1)
+
+        verify(exactly = 1) { bootrom[BOOTROM_BANK] = 1}
+    }
+
+    @Test
+    fun `should read from cart when boot is complete`() {
+        every { bootrom.booting } returns false
+        every { cart[any()] } returns 0xc
+
+        for (address in BOOTROM) {
+            assertThat(bus.read(address)).isEqualTo(0xc)
+        }
+
+        verify(exactly = 0) { bootrom[any()] }
+        verify(exactly = 0x100) { cart[any()] }
     }
 
     @Test

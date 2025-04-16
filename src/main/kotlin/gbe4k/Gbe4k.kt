@@ -4,6 +4,7 @@ import gbe4k.core.Bus
 import gbe4k.core.Cart
 import gbe4k.core.Cpu
 import gbe4k.core.Ppu
+import gbe4k.core.boot.BootRom
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Io
@@ -15,6 +16,8 @@ import java.io.ByteArrayOutputStream
 import java.time.Duration
 
 class Gbe4k(private val cart: Cart) {
+    val bootRom: BootRom? = null // BootRom() // TODO get yes/no from settings
+
     val joypad = Joypad()
     val interrupts = Interrupts()
     val serial = Serial(ByteArrayOutputStream())
@@ -22,13 +25,15 @@ class Gbe4k(private val cart: Cart) {
     val dma = Dma()
     val lcd = Lcd(dma, interrupts)
     val io = Io(joypad, serial, timer, lcd, interrupts)
-    val bus = Bus(cart, io)
+    val bus = Bus(cart, io, bootRom)
     val cpu = Cpu(bus, timer, interrupts)
     val ppu = Ppu(bus, lcd, interrupts)
 
     private var emulating = true
 
     fun emulate() {
+        setupBootRom()
+
         cart.load()
 
         var lastUpdateTime = System.nanoTime()
@@ -53,6 +58,31 @@ class Gbe4k(private val cart: Cart) {
             }
 
             Thread.sleep(DELAY)
+        }
+    }
+
+    private fun setupBootRom() {
+        // depending on settings, load the boot rom or initialize to a state as if a boot rom has run
+        if (bootRom == null) {
+            cpu.apply {
+                pc = 0x0100
+
+                registers.apply {
+                    af = 0x01b0
+                    bc = 0x0013
+                    de = 0x00d8
+                    hl = 0x014d
+                    sp = 0xfffe
+                }
+            }
+
+            lcd.apply {
+                control.value = 0x91.toByte()
+                stat.value = 0x85.toByte()
+                bgPalette = 0xfc
+                objPalette0 = 0xff
+                objPalette1 = 0xff
+            }
         }
     }
 

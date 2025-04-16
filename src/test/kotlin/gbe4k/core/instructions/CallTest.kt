@@ -32,7 +32,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xc4, 0x64, 0x3a)
 
-        assertThat(cpu.pc).isEqualTo(0x103)
+        assertThat(cpu.pc).isEqualTo(0x0003)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)
         assertThat(timer.div).isEqualTo(12)
     }
@@ -54,7 +54,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xcc, 0x64, 0x3a)
 
-        assertThat(cpu.pc).isEqualTo(0x103)
+        assertThat(cpu.pc).isEqualTo(0x0003)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)
         assertThat(timer.div).isEqualTo(12)
     }
@@ -76,7 +76,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xd4, 0x64, 0x3a)
 
-        assertThat(cpu.pc).isEqualTo(0x103)
+        assertThat(cpu.pc).isEqualTo(0x0003)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)
         assertThat(timer.div).isEqualTo(12)
     }
@@ -98,7 +98,7 @@ class CallTest : CpuTestSupport() {
 
         stepWith(0xdc, 0x64, 0x3a)
 
-        assertThat(cpu.pc).isEqualTo(0x103)
+        assertThat(cpu.pc).isEqualTo(0x0003)
         assertThat(cpu.registers.sp).isEqualTo(0xfffe)
         assertThat(timer.div).isEqualTo(12)
     }

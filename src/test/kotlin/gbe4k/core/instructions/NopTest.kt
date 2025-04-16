@@ -9,7 +9,7 @@ class NopTest : CpuTestSupport() {
     fun `should do nothing`() {
         stepWith(0x00)
 
-        assertThat(cpu.pc).isEqualTo(0x0101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(timer.div).isEqualTo(4)
     }
 }

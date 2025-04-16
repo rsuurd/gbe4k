@@ -38,7 +38,7 @@ class RetTest : CpuTestSupport() {
 
         stepWith(0xc0)
 
-        assertThat(cpu.pc).isEqualTo(0x101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(cpu.registers.sp).isEqualTo(0xfffc)
         assertThat(timer.div).isEqualTo(8)
     }
@@ -60,7 +60,7 @@ class RetTest : CpuTestSupport() {
 
         stepWith(0xc8)
 
-        assertThat(cpu.pc).isEqualTo(0x101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(cpu.registers.sp).isEqualTo(0xfffc)
         assertThat(timer.div).isEqualTo(8)
     }
@@ -83,7 +83,7 @@ class RetTest : CpuTestSupport() {
 
         stepWith(0xd0)
 
-        assertThat(cpu.pc).isEqualTo(0x101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(cpu.registers.sp).isEqualTo(0xfffc)
         assertThat(timer.div).isEqualTo(8)
     }
@@ -105,7 +105,7 @@ class RetTest : CpuTestSupport() {
 
         stepWith(0xd8)
 
-        assertThat(cpu.pc).isEqualTo(0x101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(cpu.registers.sp).isEqualTo(0xfffc)
         assertThat(timer.div).isEqualTo(8)
     }

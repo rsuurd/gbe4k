@@ -9,7 +9,7 @@ class DiTest : CpuTestSupport() {
     fun `should disable interrupts`() {
         stepWith(0xf3)
 
-        assertThat(cpu.pc).isEqualTo(0x0101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(timer.div).isEqualTo(4)
         assertThat(interrupts.ime).isFalse()
     }

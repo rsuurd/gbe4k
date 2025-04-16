@@ -119,4 +119,11 @@ class LcdTest {
         assertThat(lcd.wx).isEqualTo(13)
         assertThat(lcd.wy).isEqualTo(16)
     }
+
+    @Test
+    fun `should enable`() {
+        lcd.control.value = 0x91.toByte()
+
+        assertThat(lcd.control.enabled).isTrue()
+    }
 }

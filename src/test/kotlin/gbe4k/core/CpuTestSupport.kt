@@ -42,6 +42,7 @@ abstract class CpuTestSupport {
         cpu.registers.bc = 0x000
         cpu.registers.de = 0x000
         cpu.registers.hl = 0x000
+        cpu.registers.sp = 0xfffe
     }
 
     private fun withBytes(vararg bytes: Number, block: () -> Unit) {

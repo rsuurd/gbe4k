@@ -9,14 +9,14 @@ class EiTest : CpuTestSupport() {
     fun `should enable interrupts on next cycle`() {
         stepWith(0xfb)
 
-        assertThat(cpu.pc).isEqualTo(0x0101)
+        assertThat(cpu.pc).isEqualTo(0x0001)
         assertThat(interrupts.ime).isFalse()
         assertThat(interrupts.enableIme).isTrue()
         assertThat(timer.div).isEqualTo(4)
 
         stepWith(0x00)
 
-        assertThat(cpu.pc).isEqualTo(0x0102)
+        assertThat(cpu.pc).isEqualTo(0x0002)
         assertThat(interrupts.ime).isTrue()
         assertThat(interrupts.enableIme).isFalse()
         assertThat(timer.div).isEqualTo(8)

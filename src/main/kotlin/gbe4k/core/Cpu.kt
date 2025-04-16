@@ -15,23 +15,6 @@ class Cpu(val bus: Bus, val timer: Timer, val interrupts: Interrupts) {
 
     var halted = false
 
-    init {
-        init()
-    }
-
-    private fun init() {
-        // simulates a boot rom that has run
-        pc = 0x0100
-
-        registers.apply {
-            af = 0x01b0
-            bc = 0x0013
-            de = 0x00d8
-            hl = 0x014d
-            sp = 0xfffe
-        }
-    }
-
     fun step() {
         if (interrupts.handle(this)) {
             halted = false

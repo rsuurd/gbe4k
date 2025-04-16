@@ -1,6 +1,5 @@
 package gbe4k.core
 
-import gbe4k.core.Cpu.Companion.isBitSet
 import gbe4k.core.Cpu.Companion.setBit
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
@@ -33,7 +32,12 @@ class PpuTest {
         every { bus.oam } returns Oam()
         every { interrupts.request(any()) } just runs
 
-        ppu = Ppu(bus, Lcd(Dma(), interrupts), interrupts)
+        val lcd = Lcd(Dma(), interrupts).apply {
+            control.value = 0x91.toByte()
+            stat.value = 0x85.toByte()
+        }
+
+        ppu = Ppu(bus, lcd, interrupts)
     }
 
     @Test
