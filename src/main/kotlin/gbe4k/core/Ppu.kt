@@ -7,7 +7,7 @@ import gbe4k.core.io.Lcd
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
+class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts, val palette: List<Color>) {
     private var buffer = BufferedImage(160, 144, BufferedImage.TYPE_INT_RGB)
     private val graphics = buffer.graphics
 
@@ -24,25 +24,26 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
 
     private val backgroundPalette: Array<Color>
         get() = arrayOf(
-            GRAY[lcd.bgPalette.and(0x3)],
-            GRAY[lcd.bgPalette.shr(2).and(0x3)],
-            GRAY[lcd.bgPalette.shr(4).and(0x3)],
-            GRAY[lcd.bgPalette.shr(6).and(0x3)]
+            palette[lcd.bgPalette.and(0x3)],
+            palette[lcd.bgPalette.shr(2).and(0x3)],
+            palette[lcd.bgPalette.shr(4).and(0x3)],
+            palette[lcd.bgPalette.shr(6).and(0x3)]
         )
 
+    // backgroundPalette = palette.getColors(lcd.bgBalette)
     private val objectPalettes: Array<Array<Color>>
         get() = arrayOf(
             arrayOf(
-                GRAY[lcd.objPalette0.and(0x3)],
-                GRAY[lcd.objPalette0.shr(2).and(0x3)],
-                GRAY[lcd.objPalette0.shr(4).and(0x3)],
-                GRAY[lcd.objPalette0.shr(6).and(0x3)]
+                palette[lcd.objPalette0.and(0x3)],
+                palette[lcd.objPalette0.shr(2).and(0x3)],
+                palette[lcd.objPalette0.shr(4).and(0x3)],
+                palette[lcd.objPalette0.shr(6).and(0x3)]
             ),
             arrayOf(
-                GRAY[lcd.objPalette1.and(0x3)],
-                GRAY[lcd.objPalette1.shr(2).and(0x3)],
-                GRAY[lcd.objPalette1.shr(4).and(0x3)],
-                GRAY[lcd.objPalette1.shr(6).and(0x3)]
+                palette[lcd.objPalette1.and(0x3)],
+                palette[lcd.objPalette1.shr(2).and(0x3)],
+                palette[lcd.objPalette1.shr(4).and(0x3)],
+                palette[lcd.objPalette1.shr(6).and(0x3)]
             ),
         )
 
@@ -218,14 +219,14 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts) {
         private const val VISIBLE_SCANLINES = 144
         private const val TOTAL_SCANLINES = 154
 
-        private val GREEN = arrayOf(
+        val GREEN_PALETTE = listOf(
             Color(0x9bbc0f),
             Color(0x8bac0f),
             Color(0x306230),
             Color(0x0f380f)
         )
 
-        private val GRAY = arrayOf(
+        val GRAY_PALETTE = listOf(
             Color(0xffffff),
             Color(0xa9a9a9),
             Color(0x545454),

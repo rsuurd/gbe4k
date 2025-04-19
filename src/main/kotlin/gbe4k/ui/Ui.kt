@@ -1,7 +1,9 @@
 package gbe4k.ui
 
 import gbe4k.Gbe4k
+import gbe4k.Settings
 import gbe4k.core.Cart
+import gbe4k.core.Ppu.Companion.GRAY_PALETTE
 import gbe4k.dump
 import java.awt.BorderLayout
 import java.awt.EventQueue
@@ -78,7 +80,7 @@ class Ui : JFrame("GBE 4k") {
         val cart = Cart.load(path)
         println("Loaded cart: $cart")
         title = "GBE 4k - ${cart.title}"
-        emulator = Gbe4k(cart)
+        emulator = Gbe4k(Settings(skipBootRom = false, palette = GRAY_PALETTE), cart)
         screen.emulator = emulator
 
         Thread {

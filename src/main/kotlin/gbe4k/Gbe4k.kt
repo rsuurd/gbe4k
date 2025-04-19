@@ -15,8 +15,8 @@ import gbe4k.core.io.Timer
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 
-class Gbe4k(private val cart: Cart) {
-    val bootRom: BootRom? = null // BootRom() // TODO get yes/no from settings
+class Gbe4k(private val settings: Settings, private val cart: Cart) {
+    val bootRom = BootRom()
 
     val joypad = Joypad()
     val interrupts = Interrupts()
@@ -27,14 +27,14 @@ class Gbe4k(private val cart: Cart) {
     val io = Io(joypad, serial, timer, lcd, interrupts)
     val bus = Bus(cart, io, bootRom)
     val cpu = Cpu(bus, timer, interrupts)
-    val ppu = Ppu(bus, lcd, interrupts)
+    val ppu = Ppu(bus, lcd, interrupts, settings.palette)
 
     private var emulating = true
 
     fun emulate() {
-        setupBootRom()
-
         cart.load()
+
+        boot()
 
         var lastUpdateTime = System.nanoTime()
 
@@ -61,9 +61,8 @@ class Gbe4k(private val cart: Cart) {
         }
     }
 
-    private fun setupBootRom() {
-        // depending on settings, load the boot rom or initialize to a state as if a boot rom has run
-        if (bootRom == null) {
+    private fun boot() {
+        if (settings.skipBootRom) {
             cpu.apply {
                 pc = 0x0100
 

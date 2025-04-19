@@ -1,5 +1,6 @@
 package gbe4k.core
 
+import gbe4k.core.boot.BootRom
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Io
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 abstract class CpuTestSupport {
     @MockK
+    protected lateinit var bootRom: BootRom
+
+    @MockK
     protected lateinit var cart: Cart
 
     protected lateinit var bus: Bus
@@ -29,11 +33,13 @@ abstract class CpuTestSupport {
 
     @BeforeEach
     fun `create cpu`() {
+        every { bootRom.booting } returns false
+
         dma = spyk(Dma())
         interrupts = Interrupts()
         timer = spyk(Timer(interrupts))
         timer.div = 0x00
-        bus = spyk(Bus(cart, Io(Joypad(), Serial(), timer, Lcd(dma, interrupts), interrupts)))
+        bus = spyk(Bus(cart, Io(Joypad(), Serial(), timer, Lcd(dma, interrupts), interrupts), bootRom))
 
         cpu = Cpu(bus, timer, interrupts)
 

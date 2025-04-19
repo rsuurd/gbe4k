@@ -1,6 +1,7 @@
 package gbe4k.core
 
 import gbe4k.core.Cpu.Companion.setBit
+import gbe4k.core.Ppu.Companion.GRAY_PALETTE
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Lcd
@@ -37,7 +38,7 @@ class PpuTest {
             stat.value = 0x85.toByte()
         }
 
-        ppu = Ppu(bus, lcd, interrupts)
+        ppu = Ppu(bus, lcd, interrupts, GRAY_PALETTE)
     }
 
     @Test
