@@ -5,6 +5,7 @@ import gbe4k.core.Cart
 import gbe4k.core.Cpu
 import gbe4k.core.Ppu
 import gbe4k.core.boot.BootRom
+import gbe4k.core.boot.BootRom.Companion.BOOTROM_BANK
 import gbe4k.core.io.Dma
 import gbe4k.core.io.Interrupts
 import gbe4k.core.io.Io
@@ -63,6 +64,8 @@ class Gbe4k(private val settings: Settings, private val cart: Cart) {
 
     private fun boot() {
         if (settings.skipBootRom) {
+            bus[BOOTROM_BANK] = 1
+
             cpu.apply {
                 pc = 0x0100
 

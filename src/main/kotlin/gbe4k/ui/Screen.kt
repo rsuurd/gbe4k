@@ -1,7 +1,9 @@
 package gbe4k.ui
 
 import gbe4k.Gbe4k
+import gbe4k.Settings
 import java.awt.Canvas
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -10,7 +12,7 @@ import java.awt.image.BufferedImage
 /**
  * The screen draws depending on the state of LCD
  */
-class Screen : Canvas() {
+class Screen(private val keys: Settings.Keys) : Canvas() {
     var emulator: Gbe4k? = null
         set(value) {
             field = value
@@ -28,20 +30,25 @@ class Screen : Canvas() {
 
                 emulator?.joypad?.apply {
                     when (e.keyCode) {
-                        KeyEvent.VK_ENTER -> start = pressed
-                        KeyEvent.VK_SHIFT -> select = pressed
-                        KeyEvent.VK_L -> a = pressed
-                        KeyEvent.VK_K -> b = pressed
-                        KeyEvent.VK_W -> up = pressed
-                        KeyEvent.VK_S -> down = pressed
-                        KeyEvent.VK_A -> left = pressed
-                        KeyEvent.VK_D -> right = pressed
+                        keys.start -> start = pressed
+                        keys.select -> select = pressed
+                        keys.a -> a = pressed
+                        keys.b -> b = pressed
+                        keys.up -> up = pressed
+                        keys.down -> down = pressed
+                        keys.left -> left = pressed
+                        keys.right -> right = pressed
                     }
                 }
             }
 
             override fun keyPressed(e: KeyEvent) = handle(e)
             override fun keyReleased(e: KeyEvent) = handle(e)
+            override fun keyTyped(e: KeyEvent) {
+                when (e.extendedKeyCode) {
+                    KeyEvent.VK_ESCAPE -> emulator?.stop()
+                }
+            }
         })
     }
 

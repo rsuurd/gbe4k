@@ -4,3 +4,6 @@ build
 # test roms output
 output.txt
 serial.txt
+
+# saved settings
+gbe4k.properties
