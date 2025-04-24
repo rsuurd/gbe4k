@@ -116,7 +116,7 @@ class LcdTest {
         lcd[WX] = 20
         lcd[WY] = 16
 
-        assertThat(lcd.wx).isEqualTo(13)
+        assertThat(lcd.wx).isEqualTo(20)
         assertThat(lcd.wy).isEqualTo(16)
     }
 

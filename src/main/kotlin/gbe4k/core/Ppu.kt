@@ -109,7 +109,7 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts, val palette: L
 
         var windowOnScanline = false
         val windowX = lcd.wx - WX_OFFSET
-        
+
         for (x in 0 until 160) {
             windowOnScanline = lcd.control.windowEnabled && drawWindow && x >= windowX
 

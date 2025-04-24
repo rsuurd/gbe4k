@@ -7,6 +7,7 @@ import java.nio.file.Path
 import kotlin.experimental.and
 import kotlin.io.path.exists
 
+// TODO refactor -> extend Mbc class
 class Mbc2(
     private val data: ByteArray,
     private val battery: Boolean = false,

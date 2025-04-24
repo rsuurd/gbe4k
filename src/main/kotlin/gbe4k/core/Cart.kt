@@ -4,8 +4,9 @@ import gbe4k.core.Cpu.Companion.asInt
 import gbe4k.core.Cpu.Companion.hex
 import gbe4k.core.mappers.BatteryPowered
 import gbe4k.core.mappers.Mapper
-import gbe4k.core.mappers.Mbc1
 import gbe4k.core.mappers.Mbc2
+import gbe4k.core.mappers.Mbc3
+import gbe4k.core.mappers.Mbc1
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -19,7 +20,7 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
         0x4 -> 128
         0x5 -> 64
         else -> 0
-    }
+    }.shl(10)
 
     private val mapper: Mapper? = when (type.asInt()) {
         0x1 -> Mbc1(data)
@@ -27,6 +28,7 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
         0x3 -> Mbc1(data, ramSize = ramSize, battery = true, path = path)
         0x5 -> Mbc2(data)
         0x6 -> Mbc2(data, battery = true, path = path)
+        0x13 -> Mbc3(data, ramSize = ramSize, battery = true, path = path)
 
         else -> null
     }
@@ -42,7 +44,7 @@ class Cart(private val data: ByteArray, path: Path? = null) : Addressable {
         }
     }
 
-    override fun toString() = "Cart(title=$title, type=${type.hex()}, size=${size}kb, ram=${ramSize}kb)"
+    override fun toString() = "Cart(title=$title, type=${type.hex()}, size=${size}kb, ram=${ramSize / 1024}kb)"
 
     companion object {
         fun load(path: Path): Cart {

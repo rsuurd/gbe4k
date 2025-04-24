@@ -2,13 +2,14 @@ package gbe4k.core.mappers
 
 import gbe4k.core.Bus.Companion.CART_RAM
 import gbe4k.core.Cpu.Companion.asInt
-import gbe4k.core.mappers.Mbc1.Companion.MODE_SELECT
-import gbe4k.core.mappers.Mbc1.Companion.RAM_BANK
-import gbe4k.core.mappers.Mbc1.Companion.RAM_BANK_SELECT
-import gbe4k.core.mappers.Mbc1.Companion.RAM_ENABLE
-import gbe4k.core.mappers.Mbc1.Companion.ROM
-import gbe4k.core.mappers.Mbc1.Companion.ROM_BANK
-import gbe4k.core.mappers.Mbc1.Companion.ROM_BANK_SELECT
+import gbe4k.core.mappers.Mbc.Companion.MODE_SELECT
+import gbe4k.core.mappers.Mbc.Companion.RAM_BANK
+import gbe4k.core.mappers.Mbc.Companion.RAM_BANK_SELECT
+import gbe4k.core.mappers.Mbc.Companion.RAM_ENABLE
+import gbe4k.core.mappers.Mbc.Companion.ROM
+import gbe4k.core.mappers.Mbc.Companion.ROM_BANK
+import gbe4k.core.mappers.Mbc.Companion.ROM_BANK_SELECT
+import gbe4k.core.mappers.Mbc.Companion.ROM_BANK_SIZE
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.util.Files
 import org.junit.jupiter.api.Test
@@ -18,7 +19,7 @@ import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
 class Mbc1Test {
-    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 32, battery = false)
+    private val mbc1 = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 32768, battery = false)
 
     @Test
     fun `should directly read from first rom bank`() {
@@ -114,7 +115,7 @@ class Mbc1Test {
     fun `should store ram if cart has battery`() {
         val temp = Path.of(Files.temporaryFolderPath())
 
-        val mbc = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 64, battery = true, path = temp.resolve("game.gb"))
+        val mbc = Mbc1(ByteArray(512 * 1024) { 0x32 }, ramSize = 65536, battery = true, path = temp.resolve("game.gb"))
 
         mbc[RAM_ENABLE.random()] = 0xa
         mbc[CART_RAM.random()] = 0x23
@@ -131,7 +132,7 @@ class Mbc1Test {
         val temp = Path.of(Files.temporaryFolderPath())
         temp.resolve("game.sav").writeBytes(ByteArray(32 * 1024) { 0x11 })
 
-        val mbc = Mbc1(ByteArray(512 * 1024), ramSize = 32, battery = true, path = temp.resolve("game.gb"))
+        val mbc = Mbc1(ByteArray(512 * 1024), ramSize = 32768, battery = true, path = temp.resolve("game.gb"))
         mbc.load()
         mbc[RAM_ENABLE.random()] = 0xa
 
@@ -157,7 +158,7 @@ class Mbc1Test {
         mbc1[ROM_BANK_SELECT.random()] = 2 // lower bits
 
         val combinedBank = (1 shl 5) or 2 // 0x22
-        val expectedOffset = (combinedBank * Mbc1.ROM_BANK_SIZE) - Mbc1.ROM_BANK_SIZE
+        val expectedOffset = (combinedBank * ROM_BANK_SIZE) - ROM_BANK_SIZE
         val actualByte = mbc1[ROM_BANK.first]
 
         assertThat(mbc1.romBank).isEqualTo(2) // still shows raw lower bits
