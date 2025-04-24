@@ -108,12 +108,13 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts, val palette: L
         objects = bus.oam.entries.filter { e -> e.isVisible() }.take(10).distinctBy { it.x }
 
         var windowOnScanline = false
-
+        val windowX = lcd.wx - WX_OFFSET
+        
         for (x in 0 until 160) {
-            windowOnScanline = lcd.control.windowEnabled && drawWindow && x >= lcd.wx
+            windowOnScanline = lcd.control.windowEnabled && drawWindow && x >= windowX
 
             val index = if (windowOnScanline) {
-                fetchPixel((x - lcd.wx), windowY, lcd.control.windowTileMap)
+                fetchPixel((x - windowX), windowY, lcd.control.windowTileMap)
             } else if (lcd.control.priority) {
                 fetchPixel((x + lcd.scx) % 256, (lcd.ly + lcd.scy) % 256, lcd.control.backgroundTileMap)
             } else {
@@ -232,6 +233,8 @@ class Ppu(val bus: Bus, val lcd: Lcd, val interrupts: Interrupts, val palette: L
             Color(0x545454),
             Color(0x000000)
         )
+
+        private const val WX_OFFSET = 7
     }
 
     enum class Mode {

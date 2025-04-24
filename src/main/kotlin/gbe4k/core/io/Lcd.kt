@@ -55,7 +55,7 @@ class Lcd(private val dma: Dma, private val interrupts: Interrupts) : Addressabl
             OBJ_PALETTE_0 -> objPalette0 = value.asInt()
             OBJ_PALETTE_1 -> objPalette1 = value.asInt()
             WY -> wy = value.asInt()
-            WX -> wx = value.asInt() - 7
+            WX -> wx = value.asInt()
             DMA_TRANSFER -> dma.start(value)
         }
     }
