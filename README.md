@@ -8,7 +8,7 @@ The goals I am setting for this emulator are to have it run some of my favorite 
  * Tetris ✅
  * Dr. Mario ✅
  * Super Mario Land ✅
- * Pokémon Red & Blue ❌
+ * Pokémon Red & Blue ✅
  * The Legend of Zelda: Link's Awakening ✅
  * Final Fantasy Adventure ✅
  * Castlevania II: Belmont's Revenge ✅
@@ -26,3 +26,4 @@ Screenshots
 ![Castlevania II: Belmont's Revenge](./screenshots/castlevania-ii.png "Castlevania II: Belmont's Revenge")
 ![DuckTales](./screenshots/ducktales.png "DuckTales")
 ![Gargoyle's Quest](./screenshots/gargoyles-quest.png "Gargoyle's Quest")
+![Pokémon Red](./screenshots/pokemon-red.png "Pokémon Red")

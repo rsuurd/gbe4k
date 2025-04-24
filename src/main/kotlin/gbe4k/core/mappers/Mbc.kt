@@ -24,9 +24,7 @@ abstract class Mbc(
     private val savePath = path?.parent?.resolve("${path.toFile().nameWithoutExtension}.sav")
 
     var romBank = 1
-        protected set(value) {
-            field = (value and 0b11111).coerceAtLeast(1)
-        }
+        protected set
 
     var ramBank = 0
         protected set(value) {
@@ -51,8 +49,10 @@ abstract class Mbc(
     }
 
     protected open fun Int.bank0Address() = this
-    protected open fun Int.bankAddress(): Int {
-        val romBank = romBank.coerceAtMost(banks - 1)
+    protected open fun resolveRomBank() = romBank.coerceAtMost(banks - 1)
+
+    private fun Int.bankAddress(): Int {
+        val romBank = resolveRomBank()
 
         return (romBank * ROM_BANK_SIZE) + (this - ROM_BANK_SIZE)
     }
@@ -66,7 +66,7 @@ abstract class Mbc(
     override fun set(address: Int, value: Byte) {
         when (address) {
             in RAM_ENABLE -> ramEnabled = hasRam && value.and(0xf).asInt() == 0xa
-            in ROM_BANK_SELECT -> romBank = value.asInt()
+            in ROM_BANK_SELECT -> romBank = value.asInt().coerceAtLeast(1).and(0x7f)
             in RAM_BANK_SELECT -> ramBank = value.asInt()
             in MODE_SELECT -> selectMode(value)
             in RAM_BANK -> writeRam(address, value)

@@ -13,20 +13,25 @@ class Mbc1(data: ByteArray, ramSize: Int = 0, battery: Boolean = false, path: Pa
             }
         }
 
+    override fun resolveRomBank() = romBank.and(0b11111).let { maskedBank ->
+        if (advancedBanking) {
+            (ramBank shl 5) or maskedBank
+        } else {
+            maskedBank
+        }.let { bank ->
+            // bank 0 not allowed
+            if (bank.and(0x1f) == 0) {
+                bank + 1
+            } else {
+                bank
+            }
+        }.coerceAtMost(banks - 1)
+    }
+
     override fun Int.bank0Address() = if (advancedBanking) {
         ((ramBank shl 5) * ROM_BANK_SIZE) + this
     } else {
         this
-    }
-
-    override fun Int.bankAddress(): Int {
-        val romBank = if (advancedBanking) {
-            ((ramBank shl 5) or romBank).and(0x7F)
-        } else {
-            romBank
-        }.coerceAtMost(banks - 1)
-
-        return (romBank * ROM_BANK_SIZE) + (this - ROM_BANK_SIZE)
     }
 
     override fun selectMode(value: Byte) {
